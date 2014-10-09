@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">NumberReactor</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="zero_point_zero">0.00</string>
+    <string name="zero">0</string>
+    <string name="start">G</string>
+    <string name="stop">S</string>
+    <string name="target">TARGET:</string>
+    <string name="fade_target">TARGET: 10</string>
+    <string name="reset">RESET</string>
+    <string name="accuracy">ACCURACY: </string>
+    <string name="fade_counter_dialog">Count along with the fading counter, try to stop on the target!</string>
+    <string name="out_of_lives_dialog">You are out of lives. Would you like to try again?</string>
+    <string name="exit">EXIT</string>
+    <string name="OK">OK</string>
+    <string name="lives_remaining">LIVES: </string>
+    <string name="score">SCORE: </string>
+    <string name="title_activity_fade_counter">FadeCounterActivity</string>
+    <string name="title_activity_fading_counter">FadingCounterActivity</string>
+    <string name="title_activity_fade_out_counter">FadeOutCounterActivity</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_counter">CounterActivity</string>
+
+</resources>

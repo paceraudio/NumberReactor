@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/classes-2aae90913190bbc478f653ee6d0b230e6abb6368.jar"
+        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
+    <item
+        dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-895bc6a80e2d4e97f581e66ceb215c0cbc68d87f.jar"
+        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/libs/internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
+    <item
+        dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/support-annotations-20.0.0-f4f20f657b04f39a91127821d20e8c296f6f9ce3.jar"
+        jar="/Users/jeffwconaway/Development/android_sdk/sdk/extras/android/m2repository/com/android/support/support-annotations/20.0.0/support-annotations-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
+
+</pre-dex-items>
