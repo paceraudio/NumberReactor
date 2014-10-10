@@ -6,11 +6,14 @@ package com.paceraudio.numberreactor.app;
 
 import android.app.Application;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ApplicationState extends Application{
 
+    private String formattedDate;
     private int level;
     private int runningScoreTotal;
     private List<Integer> scoreList;
@@ -69,5 +72,13 @@ public class ApplicationState extends Application{
         for(int i = 0; i < scoreList.size(); i++) {
             runningScoreTotal += scoreList.get(i);
         }
+    }
+
+    public String setGameDate() {
+        //TODO see if this is the best place for this?
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat gameDate = new SimpleDateFormat("dd-MMM-yyyy");
+        formattedDate = gameDate.format(c.getTime());
+        return formattedDate;
     }
 }

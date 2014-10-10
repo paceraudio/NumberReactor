@@ -15,6 +15,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 // class using Threads and Handlers instead of AsyncTask. Performance seems to be the same.
@@ -67,8 +70,11 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     @Override
     protected void onResume() {
         super.onResume();
-
         state = (ApplicationState) getApplicationContext();
+        // TODO is this the right place for this?
+        state.setGameDate();
+
+
 
         switch (state.getLevel()) {
             case 1:
