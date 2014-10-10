@@ -35,8 +35,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     int upperBuffer = 5;
 
     private TextView tvCounter;
-    private TextView tvTarget;
-    private TextView tvAccuracy;
     private TextView tvLivesRemaining;
     private TextView tvScore;
 
@@ -87,7 +85,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
         gen = new Random();
         tvCounter = (TextView) findViewById(R.id.t_v_counter);
-        tvAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
         tvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
         tvLivesRemaining.setText(this.getString(R.string.lives_remaining) + " " + state.getLivesRemaining());
         tvScore = (TextView) findViewById(R.id.t_v_score);
@@ -263,7 +260,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     }
 
     private void displayTarget(double target) {
-        tvTarget = (TextView) findViewById(R.id.t_v_target);
+        TextView tvTarget = (TextView) findViewById(R.id.t_v_target);
         tvTarget.setText(getString(R.string.target) + " " + String.format("%.2f", target));
     }
 
