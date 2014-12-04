@@ -108,23 +108,30 @@ public class DBHelper extends SQLiteOpenHelper {
             int level = c.getInt(2);
             int points = c.getInt(3);
 
-            GameStats stats = new GameStats(num, date, level, points);
             Log.d(DEBUG_TAG, "***queryAllFromDb()***"
-                    + "\n game: " + stats.getmGameNumber()
-                    + "\n date: " + stats.getmGameDate()
-                    + "\n level: " + stats.getmGameLevelReached()
-                    + "\n points: " + stats.getmGamePointsScored());
+                    + "\n game: " + num
+                    + "\n date: " + date
+                    + "\n level: " + level
+                    + "\n points: " + points);
+
+//            no need to make a game stats object here
+//            GameStats stats = new GameStats(num, date, level, points);
+//            Log.d(DEBUG_TAG, "***queryAllFromDb()***"
+//                    + "\n game: " + stats.getmGameNumber()
+//                    + "\n date: " + stats.getmGameDate()
+//                    + "\n level: " + stats.getmGameLevelReached()
+//                    + "\n points: " + stats.getmGamePointsScored());
         }
         while (c.moveToNext());
 
     }
 
-    public void updateDatePlayed(String date) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(C_DATE_PLAYED, date);
-        db.close();
-    }
+//    public void updateDatePlayed(String date) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        ContentValues cv = new ContentValues();
+//        cv.put(C_DATE_PLAYED, date);
+//        db.close();
+//    }
 
     public void updateScoreDB(int score) {
         SQLiteDatabase db = this.getWritableDatabase();
