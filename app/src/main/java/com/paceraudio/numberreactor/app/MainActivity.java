@@ -251,7 +251,7 @@ public class MainActivity extends FragmentActivity implements CounterListener, O
         Log.d(DEBUG_TAG, "counter: " + counter);
         Log.d(DEBUG_TAG, "error: " + error);
         Log.d(DEBUG_TAG, "accuracy: " + accuracyD);
-        //for (int score: state.getScoreList()) {
+        //for (int score: mState.getScoreList()) {
         //    Log.d(DEBUG_TAG, Integer.toString(score));
         //}
         return accuracyI;

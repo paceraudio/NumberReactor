@@ -9,7 +9,7 @@ import android.widget.TextView;
  * Created by jeffwconaway on 9/15/14.
  */
 public class CounterAsync extends AsyncTask<Long, Double, Double> {
-    // AsyncTask params - Long from execute(Long...), Float for publishProgress(Float), and Float for onPostExecute(Float)
+    // AsyncTask params - Long from execute(Long...), Float for publishProgress(Double), and Float for onPostExecute(Double)
 
     private static final String DEBUG_TAG = "jwc";
 

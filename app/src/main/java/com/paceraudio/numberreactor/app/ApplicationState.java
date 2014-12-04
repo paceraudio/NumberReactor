@@ -17,6 +17,7 @@ public class ApplicationState extends Application{
     private int level;
     private int runningScoreTotal;
     private List<Integer> scoreList;
+    private int gameNumber;
 
 
 
@@ -31,16 +32,16 @@ public class ApplicationState extends Application{
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void setLevel(int l) {
+        level = l;
     }
 
     public List<Integer> getScoreList() {
         return scoreList;
     }
 
-    public void setScoreList(List<Integer> scoreList) {
-        this.scoreList = scoreList;
+    public void setScoreList(List<Integer> list) {
+        list = scoreList;
     }
 
     @Override
@@ -49,6 +50,7 @@ public class ApplicationState extends Application{
         runningScoreTotal = 0;
         scoreList = new ArrayList<Integer>();
         livesRemaining = NUM_OF_LIVES_PER_LEVEL;
+        gameNumber = 0;
 
     }
 
@@ -56,8 +58,8 @@ public class ApplicationState extends Application{
         return livesRemaining;
     }
 
-    public void setLivesRemaining(int livesRemaining) {
-        this.livesRemaining = livesRemaining;
+    public void setLivesRemaining(int lives) {
+        livesRemaining = lives;
     }
 
 
