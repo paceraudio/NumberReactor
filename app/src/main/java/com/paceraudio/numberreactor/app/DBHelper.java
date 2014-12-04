@@ -31,6 +31,7 @@ public class DBHelper extends SQLiteOpenHelper {
         super(ctx, DB_NAME, null, DB_VERSION);
         this.mContext = ctx;
         mState = (ApplicationState) mContext.getApplicationContext();
+        mContext.getApplicationContext();
     }
 
     @Override
@@ -114,24 +115,10 @@ public class DBHelper extends SQLiteOpenHelper {
                     + "\n level: " + level
                     + "\n points: " + points);
 
-//            no need to make a game stats object here
-//            GameStats stats = new GameStats(num, date, level, points);
-//            Log.d(DEBUG_TAG, "***queryAllFromDb()***"
-//                    + "\n game: " + stats.getmGameNumber()
-//                    + "\n date: " + stats.getmGameDate()
-//                    + "\n level: " + stats.getmGameLevelReached()
-//                    + "\n points: " + stats.getmGamePointsScored());
         }
         while (c.moveToNext());
-
     }
 
-//    public void updateDatePlayed(String date) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        ContentValues cv = new ContentValues();
-//        cv.put(C_DATE_PLAYED, date);
-//        db.close();
-//    }
 
     public void updateScoreDB(int score) {
         SQLiteDatabase db = this.getWritableDatabase();
