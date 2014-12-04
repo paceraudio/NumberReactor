@@ -28,23 +28,34 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
 
     DialogFragment mDialogFragment;
     FadeOutCounterAsync mFadeOutCounterAsync;
-
-
-
-    ApplicationState state;
+    DBHelper mDbHelper;
+    ApplicationState mState;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fade_out_counter);
+        mState = (ApplicationState) getApplication();
+        int level = mState.getLevel();
+        mState.setLevel(level + 1);
+        mDbHelper = new DBHelper(this);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        UpdateLevelDbAsync updateLevelDbAsync = new UpdateLevelDbAsync(this);
+        updateLevelDbAsync.execute(mState.getLevel());
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        state = (ApplicationState) getApplicationContext();
+        mState = (ApplicationState) getApplicationContext();
         // TODO dialog shows up after activity is on pause.  Move to onCreate?
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -72,8 +83,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
             public void onClick(View view) {
                 if (mFadeOutCounterAsync.isCancelled()) {
                     ;
-                }
-                else {
+                } else {
                     mFadeOutCounterAsync.cancel(true);
                     String target = tvFadeTarget.getText().toString();
                     String userValue = tvFadeCounter.getText().toString();
@@ -117,10 +127,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
     private void compareUserValueToTarget(String userValue, String target, TextView tv) {
         if (userValue.equals(target)) {
             tv.setTextColor(getResources().getColor(R.color.green));
-            int chancesLeft = state.getLivesRemaining();
-            state.setLivesRemaining(chancesLeft + 1);
-        }
-        else {
+            int chancesLeft = mState.getLivesRemaining();
+            mState.setLivesRemaining(chancesLeft + 1);
+        } else {
             tv.setTextColor(getResources().getColor(R.color.red));
         }
     }
