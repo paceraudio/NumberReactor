@@ -1,10 +1,13 @@
 package com.paceraudio.numberreactor.app;
 
+import android.os.SystemClock;
+
 /**
  * Created by jeffwconaway on 9/21/14.
  */
 public class TimeCounter {
 
+/*
     long startTime;
     long elapsedTimeMillis;
     double elapsedSecondsPointTenths;
@@ -34,20 +37,22 @@ public class TimeCounter {
         timeCounter.elapsedSecondsPointTenths = (float) timeCounter.elapsedTimeMillis / 1000;
         return timeCounter;
     }
+*/
 
-    public double calcElapsedAcceleratedCount(long startTime, double accelerator) {
-        elapsedTimeMillis = System.currentTimeMillis() - startTime;
-        elapsedSecondsPointTenths = (float) elapsedTimeMillis / 1000;
-        acceleratedCount = elapsedSecondsPointTenths * accelerator;
+    public static double calcElapsedAcceleratedCount(long startTime, double accelerator) {
+        long elapsedTimeMillis = SystemClock.elapsedRealtime() - startTime;
+        double acceleratedCount = (elapsedTimeMillis / 1000.00) * accelerator;
         return acceleratedCount;
     }
 
+/*
     public TimeCounter calcElapsedAcceleratedCountObj(TimeCounter timeCounter) {
         timeCounter.elapsedTimeMillis = System.currentTimeMillis() - timeCounter.startTime;
         timeCounter.elapsedSecondsPointTenths = (double) timeCounter.elapsedTimeMillis / 1000;
         timeCounter.acceleratedCount = timeCounter.elapsedSecondsPointTenths * timeCounter.accelerator;
         return timeCounter;
     }
+*/
 
 
 }

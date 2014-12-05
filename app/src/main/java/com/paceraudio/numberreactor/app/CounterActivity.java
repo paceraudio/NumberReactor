@@ -3,6 +3,7 @@ package com.paceraudio.numberreactor.app;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,10 +21,9 @@ import java.util.Random;
 
 // class using Threads and Handlers instead of AsyncTask. Performance seems to be the same.
 
-public class CounterActivity extends FragmentActivity implements CounterListener, UpdateScoreDbListener, OutOfLivesDialogFragment.OnFragmentInteractionListener{
+public class CounterActivity extends FragmentActivity implements CounterListener, UpdateScoreDbListener, OutOfLivesDialogFragment.OnFragmentInteractionListener {
 
     public static final String DEBUG_TAG = "jwc";
-
 
 
     private long startTime;
@@ -49,6 +50,8 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     ApplicationState mState;
     DBHelper mDbHelper;
 
+    long mStartTime;
+    long mElapsedTimeMillis;
     double mElapsedAcceleratedCount;
     double mNextCount;
     double mAccelerator;
@@ -67,20 +70,18 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         mState = (ApplicationState) getApplicationContext();
         mDbHelper = new DBHelper(this);
         mDbHelper.insertNewGameRowInDb();
-        Log.d(DEBUG_TAG, "newest game number in db: " +  Integer.toString(mDbHelper.queryNewestDbEntry()));
-
-        // TODO is this the right place for this?
-       // mState.setGameDate();
+        Log.d(DEBUG_TAG, "newest game number in db: " + Integer.toString(mDbHelper.queryNewestDbEntry()));
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        resetTimeValues();
 
         switch (mState.getLevel()) {
             case 1:
-                mAccelerator = 1.05;
+                mAccelerator = .7;
                 break;
             case 2:
                 maxTarget += 5;
@@ -99,8 +100,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         tvScore.setText(this.getString(R.string.score) + " " + mState.getRunningScoreTotal());
         startIsClickable = true;
 
-
-
         mHandler = new Handler() {
 
             @Override
@@ -112,73 +111,72 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         displayTarget(generateTarget());
 
         Button startButton = (Button) findViewById(R.id.b_start);
-        startButton.setOnClickListener(new View.OnClickListener() {
+
+        startButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                mElapsedAcceleratedCount = 0;
-                mNextCount = 0.001;
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 
-                mCount = 0;
+                    if (startIsClickable) {
+                        mStartTime = SystemClock.elapsedRealtime();
 
-                if (startIsClickable) {
-                    startTime = System.currentTimeMillis();
+                        mCounterThread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                while (mElapsedAcceleratedCount < target + upperBuffer && !mCounterThread.isInterrupted()) {
+                                    mElapsedAcceleratedCount = TimeCounter.calcElapsedAcceleratedCount(mStartTime, mAccelerator);
+                                    if (mElapsedAcceleratedCount >= mNextCount) {
+                                        mHandler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mElapsedTimeMillis = SystemClock.elapsedRealtime() - mStartTime;
+                                                tvCounter.setText(String.format("%.2f", mElapsedAcceleratedCount));
+                                                if (mCount == 0) {
+                                                    Log.d(DEBUG_TAG, String.format("Elapsed millis on counter update %5d", mElapsedTimeMillis));
+                                                }
+                                                mCount++;
+                                            }
+                                        });
+                                        mNextCount += 0.01;
+                                        mAccelerator *= 1.0006;
+                                    }
+                                }
+                                if (mCounterThread.isInterrupted()) return;
 
-                    mCounterThread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mTimeCounter = new TimeCounter(startTime, mElapsedAcceleratedCount, mAccelerator);
-
-                            while (mElapsedAcceleratedCount < target + upperBuffer && !mCounterThread.isInterrupted()) {
-                                mTimeCounter.calcElapsedAcceleratedCountObj(mTimeCounter);
-                                mElapsedAcceleratedCount = mTimeCounter.acceleratedCount;
-
-                                if (mElapsedAcceleratedCount >= mNextCount) {
+                                if (mElapsedAcceleratedCount >= target + upperBuffer) {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            final long elapsedMilis = System.currentTimeMillis() - startTime;
-                                            tvCounter.setText(String.format("%.2f", mElapsedAcceleratedCount));
-                                            //Log.d(DEBUG_TAG, String.format("mCount %5d", mCount));
-                                            if (mCount == 0) {
-                                                Log.d(DEBUG_TAG, String.format("Elapsed millis on counter update %5d", elapsedMilis));
-                                            }
-                                            mCount++;
+                                            onCounterComplete(mElapsedAcceleratedCount);
                                         }
                                     });
-                                    mNextCount += 0.01;
-                                    mTimeCounter.accelerator *= 1.0004;
-
                                 }
                             }
-                            if (mCounterThread.isInterrupted()) return;
+                        });
+                        mCounterThread.start();
+                        startIsClickable = false;
+                        currentTurn++;
+                        //Log.d(DEBUG_TAG, "Start clicked!");
+                    }
 
-                            if (mElapsedAcceleratedCount >= target + upperBuffer) {
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        onCounterComplete(mElapsedAcceleratedCount);
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    mCounterThread.start();
-                    startIsClickable = false;
-                    currentTurn++;
-                    //Log.d(DEBUG_TAG, "Start clicked!");
                 }
+                return false;
             }
         });
 
         Button stopButton = (Button) findViewById(R.id.b_stop);
-        stopButton.setOnClickListener(new View.OnClickListener() {
+        stopButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                long stopClickMillis = System.currentTimeMillis() - startTime;
-                Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis %5d", stopClickMillis));
-                onCounterCancelled(mElapsedAcceleratedCount, mCount);
-                mCounterThread.interrupt();
-                startIsClickable = true;
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    long stopClickMillis = SystemClock.elapsedRealtime() - mStartTime;
+                    Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount of background thread cycles: %5d", stopClickMillis, mCount));
+                    onCounterCancelled(mElapsedAcceleratedCount, mCount);
+                    mCounterThread.interrupt();
+                    startIsClickable = true;
+
+                }
+                return false;
             }
         });
 
@@ -199,6 +197,10 @@ public class CounterActivity extends FragmentActivity implements CounterListener
                 }
                 //Log.d(DEBUG_TAG, "reset clicked");
                 displayTarget(generateTarget());
+//              reset the value for the time here, after the time counting background thread has been
+//              interrupted, so that the textview values don't update when the stop button is pushed
+                resetTimeValues();
+
                 resetCounter();
             }
         });
@@ -240,7 +242,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         int accuracy = calcAccuracy(target, accelCount);
         int score = accuracy;
 
-        long onCounterCancelledElapsedTime = System.currentTimeMillis() - startTime;
+        long onCounterCancelledElapsedTime = SystemClock.elapsedRealtime() - mStartTime;
         Log.d(DEBUG_TAG, "onCountCancElapsedTime: " + Long.toString(onCounterCancelledElapsedTime));
 
         // subtract a life if score is poor
@@ -251,7 +253,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
         // set the text color of the counter based on the score
         if (accuracy >= 99) {
-            score+= 100;
+            score += 100;
 
             tvCounter.setTextColor(getResources().getColor(R.color.green));
         } else if (accuracy > lifeLossThreshhold && accuracy < 99) {
@@ -269,8 +271,10 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
         updateScoreDbAsync.execute(mState.getRunningScoreTotal());
 
-    }
+        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this);
+        resetNextTurnAsync.execute();
 
+    }
 
 
     private double generateTarget() {
@@ -281,6 +285,13 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     private void displayTarget(double target) {
         TextView tvTarget = (TextView) findViewById(R.id.t_v_target);
         tvTarget.setText(getString(R.string.target) + " " + String.format("%.2f", target));
+    }
+
+    private void resetTimeValues() {
+        mElapsedTimeMillis = 0;
+        mElapsedAcceleratedCount = 0;
+        mNextCount = 0.01;
+        mCount = 0;
     }
 
     private void resetCounter() {
@@ -299,8 +310,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         for (int i = 0; i < mState.getScoreList().size(); i++) {
             if (i == 0) {
                 mState.getScoreList().set(i, 0);
-            }
-            else {
+            } else {
                 mState.getScoreList().remove(i);
             }
             tvScore.setText(getString(R.string.score) + " " + (getString(R.string.zero)));
@@ -331,10 +341,9 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         int lives = mState.getLivesRemaining();
         if (accuracy < lifeLossThreshhold) {
             mState.setLivesRemaining(lives - 1);
-            Log.d(DEBUG_TAG, "should lose life: " +Boolean.toString(accuracy < lifeLossThreshhold)+ " lives remaining: " + lives);
-        }
-        else if (accuracy >= 99) {
-            mState.setLivesRemaining(lives +1);
+            Log.d(DEBUG_TAG, "should lose life: " + Boolean.toString(accuracy < lifeLossThreshhold) + " lives remaining: " + lives);
+        } else if (accuracy >= 99) {
+            mState.setLivesRemaining(lives + 1);
         }
         tvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
         Log.d(DEBUG_TAG, "checkAccuracyAgainstLives lives remaining: " + mState.getLivesRemaining());

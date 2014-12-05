@@ -60,7 +60,7 @@ public class CounterAsync extends AsyncTask<Long, Double, Double> {
         //tvCounter.setTextColor(0xffffffff);
 
         // instantiate a TimeCounter to manipulate in calcElapsedAcceleratedCount method
-        mTimeCounter = new TimeCounter(startTime, elapsedAcceleratedCount, accelerator);
+//        mTimeCounter = new TimeCounter(startTime, elapsedAcceleratedCount, accelerator);
 
         /* TODO tvCounter increments one more step, but is green in color i.e. target is 5.0, counter is 5.1 but text is green.  Figure this out
          */
@@ -69,25 +69,25 @@ public class CounterAsync extends AsyncTask<Long, Double, Double> {
         //while (elapsedAcceleratedCount < target && !isCancelled()) {
         while (elapsedAcceleratedCount < target) {
             // mTimeCounter calls method and passes itself as the parameter
-            mTimeCounter.calcElapsedAcceleratedCountObj(mTimeCounter);
+//            mTimeCounter.calcElapsedAcceleratedCountObj(mTimeCounter);
             // get the member variables from mTimeCounter after the method has changed them
-            elapsedAcceleratedCount = mTimeCounter.acceleratedCount;
+//            elapsedAcceleratedCount = mTimeCounter.acceleratedCount;
             // needed for logging only
-            elapsedTimeSeconds = mTimeCounter.elapsedSecondsPointTenths;
-            elapsedTimeMillis = mTimeCounter.elapsedTimeMillis;
-            if (elapsedAcceleratedCount >= nextCount) {
+//            elapsedTimeSeconds = mTimeCounter.elapsedSecondsPointTenths;
+//            elapsedTimeMillis = mTimeCounter.elapsedTimeMillis;
+//            if (elapsedAcceleratedCount >= nextCount) {
                 publishProgress(elapsedAcceleratedCount);
                 nextCount += 0.01;
-                mTimeCounter.accelerator *= 1.0004;
+//                mTimeCounter.accelerator *= 1.0004;
                 mCount++;
             }
             if (isCancelled()) {
                 //Log.d(DEBUG_TAG, "is cancelled in do in background");
                 Log.d(DEBUG_TAG, "mTimeCounter via async elapsed time: " + elapsedTimeMillis);
                 Log.d(DEBUG_TAG, "is cancelled accelerated mCount" +  Double.toString(elapsedAcceleratedCount));
-                break;
+//                break;
             }
-        }
+//        }
         // this gets passed to the onPostExecute parameter
         return elapsedAcceleratedCount;
     }
