@@ -32,10 +32,10 @@ public class FadeOutCounterAsync extends AsyncTask<Long, Double, Double> {
         long startTime = params[0];
         int buffer = 5;
         long target = params[1] + buffer;
-        mTimeCounter = new TimeCounter(startTime, elapsedTimeSecondsPointTenths);
+//        mTimeCounter = new TimeCounter(startTime, elapsedTimeSecondsPointTenths);
         while (elapsedTimeSecondsPointTenths < target && !isCancelled()) {
-            mTimeCounter.calcElapsedSecondsPointTenths(mTimeCounter);
-            elapsedTimeSecondsPointTenths = mTimeCounter.elapsedSecondsPointTenths;
+//            mTimeCounter.calcElapsedSecondsPointTenths(mTimeCounter);
+//            elapsedTimeSecondsPointTenths = mTimeCounter.elapsedSecondsPointTenths;
             if (elapsedTimeSecondsPointTenths >= nextCount && !isCancelled()) {
                 publishProgress(elapsedTimeSecondsPointTenths);
                 nextCount += 0.01;

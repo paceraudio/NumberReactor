@@ -3,6 +3,7 @@ package com.paceraudio.numberreactor.app;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,10 +21,9 @@ import java.util.Random;
 
 // class using Threads and Handlers instead of AsyncTask. Performance seems to be the same.
 
-public class CounterActivity extends FragmentActivity implements CounterListener, UpdateScoreDbListener, OutOfLivesDialogFragment.OnFragmentInteractionListener{
+public class CounterActivity extends FragmentActivity implements CounterListener, UpdateScoreDbListener, ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener {
 
     public static final String DEBUG_TAG = "jwc";
-
 
 
     private long startTime;
@@ -36,22 +37,25 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     // upper buffer over the target number
     int upperBuffer = 5;
 
-    private TextView tvCounter;
-    private TextView tvLivesRemaining;
-    private TextView tvScore;
+    private TextView mTvCounter;
+    private TextView mTvLivesRemaining;
+    private TextView mTvScore;
 
     private final static String OUT_OF_LIVES_DIALOG = "outOfLivesDialog";
     private DialogFragment mDialogFragment;
-    TimeCounter mTimeCounter;
+//    TimeCounter mTimeCounter;
 
     Handler mHandler;
     Thread mCounterThread;
     ApplicationState mState;
     DBHelper mDbHelper;
 
+    long mStartTime;
+    long mElapsedTimeMillis;
     double mElapsedAcceleratedCount;
     double mNextCount;
     double mAccelerator;
+    double mLevelAccelerator;
     int mCount;
 
 
@@ -67,20 +71,18 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         mState = (ApplicationState) getApplicationContext();
         mDbHelper = new DBHelper(this);
         mDbHelper.insertNewGameRowInDb();
-        Log.d(DEBUG_TAG, "newest game number in db: " +  Integer.toString(mDbHelper.queryNewestDbEntry()));
-
-        // TODO is this the right place for this?
-       // mState.setGameDate();
+        Log.d(DEBUG_TAG, "newest game number in db: " + Integer.toString(mDbHelper.queryNewestDbEntry()));
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        resetTimeValues();
 
         switch (mState.getLevel()) {
             case 1:
-                mAccelerator = 1.05;
+                mLevelAccelerator = .7;
                 break;
             case 2:
                 maxTarget += 5;
@@ -92,14 +94,14 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         }
 
         gen = new Random();
-        tvCounter = (TextView) findViewById(R.id.t_v_counter);
-        tvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
-        tvLivesRemaining.setText(this.getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
-        tvScore = (TextView) findViewById(R.id.t_v_score);
-        tvScore.setText(this.getString(R.string.score) + " " + mState.getRunningScoreTotal());
+        mTvCounter = (TextView) findViewById(R.id.t_v_counter);
+        mTvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
+        mTvLivesRemaining.setText(this.getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
+        mTvScore = (TextView) findViewById(R.id.t_v_score);
+        mTvScore.setText(this.getString(R.string.score) + " " + mState.getRunningScoreTotal());
         startIsClickable = true;
 
-
+        mAccelerator = mLevelAccelerator;
 
         mHandler = new Handler() {
 
@@ -112,76 +114,78 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         displayTarget(generateTarget());
 
         Button startButton = (Button) findViewById(R.id.b_start);
-        startButton.setOnClickListener(new View.OnClickListener() {
+
+        startButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                mElapsedAcceleratedCount = 0;
-                mNextCount = 0.001;
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 
-                mCount = 0;
+                    if (startIsClickable) {
+                        mStartTime = SystemClock.elapsedRealtime();
+//                        local variable so we don't have to reset mAccelerator
+                        final double accelerator = mAccelerator;
 
-                if (startIsClickable) {
-                    startTime = System.currentTimeMillis();
+                        mCounterThread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                while (mElapsedAcceleratedCount < target + upperBuffer && !mCounterThread.isInterrupted()) {
+                                    mElapsedAcceleratedCount = TimeCounter.calcElapsedAcceleratedCount(mStartTime, mAccelerator);
+                                    if (mElapsedAcceleratedCount >= mNextCount) {
+                                        mHandler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mElapsedTimeMillis = SystemClock.elapsedRealtime() - mStartTime;
+                                                mTvCounter.setText(String.format("%.2f", mElapsedAcceleratedCount));
+                                                if (mCount == 0) {
+                                                    Log.d(DEBUG_TAG, String.format("Elapsed millis on counter update %5d", mElapsedTimeMillis));
+                                                }
+                                                mCount++;
+                                            }
+                                        });
+                                        mNextCount += 0.01;
+                                        mAccelerator *= 1.0006;
+                                    }
+                                }
+                                if (mCounterThread.isInterrupted()) return;
 
-                    mCounterThread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mTimeCounter = new TimeCounter(startTime, mElapsedAcceleratedCount, mAccelerator);
-
-                            while (mElapsedAcceleratedCount < target + upperBuffer && !mCounterThread.isInterrupted()) {
-                                mTimeCounter.calcElapsedAcceleratedCountObj(mTimeCounter);
-                                mElapsedAcceleratedCount = mTimeCounter.acceleratedCount;
-
-                                if (mElapsedAcceleratedCount >= mNextCount) {
+                                if (mElapsedAcceleratedCount >= target + upperBuffer) {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            final long elapsedMilis = System.currentTimeMillis() - startTime;
-                                            tvCounter.setText(String.format("%.2f", mElapsedAcceleratedCount));
-                                            //Log.d(DEBUG_TAG, String.format("mCount %5d", mCount));
-                                            if (mCount == 0) {
-                                                Log.d(DEBUG_TAG, String.format("Elapsed millis on counter update %5d", elapsedMilis));
-                                            }
-                                            mCount++;
+                                            onCounterComplete(mElapsedAcceleratedCount);
                                         }
                                     });
-                                    mNextCount += 0.01;
-                                    mTimeCounter.accelerator *= 1.0004;
-
                                 }
                             }
-                            if (mCounterThread.isInterrupted()) return;
+                        });
+                        mCounterThread.start();
+                        startIsClickable = false;
+                        currentTurn++;
+                        //Log.d(DEBUG_TAG, "Start clicked!");
+                    }
 
-                            if (mElapsedAcceleratedCount >= target + upperBuffer) {
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        onCounterComplete(mElapsedAcceleratedCount);
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    mCounterThread.start();
-                    startIsClickable = false;
-                    currentTurn++;
-                    //Log.d(DEBUG_TAG, "Start clicked!");
                 }
+                return false;
             }
         });
 
         Button stopButton = (Button) findViewById(R.id.b_stop);
-        stopButton.setOnClickListener(new View.OnClickListener() {
+        stopButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                long stopClickMillis = System.currentTimeMillis() - startTime;
-                Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis %5d", stopClickMillis));
-                onCounterCancelled(mElapsedAcceleratedCount, mCount);
-                mCounterThread.interrupt();
-                startIsClickable = true;
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    long stopClickMillis = SystemClock.elapsedRealtime() - mStartTime;
+                    Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount of background thread cycles: %5d", stopClickMillis, mCount));
+                    onCounterCancelled(mElapsedAcceleratedCount, mCount);
+                    mCounterThread.interrupt();
+                    startIsClickable = true;
+
+                }
+                return false;
             }
         });
 
+/*
         Button resetButton = (Button) findViewById(R.id.b_reset);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,9 +203,14 @@ public class CounterActivity extends FragmentActivity implements CounterListener
                 }
                 //Log.d(DEBUG_TAG, "reset clicked");
                 displayTarget(generateTarget());
+//              reset the value for the time here, after the time counting background thread has been
+//              interrupted, so that the textview values don't update when the stop button is pushed
+                resetTimeValues();
+
                 resetCounter();
             }
         });
+*/
     }
 
     @Override
@@ -226,9 +235,9 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
     @Override
     public void onCounterComplete(Double accelCount) {
-        tvCounter.setTextColor(getResources().getColor(R.color.red));
+        mTvCounter.setTextColor(getResources().getColor(R.color.red));
 
-        tvCounter.setText(String.format("%.2f", accelCount));
+        mTvCounter.setText(String.format("%.2f", accelCount));
     }
 
     // runs when mCounter thread is  is cancelled
@@ -240,7 +249,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         int accuracy = calcAccuracy(target, accelCount);
         int score = accuracy;
 
-        long onCounterCancelledElapsedTime = System.currentTimeMillis() - startTime;
+        long onCounterCancelledElapsedTime = SystemClock.elapsedRealtime() - mStartTime;
         Log.d(DEBUG_TAG, "onCountCancElapsedTime: " + Long.toString(onCounterCancelledElapsedTime));
 
         // subtract a life if score is poor
@@ -251,15 +260,15 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
         // set the text color of the counter based on the score
         if (accuracy >= 99) {
-            score+= 100;
+            score += 100;
 
-            tvCounter.setTextColor(getResources().getColor(R.color.green));
+            mTvCounter.setTextColor(getResources().getColor(R.color.green));
         } else if (accuracy > lifeLossThreshhold && accuracy < 99) {
-            tvCounter.setTextColor(getResources().getColor(R.color.orange));
+            mTvCounter.setTextColor(getResources().getColor(R.color.orange));
         } else {
-            tvCounter.setTextColor(getResources().getColor(R.color.red));
+            mTvCounter.setTextColor(getResources().getColor(R.color.red));
         }
-        tvCounter.setText(String.format("%.2f", accelCount));
+        mTvCounter.setText(String.format("%.2f", accelCount));
 
         // add the score to the ApplicationState score
         addToStateRunningScore(score);
@@ -269,8 +278,10 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
         updateScoreDbAsync.execute(mState.getRunningScoreTotal());
 
-    }
+//        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this);
+//        resetNextTurnAsync.execute();
 
+    }
 
 
     private double generateTarget() {
@@ -283,27 +294,34 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         tvTarget.setText(getString(R.string.target) + " " + String.format("%.2f", target));
     }
 
+    private void resetTimeValues() {
+        mElapsedTimeMillis = 0;
+        mElapsedAcceleratedCount = 0;
+        mAccelerator = mLevelAccelerator;
+        mNextCount = 0.01;
+        mCount = 0;
+    }
+
     private void resetCounter() {
-        tvCounter.setText(getString(R.string.zero_point_zero));
-        tvCounter.setTextColor(getResources().getColor(R.color.white));
+        mTvCounter.setText(getString(R.string.zero_point_zero));
+        mTvCounter.setTextColor(getResources().getColor(R.color.white));
         startIsClickable = true;
     }
 
     private void resetLives() {
         int numOfLivesPerLevel = mState.getNumOfLivesPerLevel();
         mState.setLivesRemaining(numOfLivesPerLevel);
-        tvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + Integer.toString(numOfLivesPerLevel));
+        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + Integer.toString(numOfLivesPerLevel));
     }
 
     private void resetScore() {
         for (int i = 0; i < mState.getScoreList().size(); i++) {
             if (i == 0) {
                 mState.getScoreList().set(i, 0);
-            }
-            else {
+            } else {
                 mState.getScoreList().remove(i);
             }
-            tvScore.setText(getString(R.string.score) + " " + (getString(R.string.zero)));
+            mTvScore.setText(getString(R.string.score) + " " + (getString(R.string.zero)));
         }
     }
 
@@ -331,18 +349,17 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         int lives = mState.getLivesRemaining();
         if (accuracy < lifeLossThreshhold) {
             mState.setLivesRemaining(lives - 1);
-            Log.d(DEBUG_TAG, "should lose life: " +Boolean.toString(accuracy < lifeLossThreshhold)+ " lives remaining: " + lives);
+            Log.d(DEBUG_TAG, "should lose life: " + Boolean.toString(accuracy < lifeLossThreshhold) + " lives remaining: " + lives);
+        } else if (accuracy >= 99) {
+            mState.setLivesRemaining(lives + 1);
         }
-        else if (accuracy >= 99) {
-            mState.setLivesRemaining(lives +1);
-        }
-        tvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
+        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
         Log.d(DEBUG_TAG, "checkAccuracyAgainstLives lives remaining: " + mState.getLivesRemaining());
     }
 
     private void addToStateRunningScore(int newScore) {
         mState.setRunningScoreTotal(newScore);
-        tvScore.setText(getString(R.string.score) + " " + mState.getRunningScoreTotal());
+        mTvScore.setText(getString(R.string.score) + " " + mState.getRunningScoreTotal());
     }
 
     private void checkLivesLeft(int lives) {
@@ -366,12 +383,34 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         startActivity(intent);
     }
 
+
+//  Listener methods for AsyncTasks
     @Override
     public void onDbScoreUpdated() {
         // TODO write method in db helper qureying the updated score and Log it to console
         Log.d(DEBUG_TAG, "updated score from update db async: " + Integer.toString(mDbHelper.queryScoreFromDb()));
+        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvCounter);
+        resetNextTurnAsync.execute();
+
     }
 
+    @Override
+    public void onNextTurnReset() {
+        // TODO put reset button methods in here, get rid of reset button
+        if (advanceToNextLevel(currentTurn, NUM_OF_TURNS_PER_LEVEL)) {
+
+            launchFadeCounterActivity();
+        }
+        displayTarget(generateTarget());
+//              reset the value for the time here, after the time counting background thread has been
+//              interrupted, so that the textview values don't update when the stop button is pushed
+        resetTimeValues();
+
+        resetCounter();
+    }
+
+
+//  Dialog fragment interaction methods
     @Override
     public void onOkClicked() {
         mDialogFragment.dismiss();
@@ -385,5 +424,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         mDialogFragment.dismiss();
         finish();
     }
+
 }
 

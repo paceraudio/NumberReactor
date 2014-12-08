@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -67,28 +68,32 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         tvFadeCounter = (TextView) findViewById(R.id.t_v_fade_counter);
 
         Button startFadeButton = (Button) findViewById(R.id.b_fade_start);
-        startFadeButton.setOnClickListener(new View.OnClickListener() {
+        startFadeButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                startTime = System.currentTimeMillis();
-                mFadeOutCounterAsync = new FadeOutCounterAsync(FadeOutCounterActivity.this, FadeOutCounterActivity.this);
-                mFadeOutCounterAsync.execute(startTime, target);
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    startTime = System.currentTimeMillis();
+                    mFadeOutCounterAsync = new FadeOutCounterAsync(FadeOutCounterActivity.this, FadeOutCounterActivity.this);
+                    mFadeOutCounterAsync.execute(startTime, target);
+                }
+                return false;
             }
         });
-
         Button stopFadeButton = (Button) findViewById(R.id.b_fade_stop);
-        stopFadeButton.setOnClickListener(new View.OnClickListener() {
-
+        stopFadeButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                if (mFadeOutCounterAsync.isCancelled()) {
-                    ;
-                } else {
-                    mFadeOutCounterAsync.cancel(true);
-                    String target = tvFadeTarget.getText().toString();
-                    String userValue = tvFadeCounter.getText().toString();
-                    compareUserValueToTarget(userValue, target, tvFadeCounter);
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (mFadeOutCounterAsync.isCancelled()) {
+                        ;
+                    } else {
+                        mFadeOutCounterAsync.cancel(true);
+                        String target = tvFadeTarget.getText().toString();
+                        String userValue = tvFadeCounter.getText().toString();
+                        compareUserValueToTarget(userValue, target, tvFadeCounter);
+                    }
                 }
+                return false;
             }
         });
     }
