@@ -17,11 +17,15 @@ public class ResetNextTurnAsync extends AsyncTask<Void, Integer, Void> {
     private static final String DEBUG_TAG = "ResetNextTurnAsync";
 
     TextView mCounterTV;
+    ResetNextTurnListener mListener;
     int mTextColor;
     boolean isFadingIn = false;
 
-    public ResetNextTurnAsync(Activity activity) {
-        this.mCounterTV = (TextView) activity.findViewById(R.id.t_v_counter);
+
+    public ResetNextTurnAsync(Activity activity, ResetNextTurnListener listener, TextView tv) {
+       // this.mCounterTV = (TextView) activity.findViewById(R.id.t_v_counter);
+        this.mListener = listener;
+        this.mCounterTV = tv;
     }
 
     @Override
@@ -72,11 +76,6 @@ public class ResetNextTurnAsync extends AsyncTask<Void, Integer, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-    }
-
-    @Override
     protected void onProgressUpdate(Integer ...integers) {
         super.onProgressUpdate(integers);
         int fadeTextColor = Color.argb(integers[0], integers[1], integers[2], integers[3]);
@@ -86,4 +85,10 @@ public class ResetNextTurnAsync extends AsyncTask<Void, Integer, Void> {
             mCounterTV.setText("0.00");
         }
     }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        mListener.onNextTurnReset();
+    }
+
 }

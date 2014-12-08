@@ -35,10 +35,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:layout_below="@id/t_v_accuracy_rating"
-        android:layout_centerHorizontal="true"/>
+        android:layout_below="@+id/t_v_accuracy_rating"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="81dp"/>
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#ffbbbbff"
@@ -59,7 +60,7 @@
             android:background="#ff000000"
             android:gravity="center"/>
     </LinearLayout>
-
+-->
     <LinearLayout
         android:id="@+id/l_l_game_info"
         android:layout_width="match_parent"

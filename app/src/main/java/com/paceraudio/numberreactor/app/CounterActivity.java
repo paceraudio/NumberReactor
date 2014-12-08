@@ -21,7 +21,7 @@ import java.util.Random;
 
 // class using Threads and Handlers instead of AsyncTask. Performance seems to be the same.
 
-public class CounterActivity extends FragmentActivity implements CounterListener, UpdateScoreDbListener, OutOfLivesDialogFragment.OnFragmentInteractionListener {
+public class CounterActivity extends FragmentActivity implements CounterListener, UpdateScoreDbListener, ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener {
 
     public static final String DEBUG_TAG = "jwc";
 
@@ -37,13 +37,13 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     // upper buffer over the target number
     int upperBuffer = 5;
 
-    private TextView tvCounter;
-    private TextView tvLivesRemaining;
-    private TextView tvScore;
+    private TextView mTvCounter;
+    private TextView mTvLivesRemaining;
+    private TextView mTvScore;
 
     private final static String OUT_OF_LIVES_DIALOG = "outOfLivesDialog";
     private DialogFragment mDialogFragment;
-    TimeCounter mTimeCounter;
+//    TimeCounter mTimeCounter;
 
     Handler mHandler;
     Thread mCounterThread;
@@ -55,6 +55,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     double mElapsedAcceleratedCount;
     double mNextCount;
     double mAccelerator;
+    double mLevelAccelerator;
     int mCount;
 
 
@@ -81,7 +82,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
         switch (mState.getLevel()) {
             case 1:
-                mAccelerator = .7;
+                mLevelAccelerator = .7;
                 break;
             case 2:
                 maxTarget += 5;
@@ -93,12 +94,14 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         }
 
         gen = new Random();
-        tvCounter = (TextView) findViewById(R.id.t_v_counter);
-        tvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
-        tvLivesRemaining.setText(this.getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
-        tvScore = (TextView) findViewById(R.id.t_v_score);
-        tvScore.setText(this.getString(R.string.score) + " " + mState.getRunningScoreTotal());
+        mTvCounter = (TextView) findViewById(R.id.t_v_counter);
+        mTvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
+        mTvLivesRemaining.setText(this.getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
+        mTvScore = (TextView) findViewById(R.id.t_v_score);
+        mTvScore.setText(this.getString(R.string.score) + " " + mState.getRunningScoreTotal());
         startIsClickable = true;
+
+        mAccelerator = mLevelAccelerator;
 
         mHandler = new Handler() {
 
@@ -119,6 +122,8 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
                     if (startIsClickable) {
                         mStartTime = SystemClock.elapsedRealtime();
+//                        local variable so we don't have to reset mAccelerator
+                        final double accelerator = mAccelerator;
 
                         mCounterThread = new Thread(new Runnable() {
                             @Override
@@ -130,7 +135,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
                                             @Override
                                             public void run() {
                                                 mElapsedTimeMillis = SystemClock.elapsedRealtime() - mStartTime;
-                                                tvCounter.setText(String.format("%.2f", mElapsedAcceleratedCount));
+                                                mTvCounter.setText(String.format("%.2f", mElapsedAcceleratedCount));
                                                 if (mCount == 0) {
                                                     Log.d(DEBUG_TAG, String.format("Elapsed millis on counter update %5d", mElapsedTimeMillis));
                                                 }
@@ -180,6 +185,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
             }
         });
 
+/*
         Button resetButton = (Button) findViewById(R.id.b_reset);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,6 +210,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
                 resetCounter();
             }
         });
+*/
     }
 
     @Override
@@ -228,9 +235,9 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
     @Override
     public void onCounterComplete(Double accelCount) {
-        tvCounter.setTextColor(getResources().getColor(R.color.red));
+        mTvCounter.setTextColor(getResources().getColor(R.color.red));
 
-        tvCounter.setText(String.format("%.2f", accelCount));
+        mTvCounter.setText(String.format("%.2f", accelCount));
     }
 
     // runs when mCounter thread is  is cancelled
@@ -255,13 +262,13 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         if (accuracy >= 99) {
             score += 100;
 
-            tvCounter.setTextColor(getResources().getColor(R.color.green));
+            mTvCounter.setTextColor(getResources().getColor(R.color.green));
         } else if (accuracy > lifeLossThreshhold && accuracy < 99) {
-            tvCounter.setTextColor(getResources().getColor(R.color.orange));
+            mTvCounter.setTextColor(getResources().getColor(R.color.orange));
         } else {
-            tvCounter.setTextColor(getResources().getColor(R.color.red));
+            mTvCounter.setTextColor(getResources().getColor(R.color.red));
         }
-        tvCounter.setText(String.format("%.2f", accelCount));
+        mTvCounter.setText(String.format("%.2f", accelCount));
 
         // add the score to the ApplicationState score
         addToStateRunningScore(score);
@@ -271,8 +278,8 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
         updateScoreDbAsync.execute(mState.getRunningScoreTotal());
 
-        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this);
-        resetNextTurnAsync.execute();
+//        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this);
+//        resetNextTurnAsync.execute();
 
     }
 
@@ -290,20 +297,21 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     private void resetTimeValues() {
         mElapsedTimeMillis = 0;
         mElapsedAcceleratedCount = 0;
+        mAccelerator = mLevelAccelerator;
         mNextCount = 0.01;
         mCount = 0;
     }
 
     private void resetCounter() {
-        tvCounter.setText(getString(R.string.zero_point_zero));
-        tvCounter.setTextColor(getResources().getColor(R.color.white));
+        mTvCounter.setText(getString(R.string.zero_point_zero));
+        mTvCounter.setTextColor(getResources().getColor(R.color.white));
         startIsClickable = true;
     }
 
     private void resetLives() {
         int numOfLivesPerLevel = mState.getNumOfLivesPerLevel();
         mState.setLivesRemaining(numOfLivesPerLevel);
-        tvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + Integer.toString(numOfLivesPerLevel));
+        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + Integer.toString(numOfLivesPerLevel));
     }
 
     private void resetScore() {
@@ -313,7 +321,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
             } else {
                 mState.getScoreList().remove(i);
             }
-            tvScore.setText(getString(R.string.score) + " " + (getString(R.string.zero)));
+            mTvScore.setText(getString(R.string.score) + " " + (getString(R.string.zero)));
         }
     }
 
@@ -345,13 +353,13 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         } else if (accuracy >= 99) {
             mState.setLivesRemaining(lives + 1);
         }
-        tvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
+        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
         Log.d(DEBUG_TAG, "checkAccuracyAgainstLives lives remaining: " + mState.getLivesRemaining());
     }
 
     private void addToStateRunningScore(int newScore) {
         mState.setRunningScoreTotal(newScore);
-        tvScore.setText(getString(R.string.score) + " " + mState.getRunningScoreTotal());
+        mTvScore.setText(getString(R.string.score) + " " + mState.getRunningScoreTotal());
     }
 
     private void checkLivesLeft(int lives) {
@@ -375,12 +383,34 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         startActivity(intent);
     }
 
+
+//  Listener methods for AsyncTasks
     @Override
     public void onDbScoreUpdated() {
         // TODO write method in db helper qureying the updated score and Log it to console
         Log.d(DEBUG_TAG, "updated score from update db async: " + Integer.toString(mDbHelper.queryScoreFromDb()));
+        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvCounter);
+        resetNextTurnAsync.execute();
+
     }
 
+    @Override
+    public void onNextTurnReset() {
+        // TODO put reset button methods in here, get rid of reset button
+        if (advanceToNextLevel(currentTurn, NUM_OF_TURNS_PER_LEVEL)) {
+
+            launchFadeCounterActivity();
+        }
+        displayTarget(generateTarget());
+//              reset the value for the time here, after the time counting background thread has been
+//              interrupted, so that the textview values don't update when the stop button is pushed
+        resetTimeValues();
+
+        resetCounter();
+    }
+
+
+//  Dialog fragment interaction methods
     @Override
     public void onOkClicked() {
         mDialogFragment.dismiss();
@@ -394,5 +424,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         mDialogFragment.dismiss();
         finish();
     }
+
 }
 
