@@ -1,6 +1,7 @@
 package com.paceraudio.numberreactor.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.SystemClock;
@@ -18,13 +19,14 @@ public class ResetNextTurnAsync extends AsyncTask<Void, Integer, Void> {
 
     TextView mCounterTV;
     ResetNextTurnListener mListener;
+    Context mContext;
     int mTextColor;
     boolean isFadingIn = false;
 
 
-    public ResetNextTurnAsync(Activity activity, ResetNextTurnListener listener, TextView tv) {
-       // this.mCounterTV = (TextView) activity.findViewById(R.id.t_v_counter);
+    public ResetNextTurnAsync(ResetNextTurnListener listener, Context context, TextView tv) {
         this.mListener = listener;
+        this.mContext = context;
         this.mCounterTV = tv;
     }
 
@@ -60,9 +62,10 @@ public class ResetNextTurnAsync extends AsyncTask<Void, Integer, Void> {
         startTime = SystemClock.elapsedRealtime();
 
 //        reset rgb values for a white fade in
-        red = 255;
-        green = 255;
-        blue = 255;
+        int color = mContext.getResources().getColor(R.color.white);
+        red = Color.red(color);
+        green = Color.green(color);
+        blue = Color.blue(color);
         isFadingIn = true;
         while ((elapsedTime = SystemClock.elapsedRealtime() - startTime) < 1000) {
             currentValue = (int) ((float) (elapsedTime * 255) / 1000);

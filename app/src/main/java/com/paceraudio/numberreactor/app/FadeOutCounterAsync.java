@@ -12,7 +12,7 @@ public class FadeOutCounterAsync extends AsyncTask<Long, Double, Double> {
 
     //private long startTime,  elapsedTimeMillis, target;
     private int alpha = 0xff;
-    private double elapsedTimeSecondsPointTenths = 0;
+//    private double elapsedTimeSecondsPointTenths = 0;
     double nextCount = 0.01;
 
     TextView tvFadeCounter;
@@ -32,16 +32,15 @@ public class FadeOutCounterAsync extends AsyncTask<Long, Double, Double> {
         long startTime = params[0];
         int buffer = 5;
         long target = params[1] + buffer;
-//        mTimeCounter = new TimeCounter(startTime, elapsedTimeSecondsPointTenths);
-        while (elapsedTimeSecondsPointTenths < target && !isCancelled()) {
-//            mTimeCounter.calcElapsedSecondsPointTenths(mTimeCounter);
-//            elapsedTimeSecondsPointTenths = mTimeCounter.elapsedSecondsPointTenths;
-            if (elapsedTimeSecondsPointTenths >= nextCount && !isCancelled()) {
-                publishProgress(elapsedTimeSecondsPointTenths);
+        double elapsedSeconds = 0;
+        while (elapsedSeconds < target && !isCancelled()) {
+
+            if (elapsedSeconds >= nextCount && !isCancelled()) {
+                publishProgress(elapsedSeconds);
                 nextCount += 0.01;
             }
         }
-        return elapsedTimeSecondsPointTenths;
+        return elapsedSeconds;
     }
 
     @Override

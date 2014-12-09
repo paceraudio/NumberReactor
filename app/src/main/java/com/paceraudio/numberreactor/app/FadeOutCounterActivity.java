@@ -1,6 +1,11 @@
 package com.paceraudio.numberreactor.app;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -18,17 +23,35 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
 
     static final String DEBUG_TAG = "jwc";
 
-    private TextView tvFadeCounter;
-    private TextView tvFadeTarget;
-    private TextView tvFadeAccuracy;
+    private TextView mTvFadeCounter;
+    private TextView mTvFadeTarget;
+    private TextView mTvFadeAccuracy;
 
-    private long startTime;
-    private long target = 10;
+    private long mStartTime;
+    private double mElapsedSeconds;
+    private double mNextCount;
+    private int mTarget = 10;
+    private int mOverTargetRange = mTarget + 5;
+
+    private double mFadeRange;
+    private double mFadeIncrement;
+    private double mRunningFadeTime;
+    private int mFadeCounterColor;
+    private int mAlphaValue;
+    private int mRedValue;
+    private int mGreenValue;
+    private int mBlueValue;
 
     private static final String FADE_COUNT_DIALOG_FRAGMENT = "customFadeCountDialogFragment";
 
+    private static final String EXTRA_LIFE_FROM_FADE_COUNTER_ROUND = "extraLifeFromFadeCounterRound";
+
+    private static final String LEVEL_COMPLETED = "levelCompleted";
+
     DialogFragment mDialogFragment;
     FadeOutCounterAsync mFadeOutCounterAsync;
+    Handler mHandler;
+    Thread mFadeCounterThread;
     DBHelper mDbHelper;
     ApplicationState mState;
 
@@ -38,8 +61,8 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fade_out_counter);
         mState = (ApplicationState) getApplication();
-        int level = mState.getLevel();
-        mState.setLevel(level + 1);
+//        int level = mState.getLevel();
+//        mState.setLevel(level + 1);
         mDbHelper = new DBHelper(this);
 
     }
@@ -49,6 +72,20 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         super.onStart();
         UpdateLevelDbAsync updateLevelDbAsync = new UpdateLevelDbAsync(this);
         updateLevelDbAsync.execute(mState.getLevel());
+        mTvFadeTarget = (TextView) findViewById(R.id.t_v_fade_target);
+        mTvFadeAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
+        mTvFadeCounter = (TextView) findViewById(R.id.t_v_fade_counter);
+//        This is when the counter should have completely faded out, at half way through the fade
+        mFadeRange = mTarget * .7;
+//        This assumes the alpha value of the color is at its max
+        mFadeIncrement = mFadeRange / 255;
+        mRunningFadeTime = mFadeIncrement;
+        mNextCount = .01;
+        mFadeCounterColor = mTvFadeCounter.getCurrentTextColor();
+        mAlphaValue = Color.alpha(mFadeCounterColor);
+        mGreenValue = Color.red(mFadeCounterColor);
+        mBlueValue = Color.blue(mFadeCounterColor);
+
 
     }
 
@@ -63,18 +100,63 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         mDialogFragment = new FadeCountDialogFragment();
         mDialogFragment.show(ft, FADE_COUNT_DIALOG_FRAGMENT);
 
-        tvFadeTarget = (TextView) findViewById(R.id.t_v_fade_target);
-        tvFadeAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
-        tvFadeCounter = (TextView) findViewById(R.id.t_v_fade_counter);
+
+
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+            }
+        };
 
         Button startFadeButton = (Button) findViewById(R.id.b_fade_start);
         startFadeButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    startTime = System.currentTimeMillis();
-                    mFadeOutCounterAsync = new FadeOutCounterAsync(FadeOutCounterActivity.this, FadeOutCounterActivity.this);
-                    mFadeOutCounterAsync.execute(startTime, target);
+                    mStartTime = SystemClock.elapsedRealtime();
+                    Log.d(DEBUG_TAG, "start clicked at: " + mStartTime);
+//                    mFadeOutCounterAsync = new FadeOutCounterAsync(FadeOutCounterActivity.this, FadeOutCounterActivity.this);
+//                    mFadeOutCounterAsync.execute(mStartTime, mTarget);
+                    mFadeCounterThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (mElapsedSeconds < mOverTargetRange && !mFadeCounterThread.isInterrupted()) {
+                                mElapsedSeconds = TimeCounter.calcElapsedSeconds(mStartTime);
+                                if (mElapsedSeconds >= mNextCount) {
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mTvFadeCounter.setText(String.format("%.2f", mElapsedSeconds));
+                                            Log.d(DEBUG_TAG, "mElapsed time seconds: " + mElapsedSeconds);
+                                            if (mAlphaValue > 0 && mElapsedSeconds >= mRunningFadeTime) {
+                                                mAlphaValue--;
+                                                int color = Color.argb(mAlphaValue, mRedValue, mGreenValue, mBlueValue);
+                                                mTvFadeCounter.setTextColor(color);
+                                                mRunningFadeTime += mFadeIncrement;
+                                            }
+                                        }
+                                    });
+                                    mNextCount+= 0.01;
+                                }
+
+                            }
+                            if (mFadeCounterThread.isInterrupted()) {
+
+                                return;
+                            }
+                            if (mElapsedSeconds >= mOverTargetRange) {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        onFadeCountComplete(mElapsedSeconds);
+                                    }
+                                });
+
+                            }
+                        }
+                    });
+                    mFadeCounterThread.start();
                 }
                 return false;
             }
@@ -84,13 +166,14 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    if (mFadeOutCounterAsync.isCancelled()) {
+                    if (mFadeCounterThread.isInterrupted()) {
                         ;
                     } else {
-                        mFadeOutCounterAsync.cancel(true);
-                        String target = tvFadeTarget.getText().toString();
-                        String userValue = tvFadeCounter.getText().toString();
-                        compareUserValueToTarget(userValue, target, tvFadeCounter);
+                        onFadeCountCancelled(mElapsedSeconds);
+                        mFadeCounterThread.interrupt();
+//                        String target = mTvFadeTarget.getText().toString();
+//                        String userValue = mTvFadeCounter.getText().toString();
+//                        compareUserValueToTarget(userValue, target, mTvFadeCounter);
                     }
                 }
                 return false;
@@ -117,10 +200,27 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         return super.onOptionsItemSelected(item);
     }
 
+    public void onFadeCountCancelled(Double seconds) {
+        mTvFadeCounter.setText(String.format("%.2f", seconds));
+        mTvFadeCounter.setTextColor(getResources().getColor(R.color.blackRed));
+        int level = mState.getLevel();
+//        TODO make async animation for this
+        try {
+            Thread.sleep(1500);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(this, CounterActivity.class);
+//        TODO make this t or f based on performance
+        intent.putExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, true);
+        intent.putExtra(LEVEL_COMPLETED, true);
+        startActivity(intent);
+    }
+
     @Override
     public void onFadeCountComplete(Double seconds) {
-        tvFadeCounter.setText(String.format("%.2f", seconds));
-        tvFadeCounter.setTextColor(0xffff0000);
+        mTvFadeCounter.setText(String.format("%.2f", seconds));
+        mTvFadeCounter.setTextColor(0xffff0000);
     }
 
     @Override

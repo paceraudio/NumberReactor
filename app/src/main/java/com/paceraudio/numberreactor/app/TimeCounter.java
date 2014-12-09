@@ -38,6 +38,10 @@ public class TimeCounter {
         return timeCounter;
     }
 */
+    public static double calcElapsedSeconds(long startTime) {
+        double elapsedTimeSeconds = (SystemClock.elapsedRealtime() - startTime) / 1000.00;
+        return elapsedTimeSeconds;
+    }
 
     public static double calcElapsedAcceleratedCount(long startTime, double accelerator) {
         long elapsedTimeMillis = SystemClock.elapsedRealtime() - startTime;

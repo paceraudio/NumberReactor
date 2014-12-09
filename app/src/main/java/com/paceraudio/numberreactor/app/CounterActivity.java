@@ -60,7 +60,11 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
 
     int currentTurn;
-    private static final int NUM_OF_TURNS_PER_LEVEL = 5;
+    private static final int NUM_OF_TURNS_PER_LEVEL = 2;
+
+    private static final String EXTRA_LIFE_FROM_FADE_COUNTER_ROUND = "extraLifeFromFadeCounterRound";
+
+    private static final String LEVEL_COMPLETED = "levelCompleted";
 
 
     @Override
@@ -70,8 +74,12 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         currentTurn = 0;
         mState = (ApplicationState) getApplicationContext();
         mDbHelper = new DBHelper(this);
-        mDbHelper.insertNewGameRowInDb();
-        Log.d(DEBUG_TAG, "newest game number in db: " + Integer.toString(mDbHelper.queryNewestDbEntry()));
+
+
+
+
+
+
 
     }
 
@@ -80,7 +88,32 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         super.onResume();
         resetTimeValues();
 
-        switch (mState.getLevel()) {
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            if (extras.containsKey(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND) && extras.getBoolean(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND)) {
+                int lives = mState.getLivesRemaining();
+                mState.setLivesRemaining(lives +1);
+            }
+            if (extras.containsKey(LEVEL_COMPLETED)) {
+                if (extras.getBoolean(LEVEL_COMPLETED)) {
+                    int level = mState.getLevel();
+                    mState.setLevel(level + 1);
+                    mLevelAccelerator *= 1.1;
+                }
+            }
+        }
+        else {
+            //        TODO put this in async task
+            if (mState.getLevel() == 1) {
+                mDbHelper.insertNewGameRowInDb();
+                Log.d(DEBUG_TAG, "newest game number in db: " + Integer.toString(mDbHelper.queryNewestDbEntry()));
+                mLevelAccelerator = .7;
+            }
+        }
+
+
+       /* switch (mState.getLevel()) {
             case 1:
                 mLevelAccelerator = .7;
                 break;
@@ -91,7 +124,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
             case 3:
                 maxTarget += 10;
                 minTarget += 10;
-        }
+        }*/
 
         gen = new Random();
         mTvCounter = (TextView) findViewById(R.id.t_v_counter);
@@ -122,8 +155,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
                     if (startIsClickable) {
                         mStartTime = SystemClock.elapsedRealtime();
-//                        local variable so we don't have to reset mAccelerator
-                        final double accelerator = mAccelerator;
 
                         mCounterThread = new Thread(new Runnable() {
                             @Override
@@ -300,6 +331,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         mAccelerator = mLevelAccelerator;
         mNextCount = 0.01;
         mCount = 0;
+        startIsClickable = true;
     }
 
     private void resetCounter() {
