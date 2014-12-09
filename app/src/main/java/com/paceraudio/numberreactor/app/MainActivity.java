@@ -128,7 +128,7 @@ public class MainActivity extends FragmentActivity implements CounterListener, O
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentTurn == NUM_OF_TURNS_PER_LEVEL) {
+                if (mCurrentTurn == NUM_OF_TURNS_PER_LEVEL) {
                     Intent intent = new Intent(MainActivity.this, FadeOutCounterActivity.class);
                     startActivity(intent);
                 }

@@ -57,13 +57,14 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     double mAccelerator;
     double mLevelAccelerator;
     int mCount;
-    int currentTurn;
+    int mCurrentTurn;
 
     private static final int BEGINNING_TARGET_LEVEL_ONE = 3;
-    private static final int NUM_OF_TURNS_PER_LEVEL = 4;
+    private static final int TURNS_PER_LEVEL = 3;
     private final static double BEGINNING_ACCELERATOR_LEVEL_ONE = .7;
     private static int LIFE_LOSS_THRESHOLD = 85;
     private static double ACCELERATOR_INCREASE_PER_LEVEL_FACTOR = 1.1;
+    private static int LIVES_PER_LEVEL = 4;
 
     private static final String EXTRA_LIFE_FROM_FADE_COUNTER_ROUND = "extraLifeFromFadeCounterRound";
     private static final String LEVEL_COMPLETED = "levelCompleted";
@@ -73,7 +74,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        currentTurn = 0;
+//        mCurrentTurn = 0;
         mState = (ApplicationState) getApplicationContext();
         mDbHelper = new DBHelper(this);
     }
@@ -82,6 +83,17 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     protected void onResume() {
         super.onResume();
         //resetTimeValuesBetweenTurns();
+
+        //        mGen = new Random();
+        mTvCounter = (TextView) findViewById(R.id.t_v_counter);
+        mTvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
+        mTvLivesRemaining.setText(this.getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
+        mTvScore = (TextView) findViewById(R.id.t_v_score);
+        mTvScore.setText(this.getString(R.string.score) + " " + mState.getRunningScoreTotal());
+        mIsStartClickable = true;
+
+//        mAccelerator = mLevelAccelerator;
+
 
         Intent intent = getIntent();
         if (checkForExtras(intent)) {
@@ -92,15 +104,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         }
 
 
-//        mGen = new Random();
-        mTvCounter = (TextView) findViewById(R.id.t_v_counter);
-        mTvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
-        mTvLivesRemaining.setText(this.getString(R.string.lives_remaining) + " " + mState.getLivesRemaining());
-        mTvScore = (TextView) findViewById(R.id.t_v_score);
-        mTvScore.setText(this.getString(R.string.score) + " " + mState.getRunningScoreTotal());
-        mIsStartClickable = true;
-
-//        mAccelerator = mLevelAccelerator;
 
         mHandler = new Handler() {
 
@@ -157,7 +160,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
                         });
                         mCounterThread.start();
                         mIsStartClickable = false;
-                        currentTurn++;
+//                        mCurrentTurn++;
                         Log.d(DEBUG_TAG, "Start clicked!");
                     }
 
@@ -226,9 +229,8 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         // subtract a life if score is poor
         checkAccuracyAgainstLives(accuracy);
 
-        // check to see we aren't out of lives
-        checkLivesLeft(mState.getLivesRemaining());
 
+//TODO write a method for setting the color based on accuracy
         // set the text color of the counter based on the score
         if (accuracy >= 99) {
             score += 100;
@@ -245,13 +247,11 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         addToStateRunningScore(score);
 
         //TODO update the db
-        // async task updating the db score
+//        async task updating the db score.  onDbScoreUpdated() runs in onPostExecute.
+//        There we check to see if we have lives left, if we do, we start the  ResetNextTurnAsync,
+//        if not, we launch the OutOfLives Dialog
         UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
         updateScoreDbAsync.execute(mState.getRunningScoreTotal());
-
-//        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this);
-//        resetNextTurnAsync.execute();
-
     }
 
 
@@ -274,12 +274,18 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         mElapsedTimeMillis = 0;
         mNextCount = 0.01;
         mCount = 0;
+        mState.setLevel(1);
         mIsStartClickable = true;
         displayTarget(mTarget);
+        resetCounter();
+        resetLives();
+        resetScore();
+        resetTurns();
         Log.d(DEBUG_TAG, "setInitialTimeValuesLevelOne()********" +
                 "\n Level: " + mState.getLevel() +
                 "\n Target: " + mTarget +
-                "\n Accelerator: " + mAccelerator);
+                "\n Accelerator: " + mAccelerator +
+                "\n Turn: " +mCurrentTurn);
 
 
         //        TODO put this in async task
@@ -298,16 +304,18 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 //        mLevelTarget = BEGINNING_TARGET_LEVEL_ONE;
         for (int i = 1; i < newLevel + 1; i++) {
             mLevelAccelerator *= ACCELERATOR_INCREASE_PER_LEVEL_FACTOR;
-//            TODO update this to the last target played +1. See advanceToNextActivity, which is checked at the end of ResetNextTurnAsync
+//            TODO update this to the last target played +1. See isOutOfTurns, which is checked at the end of ResetNextTurnAsync
         }
         mAccelerator = mLevelAccelerator;
         mLevelTarget = mState.getLastTarget() + 1;
         mTarget = mLevelTarget;
         displayTarget(mTarget);
+        resetTurns();
         Log.d(DEBUG_TAG, "setGameValuesForNextLevel()********" +
                 "\n Level: " + mState.getLevel() +
                 "\n Target: " + mTarget +
-                "\n Accelerator: " + mAccelerator);
+                "\n Accelerator: " + mAccelerator +
+                "\n Turn: " + mCurrentTurn);
 
 
 
@@ -332,12 +340,14 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         mNextCount = 0.01;
         mCount = 0;
         mTarget++;
+        mCurrentTurn++;
         resetCounter();
         displayTarget(mTarget);
         Log.d(DEBUG_TAG, "resetTimeValuesBetweenTurns()********" +
                 "\n Level: " + mState.getLevel() +
                 "\n Target: " + mTarget +
-                "\n Accelerator: " + mAccelerator);
+                "\n Accelerator: " + mAccelerator +
+                "\n Turn: " + mCurrentTurn);
     }
 
 
@@ -348,7 +358,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     }
 
     private void resetLives() {
-        int numOfLivesPerLevel = mState.getNumOfLivesPerLevel();
+        int numOfLivesPerLevel = LIVES_PER_LEVEL;
         mState.setLivesRemaining(numOfLivesPerLevel);
         mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + Integer.toString(numOfLivesPerLevel));
     }
@@ -362,6 +372,10 @@ public class CounterActivity extends FragmentActivity implements CounterListener
             }
             mTvScore.setText(getString(R.string.score) + " " + (getString(R.string.zero)));
         }
+    }
+
+    private void resetTurns() {
+        mCurrentTurn = 1;
     }
 
     private int calcAccuracy(double target, double counter) {
@@ -401,17 +415,23 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         mTvScore.setText(getString(R.string.score) + " " + mState.getRunningScoreTotal());
     }
 
-    private void checkLivesLeft(int lives) {
+    private boolean checkIfLivesLeft(int lives) {
         if (lives == 0) {
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            mDialogFragment = new OutOfLivesDialogFragment();
-            mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
+            return false;
         }
+        return true;
+    }
+
+    private void launchOutOfLivesDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        mDialogFragment = new OutOfLivesDialogFragment();
+        mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
+
     }
 
 //    Checks whether or not to advance to the next Activity. Saves the last target played in mState
-    private boolean advanceToNextActivity(int currentTurn, int maxTurn) {
+    private boolean isOutOfTurns(int currentTurn, int maxTurn) {
         if (currentTurn == maxTurn) {
             mState.setLastTarget(mTarget);
             return true;
@@ -430,14 +450,20 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     public void onDbScoreUpdated() {
         // TODO write method in db helper qureying the updated score and Log it to console
         Log.d(DEBUG_TAG, "updated score from update db async: " + Integer.toString(mDbHelper.queryScoreFromDb()));
-        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvCounter);
-        resetNextTurnAsync.execute();
+
+        if (checkIfLivesLeft(mState.getLivesRemaining())) {
+            ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvCounter);
+            resetNextTurnAsync.execute();
+        }
+        else {
+            launchOutOfLivesDialog();
+        }
 
     }
     //        Runs in onPostExecute of ResetNextTurnAsync
     @Override
     public void onNextTurnReset() {
-        if (advanceToNextActivity(currentTurn, NUM_OF_TURNS_PER_LEVEL)) {
+        if (isOutOfTurns(mCurrentTurn, TURNS_PER_LEVEL)) {
             launchFadeCounterActivity();
         }
         else {
@@ -450,9 +476,10 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     @Override
     public void onOkClicked() {
         mDialogFragment.dismiss();
-        resetCounter();
-        resetLives();
-        resetScore();
+        setInitialTimeValuesLevelOne();
+//        resetCounter();
+//        resetLives();
+//        resetScore();
     }
 
     @Override
