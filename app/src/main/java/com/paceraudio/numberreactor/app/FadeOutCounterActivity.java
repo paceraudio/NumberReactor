@@ -128,7 +128,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
                                         @Override
                                         public void run() {
                                             mTvFadeCounter.setText(String.format("%.2f", mElapsedSeconds));
-                                            Log.d(DEBUG_TAG, "mElapsed time seconds: " + mElapsedSeconds);
+//                                            Log.d(DEBUG_TAG, "mElapsed time seconds: " + mElapsedSeconds);
                                             if (mAlphaValue > 0 && mElapsedSeconds >= mRunningFadeTime) {
                                                 mAlphaValue--;
                                                 int color = Color.argb(mAlphaValue, mRedValue, mGreenValue, mBlueValue);
@@ -171,9 +171,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
                     } else {
                         onFadeCountCancelled(mElapsedSeconds);
                         mFadeCounterThread.interrupt();
-//                        String target = mTvFadeTarget.getText().toString();
+//                        String mTarget = mTvFadeTarget.getText().toString();
 //                        String userValue = mTvFadeCounter.getText().toString();
-//                        compareUserValueToTarget(userValue, target, mTvFadeCounter);
+//                        compareUserValueToTarget(userValue, mTarget, mTvFadeCounter);
                     }
                 }
                 return false;

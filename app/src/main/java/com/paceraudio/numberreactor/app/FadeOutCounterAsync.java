@@ -10,7 +10,7 @@ import android.widget.TextView;
  */
 public class FadeOutCounterAsync extends AsyncTask<Long, Double, Double> {
 
-    //private long startTime,  elapsedTimeMillis, target;
+    //private long startTime,  elapsedTimeMillis, mTarget;
     private int alpha = 0xff;
 //    private double elapsedTimeSecondsPointTenths = 0;
     double nextCount = 0.01;

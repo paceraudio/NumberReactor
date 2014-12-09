@@ -239,15 +239,15 @@ public class MainActivity extends FragmentActivity implements CounterListener, O
 
     private int calcAccuracy(double target, double counter) {
         double error = Math.abs(target - counter);
-        // base the accuracy off of a range of 2.0 margin on either side of the target.
-        // i.e. target is 8.0, a user value of 6.0 is 0, 7.0 is 50, 7.9 is 95.
+        // base the accuracy off of a range of 2.0 margin on either side of the mTarget.
+        // i.e. mTarget is 8.0, a user value of 6.0 is 0, 7.0 is 50, 7.9 is 95.
         double accuracyD = 100 - (error * 50);
         if (accuracyD < 0) {
             accuracyD = 0;
         }
         int accuracyI = (int) Math.round(accuracyD);
 
-        Log.d(DEBUG_TAG, "target: " + target);
+        Log.d(DEBUG_TAG, "mTarget: " + target);
         Log.d(DEBUG_TAG, "counter: " + counter);
         Log.d(DEBUG_TAG, "error: " + error);
         Log.d(DEBUG_TAG, "accuracy: " + accuracyD);

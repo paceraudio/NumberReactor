@@ -44,13 +44,13 @@ public class CounterAsync extends AsyncTask<Long, Double, Double> {
         // first param in execute()
         startTime = params[0];
 
-        // upper buffer over the target number
+        // upper buffer over the mTarget number
         int upperBuffer = 5;
 
-        // second param in execute, adding 5 to give an upper buffer over the target number
+        // second param in execute, adding 5 to give an upper buffer over the mTarget number
         target = params[1] + upperBuffer;
 
-        // the mCount towards the target accelerates
+        // the mCount towards the mTarget accelerates
         elapsedAcceleratedCount = 0;
         mCount = 0;
         accelerator = 1.1f;
@@ -62,11 +62,11 @@ public class CounterAsync extends AsyncTask<Long, Double, Double> {
         // instantiate a TimeCounter to manipulate in calcElapsedAcceleratedCount method
 //        mTimeCounter = new TimeCounter(startTime, elapsedAcceleratedCount, accelerator);
 
-        /* TODO tvCounter increments one more step, but is green in color i.e. target is 5.0, counter is 5.1 but text is green.  Figure this out
+        /* TODO tvCounter increments one more step, but is green in color i.e. mTarget is 5.0, counter is 5.1 but text is green.  Figure this out
          */
 
 
-        //while (elapsedAcceleratedCount < target && !isCancelled()) {
+        //while (elapsedAcceleratedCount < mTarget && !isCancelled()) {
         while (elapsedAcceleratedCount < target) {
             // mTimeCounter calls method and passes itself as the parameter
 //            mTimeCounter.calcElapsedAcceleratedCountObj(mTimeCounter);

@@ -18,11 +18,23 @@ public class ApplicationState extends Application{
     private int runningScoreTotal;
     private List<Integer> scoreList;
     private int gameNumber;
+    private double lastTarget;
 
 
 
     private final int NUM_OF_LIVES_PER_LEVEL = 4;
     private int livesRemaining;
+
+
+    @Override
+    public void onCreate() {
+        level = 1;
+        runningScoreTotal = 0;
+        scoreList = new ArrayList<Integer>();
+        livesRemaining = NUM_OF_LIVES_PER_LEVEL;
+        gameNumber = 0;
+
+    }
 
     public int getNumOfLivesPerLevel() {
         return NUM_OF_LIVES_PER_LEVEL;
@@ -44,15 +56,6 @@ public class ApplicationState extends Application{
         list = scoreList;
     }
 
-    @Override
-    public void onCreate() {
-        level = 1;
-        runningScoreTotal = 0;
-        scoreList = new ArrayList<Integer>();
-        livesRemaining = NUM_OF_LIVES_PER_LEVEL;
-        gameNumber = 0;
-
-    }
 
     public int getLivesRemaining() {
         return livesRemaining;
@@ -66,6 +69,14 @@ public class ApplicationState extends Application{
 
     public int getRunningScoreTotal() {
         return runningScoreTotal;
+    }
+
+    public double getLastTarget() {
+        return lastTarget;
+    }
+
+    public void setLastTarget(double lastTarget) {
+        this.lastTarget = lastTarget;
     }
 
     public void setRunningScoreTotal(int newScore) {
