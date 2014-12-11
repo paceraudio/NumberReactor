@@ -13,7 +13,7 @@
         android:id="@+id/t_v_fade_target"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
+        android:textSize="50dp"
         android:textColor="@color/blackRed"
         android:text="@string/target"
         android:gravity="center"/>
@@ -31,15 +31,15 @@
     <TextView
         android:id="@+id/t_v_fade_counter"
         android:text="@string/zero_point_zero"
-        android:textSize="130sp"
+        android:textSize="220sp"
         android:typeface="normal"
         android:textColor="@color/blackRed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:layout_marginTop="69dp"
         android:layout_below="@+id/t_v_fade_accuracy_rating"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"/>
+        android:layout_centerHorizontal="true"/>
 
 
     <LinearLayout
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="100"
-        android:padding="5dp"
+        android:padding="8dp"
         android:background="@color/blackRed"
         android:layout_alignParentBottom="true">
 
@@ -92,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/start"
-            android:textSize="100sp"
+            android:textSize="120sp"
             android:typeface="normal"
             android:layout_weight="50"
             android:textColor="#ff44dd44"
@@ -104,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stop"
-            android:textSize="100sp"
+            android:textSize="120sp"
             android:typeface="normal"
             android:layout_weight="50"
             android:textColor="#ffff0000"
@@ -112,10 +112,5 @@
             android:background="@color/blackRed"/>
 
     </LinearLayout>
-
-
-
-
-
 
 </RelativeLayout>

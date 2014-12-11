@@ -103,8 +103,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
            setInitialTimeValuesLevelOne();
         }
 
-
-
         mHandler = new Handler() {
 
             @Override
@@ -112,8 +110,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
             }
         };
-
-
 
         Button startButton = (Button) findViewById(R.id.b_start);
 
