@@ -21,7 +21,7 @@ import java.util.Random;
 
 // class using Threads and Handlers instead of AsyncTask. Performance seems to be the same.
 
-public class CounterActivity extends FragmentActivity implements UpdateScoreDbListener, ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener {
+public class CounterActivity extends FragmentActivity implements UpdateDbListener, ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener {
 
     public static final String DEBUG_TAG = "jwc";
 
@@ -178,7 +178,8 @@ public class CounterActivity extends FragmentActivity implements UpdateScoreDbLi
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     long stopClickMillis = SystemClock.elapsedRealtime() - mStartTime;
-                    Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount of background thread cycles: %5d", stopClickMillis, mCount));
+                    Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount of " +
+                            "background thread cycles: %5d", stopClickMillis, mCount));
                     onCounterCancelled(mElapsedAcceleratedCount, mCount);
                     mCounterThread.interrupt();
                 }
@@ -204,6 +205,10 @@ public class CounterActivity extends FragmentActivity implements UpdateScoreDbLi
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        }
+        if (id == R.id.action_view_game_stats) {
+            Intent intent = new Intent(this, ViewStatsActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.paceraudio.numberreactor.app.CounterActivity.DEBUG_TAG;
 
 /**
@@ -48,12 +51,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
-        final String sqlDropTableGamePerformance = "DROP IF TABLE EXISTS " + TABLE_GAME_PERFORMANCE + ":";
+        final String sqlDropTableGamePerformance = "DROP IF TABLE EXISTS " +
+                TABLE_GAME_PERFORMANCE + ":";
         sqLiteDatabase.execSQL(sqlDropTableGamePerformance);
         onCreate(sqLiteDatabase);
     }
 
-    //TODO change signature to take params for date, level, and points? Would eliminate Instantiating ApplicationState here
+    //TODO change signature to take params for date, level, and points? Would eliminate
+    // Instantiating ApplicationState here
     public void insertNewGameRowInDb() {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -68,7 +73,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public int queryNewestDbEntry() {
         SQLiteDatabase db = this.getReadableDatabase();
         //String[] columns = {C_GAME_NUMBER};
-        //Cursor c = db.query(TABLE_GAME_PERFORMANCE, columns, null, null, null,null, C_GAME_NUMBER + " DESC", " 1");
+        //Cursor c = db.query(TABLE_GAME_PERFORMANCE, columns, null, null, null,null,
+        // C_GAME_NUMBER + " DESC", " 1");
         String sql = "select max(" + C_GAME_NUMBER + ")" + " from " + TABLE_GAME_PERFORMANCE;
         Cursor c = db.rawQuery(sql, null);
         c.moveToFirst();
@@ -79,7 +85,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public int queryScoreFromDb() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "select " + C_POINTS_SCORED + " from " + TABLE_GAME_PERFORMANCE + " where " + C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER + ") from " + TABLE_GAME_PERFORMANCE + ")";
+        String sql = "select " + C_POINTS_SCORED + " from " + TABLE_GAME_PERFORMANCE + " where "
+                + C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER + ") from " +
+                TABLE_GAME_PERFORMANCE + ")";
         Cursor c = db.rawQuery(sql, null);
         c.moveToFirst();
         int i = c.getInt(0);
@@ -89,7 +97,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public int queryLevelFromDb() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "select " + C_LEVEL_REACHED + " from " + TABLE_GAME_PERFORMANCE + " where " + C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER + ") from " + TABLE_GAME_PERFORMANCE + ")";
+        String sql = "select " + C_LEVEL_REACHED + " from " + TABLE_GAME_PERFORMANCE + " where "
+                + C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER + ") from " +
+                TABLE_GAME_PERFORMANCE + ")";
         Cursor c = db.rawQuery(sql, null);
         c.moveToFirst();
         int i = c.getInt(0);
@@ -97,9 +107,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return i;
     }
 
-    public void queryAllFromDb() {
+    public ArrayList<GameStats> queryAllFromDb() {
+        ArrayList<GameStats> arrayList = new ArrayList<GameStats>();
         SQLiteDatabase db = this.getReadableDatabase();
-        //String sql = "select * from "+TABLE_GAME_PERFORMANCE+" where "+C_GAME_NUMBER+" = (select max("+C_GAME_NUMBER+") from "+TABLE_GAME_PERFORMANCE+")";
+        //String sql = "select * from "+TABLE_GAME_PERFORMANCE+" where "+C_GAME_NUMBER+" =
+        // (select max("+C_GAME_NUMBER+") from "+TABLE_GAME_PERFORMANCE+")";
         String sql = "select * from " + TABLE_GAME_PERFORMANCE;
         Cursor c = db.rawQuery(sql, null);
         c.moveToFirst();
@@ -108,6 +120,9 @@ public class DBHelper extends SQLiteOpenHelper {
             String date = c.getString(1);
             int level = c.getInt(2);
             int points = c.getInt(3);
+
+            GameStats gameStats = new GameStats(num, date, level, points);
+            arrayList.add(gameStats);
 
             Log.d(DEBUG_TAG, "***queryAllFromDb()***"
                     + "\n game: " + num
@@ -118,6 +133,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         while (c.moveToNext());
         db.close();
+        return arrayList;
     }
 
 
@@ -125,7 +141,8 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(C_POINTS_SCORED, score);
-        db.update(TABLE_GAME_PERFORMANCE, cv, C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER + ") from " + TABLE_GAME_PERFORMANCE + ")", null);
+        db.update(TABLE_GAME_PERFORMANCE, cv, C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER +
+                ") from " + TABLE_GAME_PERFORMANCE + ")", null);
         db.close();
     }
 
@@ -133,7 +150,8 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(C_LEVEL_REACHED, level);
-        db.update(TABLE_GAME_PERFORMANCE, cv, C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER + ") from " + TABLE_GAME_PERFORMANCE + ")", null);
+        db.update(TABLE_GAME_PERFORMANCE, cv, C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER +
+                ") from " + TABLE_GAME_PERFORMANCE + ")", null);
         db.close();
     }
 
