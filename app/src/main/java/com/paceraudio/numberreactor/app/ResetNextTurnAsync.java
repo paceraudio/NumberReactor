@@ -44,20 +44,33 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
             mIsLastTurn = true;
         }
 
-//        Get the current text color for the counter
+/*
+        //        Get the current text color for the counter
         mTextColor = mCounterTV.getCurrentTextColor();
         int alpha = Color.alpha(mTextColor);
         int red = Color.red(mTextColor);
         int green = Color.green(mTextColor);
         int blue = Color.blue(mTextColor);
+*/
+       // getTextColor(mCounterTV);
 
-//        Do nothing for 1 second
+        //        Do nothing for 1 second
+/*
         try {
             Thread.sleep(1000);
         } catch (Exception e) {
             e.printStackTrace();
         }
+*/
 //
+
+        setDisplayBeforeFade(1000);
+
+        fadeTextOut(getTextColor(mCounterTV), 2000);
+
+
+
+/*
         long startTime = SystemClock.elapsedRealtime();
         long elapsedTime;
         int currentValue;
@@ -72,6 +85,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
                 publishProgress(lastValue, red, green, blue);
             }
         }
+*/
 
 //        If this is after the last turn, skip this, no fade in
         if (!mIsLastTurn) {
@@ -110,6 +124,51 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         mListener.onNextTurnReset();
+    }
+
+    private int[] getTextColor(TextView tv) {
+//        Get the current text color for the counter
+        int color = tv.getCurrentTextColor();
+        int alpha = Color.alpha(color);
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+
+        int[] rgbValues = {alpha, red, green, blue};
+        return rgbValues;
+    }
+
+    private void setDisplayBeforeFade(long millis) {
+        try{
+            Thread.sleep(millis);
+        } catch (Exception e) {e.printStackTrace();}
+    }
+
+    private void fadeTextOut(int[] rgbValues, long fadeTime) {
+        int alpha = rgbValues[0];
+        int red = rgbValues[1];
+        int green = rgbValues[2];
+        int blue = rgbValues[3];
+
+        int futureValue;
+        int currentValue = alpha;
+        long elapsedTime;
+
+        long startTime = SystemClock.elapsedRealtime();
+        if (currentValue > 0) {
+            while ((elapsedTime = SystemClock.elapsedRealtime() - startTime) < fadeTime) {
+                futureValue = 255 - ((int) ((double) (elapsedTime * 255 / fadeTime)));
+                if(futureValue < currentValue) {
+                    currentValue = futureValue;
+                    publishProgress(currentValue, red, green, blue);
+                }
+            }
+        }
+    }
+
+    private void fadeTextIn(Color colorToBe, long fadeTime) {
+        int color = mContext.getResources().getColor(R)
+
     }
 
 }
