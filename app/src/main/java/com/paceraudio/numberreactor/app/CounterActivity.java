@@ -60,11 +60,14 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     int mCurrentTurn;
 
     private static final int BEGINNING_TARGET_LEVEL_ONE = 3;
-    private static final int TURNS_PER_LEVEL = 3;
+    private static final int TURNS_PER_LEVEL = 5;
     private final static double BEGINNING_ACCELERATOR_LEVEL_ONE = .7;
     private static int LIFE_LOSS_THRESHOLD = 85;
-    private static double ACCELERATOR_INCREASE_PER_LEVEL_FACTOR = 1.1;
+    private static double ACCELERATOR_INCREASE_PER_LEVEL_FACTOR = 1.05;
     private static int LIVES_PER_LEVEL = 4;
+
+    private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
+    private static final int NORMAL_TURN_RESET = 0;
 
     private static final String EXTRA_LIFE_FROM_FADE_COUNTER_ROUND = "extraLifeFromFadeCounterRound";
     private static final String LEVEL_COMPLETED = "levelCompleted";
@@ -242,8 +245,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         // add the score to the ApplicationState score
         addToStateRunningScore(score);
 
-        //TODO update the db
-//        async task updating the db score.  onDbScoreUpdated() runs in onPostExecute.
+//        async task updating the db score.  onDbScoreUpdatedEndOfTurn() runs in onPostExecute.
 //        There we check to see if we have lives left, if we do, we start the  ResetNextTurnAsync,
 //        if not, we launch the OutOfLives Dialog
         UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
@@ -290,8 +292,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     }
 
     private void setGameValuesForNextLevel() {
-//        int lives = mState.getLivesRemaining();
-//        mState.setLivesRemaining(lives +1);
         int currentLevel = mState.getLevel();
         int newLevel = currentLevel + 1;
         mState.setLevel(newLevel);
@@ -300,7 +300,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 //        mLevelTarget = BEGINNING_TARGET_LEVEL_ONE;
         for (int i = 1; i < newLevel + 1; i++) {
             mLevelAccelerator *= ACCELERATOR_INCREASE_PER_LEVEL_FACTOR;
-//            TODO update this to the last target played +1. See isOutOfTurns, which is checked at the end of ResetNextTurnAsync
         }
         mAccelerator = mLevelAccelerator;
         mLevelTarget = mState.getLastTarget() + 1;
@@ -423,10 +422,10 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         FragmentTransaction ft = fm.beginTransaction();
         mDialogFragment = new OutOfLivesDialogFragment();
         mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
-
     }
 
 //    Checks whether or not to advance to the next Activity. Saves the last target played in mState
+
     private boolean isOutOfTurns(int currentTurn, int maxTurn) {
         if (currentTurn == maxTurn) {
             mState.setLastTarget(mTarget);
@@ -442,21 +441,31 @@ public class CounterActivity extends FragmentActivity implements CounterListener
 
 
 //  Listener methods for AsyncTasks
+
+//    After the db is updated, we reset for a new turn if we have lives left. We check if
+//    the turn just played was the last, if so, we send a different param to the ResetNextTurnAsync
+//    to avoid fading in a "0.00" fresh counter before launching the new activity.
+
     @Override
-    public void onDbScoreUpdated() {
-        // TODO write method in db helper qureying the updated score and Log it to console
+    public void onDbScoreUpdatedEndOfTurn() {
         Log.d(DEBUG_TAG, "updated score from update db async: " + Integer.toString(mDbHelper.queryScoreFromDb()));
 
         if (checkIfLivesLeft(mState.getLivesRemaining())) {
-            ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvCounter);
-            resetNextTurnAsync.execute();
+            if (isOutOfTurns(mCurrentTurn, TURNS_PER_LEVEL)) {
+                ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvCounter);
+                resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY);
+            }
+            else {
+                ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvCounter);
+                resetNextTurnAsync.execute(NORMAL_TURN_RESET);
+            }
         }
         else {
             launchOutOfLivesDialog();
         }
 
     }
-    //        Runs in onPostExecute of ResetNextTurnAsync
+//    Runs in onPostExecute of ResetNextTurnAsync
     @Override
     public void onNextTurnReset() {
         if (isOutOfTurns(mCurrentTurn, TURNS_PER_LEVEL)) {

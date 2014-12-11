@@ -19,7 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-public class FadeOutCounterActivity extends FragmentActivity implements FadeCounterListener, FadeCountDialogFragment.OnFragmentInteractionListener {
+public class FadeOutCounterActivity extends FragmentActivity implements FadeCounterListener, ResetNextTurnFadeCounterListener, FadeCountDialogFragment.OnFragmentInteractionListener {
 
     static final String DEBUG_TAG = "jwc";
 
@@ -204,17 +204,18 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         mTvFadeCounter.setText(String.format("%.2f", seconds));
         mTvFadeCounter.setTextColor(getResources().getColor(R.color.blackRed));
         int level = mState.getLevel();
-//        TODO make async animation for this
-        try {
-            Thread.sleep(1500);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ResetNextTurnFadeCounterAsync resetNextTurnFadeCounterAsync = new ResetNextTurnFadeCounterAsync(this, this, mTvFadeCounter);
+        resetNextTurnFadeCounterAsync.execute();
+    }
+
+    @Override
+    public void onFadeCounterTurnReset() {
         Intent intent = new Intent(this, CounterActivity.class);
 //        TODO make this t or f based on performance
         intent.putExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, true);
         intent.putExtra(LEVEL_COMPLETED, true);
         startActivity(intent);
+
     }
 
     @Override

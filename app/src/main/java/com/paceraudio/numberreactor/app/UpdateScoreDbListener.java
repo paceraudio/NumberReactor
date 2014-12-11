@@ -5,6 +5,6 @@ package com.paceraudio.numberreactor.app;
  */
 public interface UpdateScoreDbListener {
 
-    public void onDbScoreUpdated();
+    public void onDbScoreUpdatedEndOfTurn();
 
 }

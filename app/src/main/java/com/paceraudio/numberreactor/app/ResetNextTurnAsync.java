@@ -13,7 +13,7 @@ import android.widget.TextView;
 /**
  * Created by jeffwconaway on 12/4/14.
  */
-public class ResetNextTurnAsync extends AsyncTask<Void, Integer, Void> {
+public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
 
     private static final String DEBUG_TAG = "ResetNextTurnAsync";
 
@@ -23,6 +23,11 @@ public class ResetNextTurnAsync extends AsyncTask<Void, Integer, Void> {
     int mTextColor;
     boolean isFadingIn = false;
 
+    private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
+//    private static final int NORMAL_TURN_RESET = 0;
+
+    private boolean mIsLastTurn = false;
+
 
     public ResetNextTurnAsync(ResetNextTurnListener listener, Context context, TextView tv) {
         this.mListener = listener;
@@ -31,24 +36,34 @@ public class ResetNextTurnAsync extends AsyncTask<Void, Integer, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void ...voids) {
+    protected Void doInBackground(Integer ...integers) {
+
+//        Check to see if this is the last turn of Counter Activity.  If so, do not
+//        fade the new counter at "0.00" in.  We only have a fade out.
+        if (integers[0] == LAST_TURN_RESET_BEFORE_NEW_ACTIVITY) {
+            mIsLastTurn = true;
+        }
+
+//        Get the current text color for the counter
         mTextColor = mCounterTV.getCurrentTextColor();
+        int alpha = Color.alpha(mTextColor);
         int red = Color.red(mTextColor);
         int green = Color.green(mTextColor);
         int blue = Color.blue(mTextColor);
 
+//        Do nothing for 1 second
         try {
             Thread.sleep(1000);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+//
         long startTime = SystemClock.elapsedRealtime();
         long elapsedTime;
         int currentValue;
-        int lastValue = 255;
-
+        int lastValue = alpha;
         publishProgress(lastValue, red, green, blue);
+
 //        currentValue gets subtracted from 255 to produce a negative alpha fade in counter text
         while ((elapsedTime = SystemClock.elapsedRealtime() - startTime) < 2000) {
             currentValue = 255 - (int) ((float) (elapsedTime * 255) / 2000);
@@ -57,23 +72,26 @@ public class ResetNextTurnAsync extends AsyncTask<Void, Integer, Void> {
                 publishProgress(lastValue, red, green, blue);
             }
         }
+
+//        If this is after the last turn, skip this, no fade in
+        if (!mIsLastTurn) {
 //        reset startTime for positive alpha fade in
-        lastValue = 0;
-        startTime = SystemClock.elapsedRealtime();
+            lastValue = 0;
+            startTime = SystemClock.elapsedRealtime();
 
 //        reset rgb values for a white fade in
-        int color = mContext.getResources().getColor(R.color.white);
-        red = Color.red(color);
-        green = Color.green(color);
-        blue = Color.blue(color);
-        isFadingIn = true;
-        while ((elapsedTime = SystemClock.elapsedRealtime() - startTime) < 1000) {
-            currentValue = (int) ((float) (elapsedTime * 255) / 1000);
-            if (currentValue > lastValue) {
-                lastValue = currentValue;
-                publishProgress(lastValue, red, green, blue);
+            int color = mContext.getResources().getColor(R.color.white);
+            red = Color.red(color);
+            green = Color.green(color);
+            blue = Color.blue(color);
+            isFadingIn = true;
+            while ((elapsedTime = SystemClock.elapsedRealtime() - startTime) < 1000) {
+                currentValue = (int) ((float) (elapsedTime * 255) / 1000);
+                if (currentValue > lastValue) {
+                    lastValue = currentValue;
+                    publishProgress(lastValue, red, green, blue);
+                }
             }
-
         }
         return null;
     }

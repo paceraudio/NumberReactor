@@ -24,7 +24,14 @@ public class ResetNextTurnFadeCounterAsync extends AsyncTask<Void, Integer, Void
     @Override
     protected Void doInBackground(Void... voids) {
 
-        int color = mTextView.getCurrentTextColor();
+//        Do nothing for 1 second
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        int color = mTextView.getCurrentTextColor();
+        int color = mContext.getResources().getColor(R.color.blackRed);
         int alpha = Color.alpha(color);
         int red = Color.red(color);
         int green = Color.green(color);
@@ -34,15 +41,16 @@ public class ResetNextTurnFadeCounterAsync extends AsyncTask<Void, Integer, Void
         int lastValue = alpha;
         long startTime = SystemClock.elapsedRealtime();
         long elapsedTime = 0;
-        publishProgress(lastValue);
+//        publishProgress(lastValue, red, green, blue);
         while ((elapsedTime = (SystemClock.elapsedRealtime() - startTime)) < 3000) {
-            currentValue = 255 - (int) ((float) (elapsedTime * 255) / 3000);
-            if (currentValue < lastValue) {
-                lastValue = currentValue;
-                publishProgress(lastValue, red, green, blue);
+
+                    currentValue = 255 - (int) ((float) (elapsedTime * 255) / 3000);
+                    if (currentValue < lastValue) {
+                        lastValue = currentValue;
+                        publishProgress(lastValue, red, green, blue);
+                    }
             }
 
-        }
         return null;
     }
 
@@ -54,9 +62,9 @@ public class ResetNextTurnFadeCounterAsync extends AsyncTask<Void, Integer, Void
     }
 
     @Override
-    protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
-        mTextView.setTextColor(Color.argb(values[0], values[1], values[2], values[3]));
+    protected void onProgressUpdate(Integer ...integers) {
+        super.onProgressUpdate(integers);
+        mTextView.setTextColor(Color.argb(integers[0], integers[1], integers[2], integers[3]));
 
     }
 }

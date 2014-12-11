@@ -28,7 +28,7 @@ public class UpdateScoreDbAsync extends AsyncTask<Integer, Void, Void>{
 
     @Override
     protected void onPostExecute(Void result) {
-        mListener.onDbScoreUpdated();
+        mListener.onDbScoreUpdatedEndOfTurn();
     }
 
 
