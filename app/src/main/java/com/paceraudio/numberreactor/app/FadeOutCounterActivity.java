@@ -19,7 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-public class FadeOutCounterActivity extends FragmentActivity implements FadeCounterListener, ResetNextTurnFadeCounterListener, FadeCountDialogFragment.OnFragmentInteractionListener {
+public class FadeOutCounterActivity extends FragmentActivity implements FadeCounterListener, ResetNextTurnListener, ResetNextTurnFadeCounterListener, FadeCountDialogFragment.OnFragmentInteractionListener {
 
     static final String DEBUG_TAG = "jwc";
 
@@ -43,10 +43,12 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
     private int mBlueValue;
 
     private static final String FADE_COUNT_DIALOG_FRAGMENT = "customFadeCountDialogFragment";
-
     private static final String EXTRA_LIFE_FROM_FADE_COUNTER_ROUND = "extraLifeFromFadeCounterRound";
-
     private static final String LEVEL_COMPLETED = "levelCompleted";
+
+    private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
+    private static final int NORMAL_TURN_RESET = 0;
+
 
     DialogFragment mDialogFragment;
     FadeOutCounterAsync mFadeOutCounterAsync;
@@ -204,17 +206,34 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         mTvFadeCounter.setText(String.format("%.2f", seconds));
         mTvFadeCounter.setTextColor(getResources().getColor(R.color.blackRed));
         int level = mState.getLevel();
+/*
         ResetNextTurnFadeCounterAsync resetNextTurnFadeCounterAsync = new ResetNextTurnFadeCounterAsync(this, this, mTvFadeCounter);
         resetNextTurnFadeCounterAsync.execute();
+*/
+        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvFadeCounter);
+        resetNextTurnAsync.execute(NORMAL_TURN_RESET);
     }
 
     @Override
-    public void onFadeCounterTurnReset() {
+    public void onNextTurnReset() {
+        Log.d(DEBUG_TAG, "ResetNextTurnAsync returning to FadeCounter!!!!");
         Intent intent = new Intent(this, CounterActivity.class);
 //        TODO make this t or f based on performance
         intent.putExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, true);
         intent.putExtra(LEVEL_COMPLETED, true);
         startActivity(intent);
+
+    }
+
+    @Override
+    public void onFadeCounterTurnReset() {
+/*
+        Intent intent = new Intent(this, CounterActivity.class);
+//        TODO make this t or f based on performance
+        intent.putExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, true);
+        intent.putExtra(LEVEL_COMPLETED, true);
+        startActivity(intent);
+*/
 
     }
 
