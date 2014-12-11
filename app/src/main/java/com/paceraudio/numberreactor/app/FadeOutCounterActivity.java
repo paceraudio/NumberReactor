@@ -19,7 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-public class FadeOutCounterActivity extends FragmentActivity implements FadeCounterListener, ResetNextTurnListener, ResetNextTurnFadeCounterListener, FadeCountDialogFragment.OnFragmentInteractionListener {
+public class FadeOutCounterActivity extends FragmentActivity implements FadeCounterListener, ResetNextTurnListener, FadeCountDialogFragment.OnFragmentInteractionListener {
 
     static final String DEBUG_TAG = "jwc";
 
@@ -51,7 +51,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
 
 
     DialogFragment mDialogFragment;
-    FadeOutCounterAsync mFadeOutCounterAsync;
     Handler mHandler;
     Thread mFadeCounterThread;
     DBHelper mDbHelper;
@@ -222,19 +221,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         intent.putExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, true);
         intent.putExtra(LEVEL_COMPLETED, true);
         startActivity(intent);
-
-    }
-
-    @Override
-    public void onFadeCounterTurnReset() {
-/*
-        Intent intent = new Intent(this, CounterActivity.class);
-//        TODO make this t or f based on performance
-        intent.putExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, true);
-        intent.putExtra(LEVEL_COMPLETED, true);
-        startActivity(intent);
-*/
-
     }
 
     @Override

@@ -21,7 +21,7 @@ import java.util.Random;
 
 // class using Threads and Handlers instead of AsyncTask. Performance seems to be the same.
 
-public class CounterActivity extends FragmentActivity implements CounterListener, UpdateScoreDbListener, ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener {
+public class CounterActivity extends FragmentActivity implements UpdateScoreDbListener, ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener {
 
     public static final String DEBUG_TAG = "jwc";
 
@@ -40,6 +40,9 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     private TextView mTvCounter;
     private TextView mTvLivesRemaining;
     private TextView mTvScore;
+
+    private Button mStartButton;
+    private Button mStopButton;
 
     private final static String OUT_OF_LIVES_DIALOG = "outOfLivesDialog";
     private DialogFragment mDialogFragment;
@@ -114,9 +117,9 @@ public class CounterActivity extends FragmentActivity implements CounterListener
             }
         };
 
-        Button startButton = (Button) findViewById(R.id.b_start);
+        mStartButton = (Button) findViewById(R.id.b_start);
 
-        startButton.setOnTouchListener(new View.OnTouchListener() {
+        mStartButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -168,8 +171,9 @@ public class CounterActivity extends FragmentActivity implements CounterListener
             }
         });
 
-        Button stopButton = (Button) findViewById(R.id.b_stop);
-        stopButton.setOnTouchListener(new View.OnTouchListener() {
+
+         mStopButton = (Button) findViewById(R.id.b_stop);
+        mStopButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -177,8 +181,6 @@ public class CounterActivity extends FragmentActivity implements CounterListener
                     Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount of background thread cycles: %5d", stopClickMillis, mCount));
                     onCounterCancelled(mElapsedAcceleratedCount, mCount);
                     mCounterThread.interrupt();
-                    mIsStartClickable = true;
-
                 }
                 return false;
             }
@@ -206,7 +208,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+
     public void onCounterComplete(Double accelCount) {
         mTvCounter.setTextColor(getResources().getColor(R.color.red));
 
@@ -214,7 +216,7 @@ public class CounterActivity extends FragmentActivity implements CounterListener
     }
 
     // runs when mCounter thread is  is cancelled
-    @Override
+
     public void onCounterCancelled(Double accelCount, int count) {
         //Log.d(DEBUG_TAG, "Main Activity: Accelerated Count via onCounterCancelled: " + accelCount);
 
@@ -473,6 +475,8 @@ public class CounterActivity extends FragmentActivity implements CounterListener
         }
         else {
             resetTimeValuesBetweenTurns();
+            mIsStartClickable = true;
+
         }
     }
 
