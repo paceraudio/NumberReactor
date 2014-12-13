@@ -37,7 +37,8 @@
         </activity>
         <activity
             android:name=".ViewStatsActivity"
-            android:label="@string/title_activity_view_stats" >
+            android:label="@string/title_activity_view_stats"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         </activity>
     </application>
 

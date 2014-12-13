@@ -45,7 +45,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
         if (integers[0] == NORMAL_TURN_RESET) {
             fadeTextOut(getTextColor(mCounterTV), 2000);
             mHasFadeIn = true;
-            fadeTextIn(mContext.getResources().getColor(R.color.white), 2000);
+            fadeTextIn(mContext.getResources().getColor(R.color.red), 2000);
         }
         return null;
     }

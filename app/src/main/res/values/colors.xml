@@ -4,7 +4,10 @@
     <color name="red">#ffff0000</color>
     <color name="green">#ff00ff00</color>
     <color name="white">#ffeee9d6</color>
-    <color name="lightBlue">#ff5175ff</color>
-    <color name="blackRed">#ff190c0c</color>
+    <color name="lightBlue">#ff38708a</color>
+    <color name="blackRed">#ff0e0606</color>
+    <color name="darkBlackRed">#ff0a0000</color>
     <color name="slateBlue">#ff304c61</color>
+    <color name="grey">#ffb3a38a</color>
+    <color name="brown">#ff2a0b06</color>
 </resources>

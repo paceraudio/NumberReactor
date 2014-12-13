@@ -9,7 +9,7 @@
     <string name="zero">0</string>
     <string name="start">G</string>
     <string name="stop">S</string>
-    <string name="target">TARGET:</string>
+    <string name="target">TARGET: </string>
     <string name="fade_target">TARGET: 10</string>
     <string name="reset">RESET</string>
     <string name="accuracy">ACCURACY: </string>
@@ -19,6 +19,7 @@
     <string name="OK">OK</string>
     <string name="lives_remaining">LIVES: </string>
     <string name="score">SCORE: </string>
+    <string name="level">LEVEL: </string>
     <string name="title_activity_fade_counter">FadeCounterActivity</string>
     <string name="title_activity_fading_counter">FadingCounterActivity</string>
     <string name="title_activity_fade_out_counter">FadeOutCounterActivity</string>

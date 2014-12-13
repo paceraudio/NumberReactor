@@ -42,6 +42,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private TextView mTvCounter;
     private TextView mTvLivesRemaining;
     private TextView mTvScore;
+    private TextView mTvAccuracy;
+    private TextView mTvLevel;
 
     private Button mStartButton;
     private Button mStopButton;
@@ -64,7 +66,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     int mCount;
     int mCurrentTurn;
 
-    private static final int BEGINNING_TARGET_LEVEL_ONE = 3;
+    private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     private static final int TURNS_PER_LEVEL = 5;
     private final static double BEGINNING_ACCELERATOR_LEVEL_ONE = .7;
     private static int LIFE_LOSS_THRESHOLD = 85;
@@ -104,8 +106,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
 //        MyTypefaces myTypefaces = MyTypefaces.getInstance();
 
-        Typeface tf = MyTypefaces.get(this, DIGITAL_7_FONT_PATH);
-        mTvCounter.setTypeface(tf);
+//        Typeface tf = MyTypefaces.get(this, DIGITAL_7_FONT_PATH);
+//        mTvCounter.setTypeface(tf);
 
 //        Typeface tf = MyTypefaces.get(this, ROBOTO_THIN_FONT_PATH);
 //        mTvCounter.setTypeface(tf);
@@ -115,6 +117,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 .getLivesRemaining());
         mTvScore = (TextView) findViewById(R.id.t_v_score);
         mTvScore.setText(this.getString(R.string.score) + " " + mState.getRunningScoreTotal());
+        mTvAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
+        mTvAccuracy.setText(R.string.accuracy);
         mIsStartClickable = true;
 
 //        mAccelerator = mLevelAccelerator;
@@ -170,7 +174,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                             }
                                         });
                                         mNextCount += 0.01;
-                                        mAccelerator *= 1.0006;
+                                        mAccelerator *= 1.0004;
                                     }
                                 }
                                 if (mCounterThread.isInterrupted()) return;
@@ -247,28 +251,33 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     // runs when mCounter thread is  is cancelled
 
-    public void onCounterCancelled(Double accelCount, int count) {
+    public void onCounterCancelled(double accelCount, int count) {
         //Log.d(DEBUG_TAG, "Main Activity: Accelerated Count via onCounterCancelled: " +
         // accelCount);
 
-        // assign a score
-        int accuracy = calcAccuracy(mTarget, accelCount);
-        int score = accuracy;
+        // calc the accuracy
+        double accuracy = calcAccuracy(mTarget, accelCount);
+
+//        calc the score
+        int score = calcScore(accuracy);
+
+//        Display the accuracy
+        displayAccuracy(accuracy);
 
         long onCounterCancelledElapsedTime = SystemClock.elapsedRealtime() - mStartTime;
         Log.d(DEBUG_TAG, "onCountCancElapsedTime: " + Long.toString(onCounterCancelledElapsedTime));
 
         // subtract a life if score is poor
-        checkAccuracyAgainstLives(accuracy);
+        checkScoreAgainstLives(score);
 
 
-//TODO write a method for setting the color based on accuracy
+//  TODO write a method for setting the color based on accuracy
         // set the text color of the counter based on the score
         if (accuracy >= 99) {
             score += 100;
 
             mTvCounter.setTextColor(getResources().getColor(R.color.green));
-        } else if (accuracy > LIFE_LOSS_THRESHOLD && accuracy < 99) {
+        } else if (accuracy > LIFE_LOSS_THRESHOLD && accuracy < 98) {
             mTvCounter.setTextColor(getResources().getColor(R.color.orange));
         } else {
             mTvCounter.setTextColor(getResources().getColor(R.color.red));
@@ -288,13 +297,37 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     private double generateTarget() {
 //        mTarget = mGen.nextInt((maxTarget + 1) - mBeginningTargetLevelOne) +
-// mBeginningTargetLevelOne;
+//         mBeginningTargetLevelOne;
         return mTarget;
     }
 
     private void displayTarget(double target) {
         TextView tvTarget = (TextView) findViewById(R.id.t_v_target);
         tvTarget.setText(getString(R.string.target) + " " + String.format("%.2f", target));
+    }
+
+    private double calcAccuracy(double target, double counter) {
+        double error = Math.abs(target - counter);
+        return ((target - error) / target) * 100;
+    }
+
+    private int calcScore(double accuracy) {
+        int score = 0;
+        double margin = 80;
+        double scoreToCalc = accuracy - margin;
+        if (scoreToCalc > 0) {
+            score = (int) scoreToCalc * 5;
+        }
+        return score;
+    }
+
+    private void displayAccuracy(double accuracy) {
+        int percentage = (int) accuracy;
+        mTvAccuracy.setText(getString(R.string.accuracy) + " " + percentage + "%");
+    }
+
+    private void displayLevel() {
+        mTvLevel.setText(getString(R.string.level) + mState.getLevel());
     }
 
     private void setInitialTimeValuesLevelOne() {
@@ -309,6 +342,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mState.setLevel(1);
         mIsStartClickable = true;
         displayTarget(mTarget);
+        displayLevel();
         resetCounter();
         resetLives();
         resetScore();
@@ -331,7 +365,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         int newLevel = currentLevel + 1;
         mState.setLevel(newLevel);
 //        Set target and accelerator to their beginning levels, and increase them based on the
-// current level
+//  current level
         mLevelAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE;
 //        mLevelTarget = BEGINNING_TARGET_LEVEL_ONE;
         for (int i = 1; i < newLevel + 1; i++) {
@@ -341,7 +375,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mLevelTarget = mState.getLastTarget() + 1;
         mTarget = mLevelTarget;
         displayTarget(mTarget);
+        displayLevel();
         resetTurns();
+        resetAccuracy();
         Log.d(DEBUG_TAG, "setGameValuesForNextLevel()********" +
                 "\n Level: " + mState.getLevel() +
                 "\n Target: " + mTarget +
@@ -373,6 +409,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mTarget++;
         mCurrentTurn++;
         resetCounter();
+        resetAccuracy();
         displayTarget(mTarget);
         Log.d(DEBUG_TAG, "resetTimeValuesBetweenTurns()********" +
                 "\n Level: " + mState.getLevel() +
@@ -384,8 +421,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     private void resetCounter() {
         mTvCounter.setText(getString(R.string.zero_point_zero));
-        mTvCounter.setTextColor(getResources().getColor(R.color.white));
+        mTvCounter.setTextColor(getResources().getColor(R.color.red));
         mIsStartClickable = true;
+    }
+
+    private void resetAccuracy() {
+        mTvAccuracy.setText(R.string.accuracy);
     }
 
     private void resetLives() {
@@ -410,27 +451,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mCurrentTurn = 1;
     }
 
-    private int calcAccuracy(double target, double counter) {
-        double error = Math.abs(target - counter);
-        // base the accuracy off of a range of 2.0 margin on either side of the mTarget.
-        // i.e. mTarget is 8.0, a user value of 6.0 is 0, 7.0 is 50, 7.9 is 95.
-        double accuracyD = 100 - (error * 50);
-        if (accuracyD < 0) {
-            accuracyD = 0;
-        }
-        int accuracyI = (int) Math.round(accuracyD);
 
-        Log.d(DEBUG_TAG, "mTarget: " + target);
-        Log.d(DEBUG_TAG, "counter: " + counter);
-        Log.d(DEBUG_TAG, "error: " + error);
-        Log.d(DEBUG_TAG, "accuracy: " + accuracyD);
-        //for (int score: mState.getScoreList()) {
-        //    Log.d(DEBUG_TAG, Integer.toString(score));
-        //}
-        return accuracyI;
-    }
-
-    private void checkAccuracyAgainstLives(int accuracy) {
+    private void checkScoreAgainstLives(int accuracy) {
         int lives = mState.getLivesRemaining();
         if (accuracy < LIFE_LOSS_THRESHOLD) {
             mState.setLivesRemaining(lives - 1);
@@ -441,7 +463,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         }
         mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + mState
                 .getLivesRemaining());
-        Log.d(DEBUG_TAG, "checkAccuracyAgainstLives lives remaining: " + mState.getLivesRemaining
+        Log.d(DEBUG_TAG, "checkScoreAgainstLives lives remaining: " + mState.getLivesRemaining
                 ());
     }
 
