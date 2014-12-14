@@ -119,6 +119,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mTvScore.setText(this.getString(R.string.score) + " " + mState.getRunningScoreTotal());
         mTvAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
         mTvAccuracy.setText(R.string.accuracy);
+
+        mTvLevel = (TextView) findViewById(R.id.t_v_level);
         mIsStartClickable = true;
 
 //        mAccelerator = mLevelAccelerator;
