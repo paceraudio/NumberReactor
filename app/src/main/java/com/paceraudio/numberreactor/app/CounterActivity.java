@@ -1,7 +1,6 @@
 package com.paceraudio.numberreactor.app;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -16,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.util.Random;
@@ -44,9 +44,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private TextView mTvScore;
     private TextView mTvAccuracy;
     private TextView mTvLevel;
+    private TextView mTvTarget;
 
     private Button mStartButton;
+    private FrameLayout mFrameStartButton;
     private Button mStopButton;
+    private FrameLayout mFrameStopButton;
 
     private final static String OUT_OF_LIVES_DIALOG = "outOfLivesDialog";
     private DialogFragment mDialogFragment;
@@ -67,7 +70,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     int mCurrentTurn;
 
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
-    private static final int TURNS_PER_LEVEL = 5;
+    private static final int TURNS_PER_LEVEL = 2;
     private final static double BEGINNING_ACCELERATOR_LEVEL_ONE = .7;
     private static int LIFE_LOSS_THRESHOLD = 85;
     private static double ACCELERATOR_INCREASE_PER_LEVEL_FACTOR = 1.05;
@@ -89,20 +92,27 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_counter);
 //        mCurrentTurn = 0;
         mState = (ApplicationState) getApplicationContext();
         mDbHelper = new DBHelper(this);
 
+//        Define all the UI elements
+        mTvCounter = (TextView) findViewById(R.id.t_v_counter);
+        mTvTarget = (TextView) findViewById(R.id.t_v_target);
+        mTvAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
+        mTvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
+        mTvScore = (TextView) findViewById(R.id.t_v_score);
+        mTvLevel = (TextView) findViewById(R.id.t_v_level);
+        mStartButton = (Button) findViewById(R.id.b_start);
+        mFrameStartButton = (FrameLayout) findViewById(R.id.frame_b_start);
+        mStopButton = (Button) findViewById(R.id.b_stop);
+        mFrameStopButton = (FrameLayout) findViewById(R.id.frame_b_stop);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //resetTimeValuesBetweenTurns();
-
-        //        mGen = new Random();
-        mTvCounter = (TextView) findViewById(R.id.t_v_counter);
 
 //        MyTypefaces myTypefaces = MyTypefaces.getInstance();
 
@@ -112,22 +122,20 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 //        Typeface tf = MyTypefaces.get(this, ROBOTO_THIN_FONT_PATH);
 //        mTvCounter.setTypeface(tf);
 
-        mTvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
+/*
         mTvLivesRemaining.setText(this.getString(R.string.lives_remaining) + " " + mState
                 .getLivesRemaining());
-        mTvScore = (TextView) findViewById(R.id.t_v_score);
         mTvScore.setText(this.getString(R.string.score) + " " + mState.getRunningScoreTotal());
-        mTvAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
         mTvAccuracy.setText(R.string.accuracy);
+*/
 
-        mTvLevel = (TextView) findViewById(R.id.t_v_level);
         mIsStartClickable = true;
 
 //        mAccelerator = mLevelAccelerator;
 
 
         Intent intent = getIntent();
-        if (checkForExtras(intent)) {
+        if (doesOutIntentHaveExtras(intent)) {
             setGameValuesForNextLevel();
         } else {
             setInitialTimeValuesLevelOne();
@@ -141,7 +149,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             }
         };
 
-        mStartButton = (Button) findViewById(R.id.b_start);
 
         mStartButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -150,7 +157,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
                     if (mIsStartClickable) {
                         mStartTime = SystemClock.elapsedRealtime();
-
+                        showStartButtonEngaged();
                         mCounterThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -203,7 +210,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         });
 
 
-        mStopButton = (Button) findViewById(R.id.b_stop);
         mStopButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -212,6 +218,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                     Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount of " +
                             "background thread cycles: %5d", stopClickMillis, mCount));
                     onCounterCancelled(mElapsedAcceleratedCount, mCount);
+                    showStopButtonEngaged();
+                    showStartButtonNotEngaged();
                     mCounterThread.interrupt();
                 }
                 return false;
@@ -264,7 +272,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         int score = calcScore(accuracy);
 
 //        Display the accuracy
-        displayAccuracy(accuracy);
+        displayAccuracyResult(accuracy);
 
         long onCounterCancelledElapsedTime = SystemClock.elapsedRealtime() - mStartTime;
         Log.d(DEBUG_TAG, "onCountCancElapsedTime: " + Long.toString(onCounterCancelledElapsedTime));
@@ -303,9 +311,60 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         return mTarget;
     }
 
+    private void showStartButtonEngaged() {
+        mFrameStartButton.setBackgroundColor(getResources().getColor(R.color.green));
+        mStartButton.setTextColor(getResources().getColor(R.color.green));
+    }
+
+    private void showStopButtonEngaged() {
+        mFrameStopButton.setBackgroundColor(getResources().getColor(R.color.red));
+        mStopButton.setTextColor(getResources().getColor(R.color.red));
+    }
+
+    private void showStartButtonNotEngaged() {
+        mFrameStartButton.setBackgroundColor(getResources().getColor(R.color.brown));
+        mStartButton.setTextColor(getResources().getColor(R.color.grey));
+    }
+
+    private void showStopButtonNotEngaged() {
+        mFrameStopButton.setBackgroundColor(getResources().getColor(R.color.brown));
+        mStopButton.setTextColor(getResources().getColor(R.color.grey));
+    }
+
+
+
+
     private void displayTarget(double target) {
-        TextView tvTarget = (TextView) findViewById(R.id.t_v_target);
-        tvTarget.setText(getString(R.string.target) + " " + String.format("%.2f", target));
+        mTvTarget.setText(getString(R.string.target) + " " + String.format("%.2f", target));
+    }
+
+    private void displayAccuracy() {
+        mTvAccuracy.setText(getString(R.string.accuracy) + "    ");
+    }
+
+    private void displayAccuracyResult(double accuracy) {
+        int percentage = (int) accuracy;
+        mTvAccuracy.setText(getString(R.string.accuracy) + " " + percentage + "%");
+    }
+
+    private void displayLives() {
+        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " +  mState.getLivesRemaining());
+    }
+
+    private void displayScore() {
+        mTvScore.setText(getString(R.string.score) + " " + mState.getRunningScoreTotal());
+    }
+
+    private void displayLevel() {
+        mTvLevel.setText(getString(R.string.level) +  " " + mState.getLevel());
+    }
+
+    private void displayAllGameInfo() {
+        displayTarget(mTarget);
+        displayAccuracy();
+        displayLives();
+        displayScore();
+        displayLevel();
     }
 
     private double calcAccuracy(double target, double counter) {
@@ -323,17 +382,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         return score;
     }
 
-    private void displayAccuracy(double accuracy) {
-        int percentage = (int) accuracy;
-        mTvAccuracy.setText(getString(R.string.accuracy) + " " + percentage + "%");
-    }
 
-    private void displayLevel() {
-        mTvLevel.setText(getString(R.string.level) + mState.getLevel());
-    }
 
     private void setInitialTimeValuesLevelOne() {
-//        resetTimeValuesBetweenTurns();
         mTarget = BEGINNING_TARGET_LEVEL_ONE;
         mLevelAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE;
         mAccelerator = mLevelAccelerator;
@@ -341,14 +392,20 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mElapsedTimeMillis = 0;
         mNextCount = 0.01;
         mCount = 0;
+        mCurrentTurn = 1;
         mState.setLevel(1);
+        mState.resetScoreForNewGame();
         mIsStartClickable = true;
-        displayTarget(mTarget);
-        displayLevel();
-        resetCounter();
-        resetLives();
-        resetScore();
-        resetTurns();
+//        displayTarget(mTarget);
+//        displayLevel();
+//        resetCounterToZero();
+//        resetLivesToDefaultLivesPerLevel();
+//        displayLives();
+//        resetScoreToZero();
+//        displayScore();
+//        displayLevel();
+//        resetTurnsToFirstTurn();
+        displayAllGameInfo();
         Log.d(DEBUG_TAG, "setInitialTimeValuesLevelOne()********" +
                 "\n Level: " + mState.getLevel() +
                 "\n Target: " + mTarget +
@@ -362,12 +419,30 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 .queryNewestDbEntry()));
     }
 
+    private void resetTimeValuesBetweenTurns() {
+        mElapsedTimeMillis = 0;
+        mElapsedAcceleratedCount = 0;
+        mAccelerator = mLevelAccelerator;
+        mNextCount = 0.01;
+        mCount = 0;
+        mTarget++;
+        mCurrentTurn++;
+        resetCounterToZero();
+//        displayTarget(mTarget);
+        displayAllGameInfo();
+        Log.d(DEBUG_TAG, "resetTimeValuesBetweenTurns()********" +
+                "\n Level: " + mState.getLevel() +
+                "\n Target: " + mTarget +
+                "\n Accelerator: " + mAccelerator +
+                "\n Turn: " + mCurrentTurn);
+    }
+
     private void setGameValuesForNextLevel() {
         int currentLevel = mState.getLevel();
         int newLevel = currentLevel + 1;
         mState.setLevel(newLevel);
 //        Set target and accelerator to their beginning levels, and increase them based on the
-//  current level
+//        current level
         mLevelAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE;
 //        mLevelTarget = BEGINNING_TARGET_LEVEL_ONE;
         for (int i = 1; i < newLevel + 1; i++) {
@@ -376,10 +451,16 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mAccelerator = mLevelAccelerator;
         mLevelTarget = mState.getLastTarget() + 1;
         mTarget = mLevelTarget;
-        displayTarget(mTarget);
-        displayLevel();
-        resetTurns();
-        resetAccuracy();
+        resetTurnsToFirstTurn();
+        resetLivesToDefaultLivesPerLevel();
+//        resetScoreToZero();
+//        displayTarget(mTarget);
+//        displayLives();
+//        displayScore();
+//        displayLevel();
+//
+//        displayAccuracy();
+        displayAllGameInfo();
         Log.d(DEBUG_TAG, "setGameValuesForNextLevel()********" +
                 "\n Level: " + mState.getLevel() +
                 "\n Target: " + mTarget +
@@ -389,7 +470,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     }
 
-    private boolean checkForExtras(Intent intent) {
+    private boolean doesOutIntentHaveExtras(Intent intent) {
         Bundle extras = intent.getExtras();
         boolean hasExtras = false;
         if (extras != null) {
@@ -401,55 +482,41 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         Log.d(DEBUG_TAG, "intent has extras: " + hasExtras);
         return hasExtras;
     }
+//    TODO finish this method for checking for a bonus life from FadeCounter in game-structure branch
+    private void checkOurIntentValues(Intent intent) {
 
-    private void resetTimeValuesBetweenTurns() {
-        mElapsedTimeMillis = 0;
-        mElapsedAcceleratedCount = 0;
-        mAccelerator = mLevelAccelerator;
-        mNextCount = 0.01;
-        mCount = 0;
-        mTarget++;
-        mCurrentTurn++;
-        resetCounter();
-        resetAccuracy();
-        displayTarget(mTarget);
-        Log.d(DEBUG_TAG, "resetTimeValuesBetweenTurns()********" +
-                "\n Level: " + mState.getLevel() +
-                "\n Target: " + mTarget +
-                "\n Accelerator: " + mAccelerator +
-                "\n Turn: " + mCurrentTurn);
     }
 
 
-    private void resetCounter() {
+
+
+    private void resetCounterToZero() {
         mTvCounter.setText(getString(R.string.zero_point_zero));
         mTvCounter.setTextColor(getResources().getColor(R.color.red));
         mIsStartClickable = true;
     }
 
-    private void resetAccuracy() {
-        mTvAccuracy.setText(R.string.accuracy);
-    }
+//    private void resetAccuracy() {
+//        mTvAccuracy.setText(getString(R.string.accuracy));
+//    }
 
-    private void resetLives() {
+    private void resetLivesToDefaultLivesPerLevel() {
         int numOfLivesPerLevel = LIVES_PER_LEVEL;
         mState.setLivesRemaining(numOfLivesPerLevel);
-        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + Integer.toString
-                (numOfLivesPerLevel));
     }
 
-    private void resetScore() {
+    private void resetScoreToZero() {
         for (int i = 0; i < mState.getScoreList().size(); i++) {
             if (i == 0) {
                 mState.getScoreList().set(i, 0);
             } else {
                 mState.getScoreList().remove(i);
             }
-            mTvScore.setText(getString(R.string.score) + " " + (getString(R.string.zero)));
+            mState.setRunningScoreTotal(0);
         }
     }
 
-    private void resetTurns() {
+    private void resetTurnsToFirstTurn() {
         mCurrentTurn = 1;
     }
 
@@ -471,7 +538,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     private void addToStateRunningScore(int newScore) {
         mState.setRunningScoreTotal(newScore);
-        mTvScore.setText(getString(R.string.score) + " " + mState.getRunningScoreTotal());
     }
 
     private boolean checkIfLivesLeft(int lives) {
@@ -538,6 +604,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             launchFadeCounterActivity();
         } else {
             resetTimeValuesBetweenTurns();
+            showStopButtonNotEngaged();
             mIsStartClickable = true;
 
         }
@@ -549,9 +616,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     public void onOkClicked() {
         mDialogFragment.dismiss();
         setInitialTimeValuesLevelOne();
-//        resetCounter();
-//        resetLives();
-//        resetScore();
+//        resetCounterToZero();
+//        resetLivesToDefaultLivesPerLevel();
+//        resetScoreToZero();
     }
 
     @Override

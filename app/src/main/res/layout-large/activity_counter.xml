@@ -124,7 +124,7 @@
         android:layout_alignLeft="@+id/frame_counter"
         android:layout_alignTop="@+id/frame_b_stop"
         android:layout_marginLeft="30dp"
-        android:background="@color/green"
+        android:background="@color/brown"
         android:gravity="center"
         android:padding="2dp">
 
@@ -134,7 +134,7 @@
             android:layout_height="match_parent"
             android:background="@color/darkBlackRed"
             android:text="@string/start"
-            android:textColor="@color/green"
+            android:textColor="@color/grey"
             android:textSize="90sp"
             android:typeface="normal"
             />
@@ -150,17 +150,17 @@
         android:layout_alignRight="@+id/frame_counter"
         android:layout_marginBottom="58dp"
         android:layout_marginRight="30dp"
-        android:background="@color/red"
+        android:background="@color/brown"
         android:gravity="center"
         android:padding="2dp">
 
-        <Button
+         <Button
             android:id="@+id/b_stop"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/darkBlackRed"
             android:text="@string/stop"
-            android:textColor="@color/red"
+            android:textColor="@color/grey"
             android:textSize="90sp"
             android:typeface="normal"
             />

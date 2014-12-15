@@ -26,6 +26,11 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
     private TextView mTvFadeCounter;
     private TextView mTvFadeTarget;
     private TextView mTvFadeAccuracy;
+    private TextView mTvFadeLives;
+    private TextView mTvFadeScore;
+    private TextView mTvFadeLevel;
+    private Button mFadeStartButton;
+    private Button mFadeStopButton;
 
     private long mStartTime;
     private double mElapsedSeconds;
@@ -61,11 +66,16 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fade_out_counter);
-        mState = (ApplicationState) getApplication();
-//        int level = mState.getLevel();
-//        mState.setLevel(level + 1);
+        mState = (ApplicationState) getApplicationContext();
         mDbHelper = new DBHelper(this);
-
+        mTvFadeCounter = (TextView) findViewById(R.id.t_v_fade_counter);
+        mTvFadeTarget = (TextView) findViewById(R.id.t_v_fade_target);
+        mTvFadeAccuracy = (TextView) findViewById(R.id.t_v_fade_accuracy_rating);
+        mTvFadeLives = (TextView) findViewById(R.id.t_v_fade_lives_remaining);
+        mTvFadeScore = (TextView) findViewById(R.id.t_v_fade_score);
+        mTvFadeLevel = (TextView) findViewById(R.id.t_v_fade_level);
+        mFadeStartButton = (Button) findViewById(R.id.fade_b_start);
+        mFadeStopButton = (Button) findViewById(R.id.fade_b_stop);
     }
 
     @Override
@@ -73,17 +83,15 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         super.onStart();
         UpdateLevelDbAsync updateLevelDbAsync = new UpdateLevelDbAsync(this);
         updateLevelDbAsync.execute(mState.getLevel());
-        mTvFadeTarget = (TextView) findViewById(R.id.t_v_fade_target);
-        mTvFadeAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
-        mTvFadeCounter = (TextView) findViewById(R.id.t_v_fade_counter);
 //        This is when the counter should have completely faded out, at half way through the fade
-        mFadeRange = mTarget * .7;
+        mFadeRange = mTarget * .65;
 //        This assumes the alpha value of the color is at its max
         mFadeIncrement = mFadeRange / 255;
         mRunningFadeTime = mFadeIncrement;
         mNextCount = .01;
         mFadeCounterColor = mTvFadeCounter.getCurrentTextColor();
         mAlphaValue = Color.alpha(mFadeCounterColor);
+        mRunningFadeTime = Color.red(mFadeCounterColor);
         mGreenValue = Color.red(mFadeCounterColor);
         mBlueValue = Color.blue(mFadeCounterColor);
 
@@ -94,15 +102,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
     protected void onResume() {
         super.onResume();
 
-        mState = (ApplicationState) getApplicationContext();
-        // TODO dialog shows up after activity is on pause.  Move to onCreate?
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        mDialogFragment = new FadeCountDialogFragment();
-        mDialogFragment.show(ft, FADE_COUNT_DIALOG_FRAGMENT);
-
-
-
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -110,8 +109,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
             }
         };
 
-        Button startFadeButton = (Button) findViewById(R.id.b_fade_start);
-        startFadeButton.setOnTouchListener(new View.OnTouchListener() {
+        mFadeStartButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -162,8 +160,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
                 return false;
             }
         });
-        Button stopFadeButton = (Button) findViewById(R.id.b_fade_stop);
-        stopFadeButton.setOnTouchListener(new View.OnTouchListener() {
+        mFadeStopButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -205,14 +202,11 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         mTvFadeCounter.setText(String.format("%.2f", seconds));
         mTvFadeCounter.setTextColor(getResources().getColor(R.color.blackRed));
         int level = mState.getLevel();
-/*
-        ResetNextTurnFadeCounterAsync resetNextTurnFadeCounterAsync = new ResetNextTurnFadeCounterAsync(this, this, mTvFadeCounter);
-        resetNextTurnFadeCounterAsync.execute();
-*/
         ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvFadeCounter);
-        resetNextTurnAsync.execute(NORMAL_TURN_RESET);
+        resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY);
     }
 
+//    Listener method runs after ResetNextTurnAsync is finished
     @Override
     public void onNextTurnReset() {
         Log.d(DEBUG_TAG, "ResetNextTurnAsync returning to FadeCounter!!!!");

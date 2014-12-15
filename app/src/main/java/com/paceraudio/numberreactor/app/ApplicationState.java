@@ -87,6 +87,11 @@ public class ApplicationState extends Application{
         }
     }
 
+    public void resetScoreForNewGame() {
+        scoreList.clear();
+        runningScoreTotal = 0;
+    }
+
     public String setGameDate() {
         //TODO see if this is the best place for this?
         Calendar c = Calendar.getInstance();
