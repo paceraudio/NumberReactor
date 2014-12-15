@@ -125,6 +125,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         super.onResume();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
 
 
 //        MyTypefaces myTypefaces = MyTypefaces.getInstance();
@@ -147,7 +148,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 //        mAccelerator = mLevelAccelerator;
 
 //      TODO make sure this doesn't run when user hits back button from seeing game stats.  Level
-// was rising. Set intent to null? Or make a boolean isIntentChecked?
+//      was rising. Set intent to null? Or make a boolean isIntentChecked?
         Intent intent = getIntent();
         if (doesOutIntentHaveExtras(intent)) {
             setGameValuesForNextLevel();
@@ -241,6 +242,13 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             }
         });
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -381,6 +389,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         displayLives();
         displayScore();
         displayLevel();
+        Log.d(DEBUG_TAG, "displayAllGameInfo ()********" +
+                "\n Level: " + mState.getLevel() +
+                "\n Target: " + mTarget +
+                "\n Accelerator: " + mAccelerator +
+                "\n Turn: " + mCurrentTurn);
+
     }
 
     private double calcAccuracy(double target, double counter) {
@@ -423,22 +437,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mState.setLevel(1);
         mState.resetScoreForNewGame();
         mIsStartClickable = true;
-//        displayTarget(mTarget);
-//        displayLevel();
-//        resetCounterToZero();
-//        resetLivesToDefaultLivesPerLevel();
-//        displayLives();
-//        resetScoreToZero();
-//        displayScore();
-//        displayLevel();
-//        resetTurnsToFirstTurn();
         displayAllGameInfo();
-        Log.d(DEBUG_TAG, "setInitialTimeValuesLevelOne()********" +
-                "\n Level: " + mState.getLevel() +
-                "\n Target: " + mTarget +
-                "\n Accelerator: " + mAccelerator +
-                "\n Turn: " + mCurrentTurn);
-
 
         //        TODO put this in async task
         mDbHelper.insertNewGameRowInDb();
@@ -457,11 +456,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         resetCounterToZero();
 //        displayTarget(mTarget);
         displayAllGameInfo();
-        Log.d(DEBUG_TAG, "resetTimeValuesBetweenTurns()********" +
-                "\n Level: " + mState.getLevel() +
-                "\n Target: " + mTarget +
-                "\n Accelerator: " + mAccelerator +
-                "\n Turn: " + mCurrentTurn);
     }
 
     private void setGameValuesForNextLevel() {
@@ -469,32 +463,16 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         int newLevel = currentLevel + 1;
         mState.setLevel(newLevel);
 //        Set target and accelerator to their beginning levels, and increase them based on the
-//        current level
-        mLevelAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL;
-//        mLevelTarget = BEGINNING_TARGET_LEVEL_ONE;
-        for (int i = 1; i < newLevel + 1; i++) {
-            mLevelAccelerator *= ACCELERATOR_INCREASE_PER_LEVEL_FACTOR;
-        }
+//        current level. Check the SharedPreferences for the difficulty level.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        updateDifficultyBasedOnPreferencesAndLevel(prefs);
+
         mAccelerator = mLevelAccelerator;
-        mLevelTarget = mState.getLastTarget() + 1;
+        mLevelTarget = BEGINNING_TARGET_LEVEL_ONE + 1;
         mTarget = mLevelTarget;
         resetTurnsToFirstTurn();
         resetLivesToDefaultLivesPerLevel();
-//        resetScoreToZero();
-//        displayTarget(mTarget);
-//        displayLives();
-//        displayScore();
-//        displayLevel();
-//
-//        displayAccuracy();
         displayAllGameInfo();
-        Log.d(DEBUG_TAG, "setGameValuesForNextLevel()********" +
-                "\n Level: " + mState.getLevel() +
-                "\n Target: " + mTarget +
-                "\n Accelerator: " + mAccelerator +
-                "\n Turn: " + mCurrentTurn);
-
-
     }
 
     private boolean doesOutIntentHaveExtras(Intent intent) {
@@ -656,6 +634,36 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        updateDifficultyBasedOnPreferencesAndLevel(sharedPreferences);
+    }
+
+    private void updateDifficultyBasedOnPreferencesAndLevel(SharedPreferences prefs) {
+        Log.d(DEBUG_TAG, "updateDifficultyBasedOnPreferencesAndLevel() running");
+        int level = mState.getLevel();
+        String difficulty = prefs.getString(getString(R.string.prefs_difficulty_key), "-1");
+        if (!difficulty.equals("-1")) {
+            if (difficulty.equals(getString(R.string.prefs_difficulty_values_1))) {
+                mLevelAccelerator = BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY;
+            }
+            if (difficulty.equals(getString(R.string.prefs_difficulty_values_2))) {
+                mLevelAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL;
+            }
+            if (difficulty.equals(getString(R.string.prefs_difficulty_values_3))) {
+                mLevelAccelerator = BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD;
+            }
+            for (int i = 1; i < level; i++) {
+                mLevelAccelerator *= ACCELERATOR_INCREASE_PER_LEVEL_FACTOR;
+            }
+
+            String newDifficulty = prefs.getString(getString(R.string.prefs_difficulty_key), "-1");
+            Log.d(DEBUG_TAG, "CounterActivity shared prefs changed!!!: " + newDifficulty +
+                    "\n new accelerator: " + mLevelAccelerator);
+
+
+
+        } else {
+            Log.e(DEBUG_TAG, "Shared Prefs not working!!!!!!!!!!");
+        }
 
     }
 }
