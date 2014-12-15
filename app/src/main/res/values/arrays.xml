@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="prefs_difficulty_settings">
+        <item
+            >EASY</item>
+        <item
+            >MEDIUM</item>
+        <item
+            >HARD</item>
+    </string-array>
+
+    <string-array name="prefs_difficulty_values">
+        <item
+            >@string/prefs_difficulty_values_1</item>
+        <item
+            >@string/prefs_difficulty_values_2</item>
+        <item
+            >@string/prefs_difficulty_values_3</item>
+    </string-array>
+</resources>

@@ -1,9 +1,11 @@
 package com.paceraudio.numberreactor.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -23,7 +25,8 @@ import java.util.Random;
 // class using Threads and Handlers instead of AsyncTask. Performance seems to be the same.
 
 public class CounterActivity extends FragmentActivity implements UpdateDbListener,
-        ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener {
+        ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String DEBUG_TAG = "jwc";
 
@@ -71,7 +74,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     private static final int TURNS_PER_LEVEL = 2;
-    private final static double BEGINNING_ACCELERATOR_LEVEL_ONE = .7;
+    private static final double BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY = .3;
+    private final static double BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL = .5;
+    private static final double BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD = .7;
     private static int LIFE_LOSS_THRESHOLD = 85;
     private static double ACCELERATOR_INCREASE_PER_LEVEL_FACTOR = 1.05;
     private static int LIVES_PER_LEVEL = 4;
@@ -87,6 +92,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             "fonts/digital-7-mono.ttf";
     private static final String ROBOTO_THIN_FONT_PATH =
             "fonts/Roboto-Thin.ttf";
+
+
+//    private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
 
 
     @Override
@@ -108,11 +116,16 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mFrameStartButton = (FrameLayout) findViewById(R.id.frame_b_start);
         mStopButton = (Button) findViewById(R.id.b_stop);
         mFrameStopButton = (FrameLayout) findViewById(R.id.frame_b_stop);
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
 
 //        MyTypefaces myTypefaces = MyTypefaces.getInstance();
 
@@ -133,7 +146,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
 //        mAccelerator = mLevelAccelerator;
 
-//      TODO make sure this doesn't run when user hits back button from seeing game stats.  Level was rising. Set intent to null? Or make a boolean isIntentChecked?
+//      TODO make sure this doesn't run when user hits back button from seeing game stats.  Level
+// was rising. Set intent to null? Or make a boolean isIntentChecked?
         Intent intent = getIntent();
         if (doesOutIntentHaveExtras(intent)) {
             setGameValuesForNextLevel();
@@ -177,7 +191,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                                 if (mCount == 0) {
                                                     Log.d(DEBUG_TAG,
                                                             String.format("Elapsed millis on " +
-                                                                    "counter update %5d",
+                                                                            "counter update %5d",
                                                                     mElapsedTimeMillis));
                                                 }
                                                 mCount++;
@@ -244,6 +258,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
         if (id == R.id.action_view_game_stats) {
@@ -333,8 +349,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
 
-
-
     private void displayTarget(double target) {
         mTvTarget.setText(getString(R.string.target) + " " + String.format("%.2f", target));
     }
@@ -349,7 +363,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     private void displayLives() {
-        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " +  mState.getLivesRemaining());
+        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + mState
+                .getLivesRemaining());
     }
 
     private void displayScore() {
@@ -357,7 +372,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     private void displayLevel() {
-        mTvLevel.setText(getString(R.string.level) +  " " + mState.getLevel());
+        mTvLevel.setText(getString(R.string.level) + " " + mState.getLevel());
     }
 
     private void displayAllGameInfo() {
@@ -384,10 +399,21 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
 
-
     private void setInitialTimeValuesLevelOne() {
+//        Get shared prefs and see what the difficulty level is set to.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String difficultyLevel = prefs.getString(getString(R.string.prefs_difficulty_key), "1");
+        if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_1))) {
+            mLevelAccelerator = BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY;
+        }
+        if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_2))) {
+            mLevelAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL;
+        }
+        if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_3))) {
+            mLevelAccelerator = BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD;
+        }
+
         mTarget = BEGINNING_TARGET_LEVEL_ONE;
-        mLevelAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE;
         mAccelerator = mLevelAccelerator;
         mElapsedAcceleratedCount = 0;
         mElapsedTimeMillis = 0;
@@ -444,7 +470,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mState.setLevel(newLevel);
 //        Set target and accelerator to their beginning levels, and increase them based on the
 //        current level
-        mLevelAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE;
+        mLevelAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL;
 //        mLevelTarget = BEGINNING_TARGET_LEVEL_ONE;
         for (int i = 1; i < newLevel + 1; i++) {
             mLevelAccelerator *= ACCELERATOR_INCREASE_PER_LEVEL_FACTOR;
@@ -483,12 +509,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         Log.d(DEBUG_TAG, "intent has extras: " + hasExtras);
         return hasExtras;
     }
-//    TODO finish this method for checking for a bonus life from FadeCounter in game-structure branch
+
+    //    TODO finish this method for checking for a bonus life from FadeCounter in
+    // game-structure branch
     private void checkOurIntentValues(Intent intent) {
 
     }
-
-
 
 
     private void resetCounterToZero() {
@@ -628,5 +654,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         finish();
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+
+    }
 }
 

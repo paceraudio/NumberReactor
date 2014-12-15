@@ -20,6 +20,11 @@
     <string name="out_of_lives_dialog">You are out of lives. Would you like to try again?</string>
     <string name="exit">EXIT</string>
     <string name="OK">OK</string>
+    <string name="prefs_title_select_difficulty">SELECT YOUR DIFFICULTY</string>
+    <string name="prefs_difficulty_key">prefsDifficultyKey</string>
+    <string name="prefs_difficulty_values_1">1</string>
+    <string name="prefs_difficulty_values_2">2</string>
+    <string name="prefs_difficulty_values_3">3</string>
     <string name="title_activity_fade_counter">FadeCounterActivity</string>
     <string name="title_activity_fading_counter">FadingCounterActivity</string>
     <string name="title_activity_fade_out_counter">FadeOutCounterActivity</string>

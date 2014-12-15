@@ -5,6 +5,7 @@ package com.paceraudio.numberreactor.app;
  */
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class ApplicationState extends Application{
     private int gameNumber;
     private double lastTarget;
 
+//    private SharedPreferences prefs;
+
 
 
     private final int NUM_OF_LIVES_PER_LEVEL = 4;
@@ -33,7 +36,7 @@ public class ApplicationState extends Application{
         scoreList = new ArrayList<Integer>();
         livesRemaining = NUM_OF_LIVES_PER_LEVEL;
         gameNumber = 0;
-
+//        prefs = getSharedPreferences(getString(R.string.app_state_shared_prefs), MODE_PRIVATE);
     }
 
     public int getNumOfLivesPerLevel() {
@@ -99,4 +102,10 @@ public class ApplicationState extends Application{
         formattedDate = gameDate.format(c.getTime());
         return formattedDate;
     }
+
+//    public SharedPreferences getPrefs() {
+//        return prefs;
+//    }
+
+
 }
