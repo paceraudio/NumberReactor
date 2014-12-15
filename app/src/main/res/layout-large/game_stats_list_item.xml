@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/blackRed"
+              android:weightSum="100"
+              android:layout_margin="4dp">
+
+    <TextView
+        android:id="@+id/list_t_v_game_number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="20"
+        android:textColor="@color/orange"
+        android:textSize="45sp"
+        android:gravity="right"
+        android:paddingRight="20dp"
+        android:text="32"/>
+
+    <TextView
+        android:id="@+id/list_t_v_game_date"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="40"
+        android:textColor="@color/orange"
+        android:gravity="center"
+        android:textSize="20sp"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="40"
+        android:weightSum="100"
+        android:paddingLeft="30dp">
+
+        <TextView
+            android:id="@+id/list_t_v_game_level"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/orange"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/list_t_v_game_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/orange"
+            android:textSize="20sp"/>
+
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

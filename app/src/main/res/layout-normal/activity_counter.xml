@@ -48,20 +48,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fade_linearLayout"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="60dp"
         android:background="@color/brown"
         android:padding="2dp"
         android:layout_centerInParent="true">
 
         <TextView
             android:id="@+id/t_v_fade_counter"
-            android:layout_width="280dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:background="@color/blackRed"
             android:gravity="center_horizontal"
             android:text="@string/zero_point_zero"
             android:textColor="@color/red"
-            android:textSize="110sp"
+            android:textSize="115sp"
             android:typeface="normal"
             />
 

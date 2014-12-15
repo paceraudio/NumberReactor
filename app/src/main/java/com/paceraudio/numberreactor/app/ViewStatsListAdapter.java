@@ -52,7 +52,7 @@ public class ViewStatsListAdapter extends BaseAdapter {
         }
 
         TextView gameNumberTV = (TextView) convertView.findViewById(R.id.list_t_v_game_number);
-        gameNumberTV.setText("Game Number: " + Integer.toString(gameStats.getmGameNumber()));
+        gameNumberTV.setText(Integer.toString(gameStats.getmGameNumber()));
 
         TextView gameDateTV = (TextView) convertView.findViewById(R.id.list_t_v_game_date);
         gameDateTV.setText("Date: " + gameStats.getmGameDate());

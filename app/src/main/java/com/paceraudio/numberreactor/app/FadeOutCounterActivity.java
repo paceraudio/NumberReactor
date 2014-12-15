@@ -19,7 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-public class FadeOutCounterActivity extends FragmentActivity implements FadeCounterListener, ResetNextTurnListener, FadeCountDialogFragment.OnFragmentInteractionListener {
+public class FadeOutCounterActivity extends FragmentActivity implements FadeCounterListener, ResetNextTurnListener {
 
     static final String DEBUG_TAG = "jwc";
 
@@ -55,7 +55,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
     private static final int NORMAL_TURN_RESET = 0;
 
 
-    DialogFragment mDialogFragment;
+//    DialogFragment mDialogFragment;
     Handler mHandler;
     Thread mFadeCounterThread;
     DBHelper mDbHelper;
@@ -92,7 +92,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         mFadeCounterColor = mTvFadeCounter.getCurrentTextColor();
         mAlphaValue = Color.alpha(mFadeCounterColor);
         mRunningFadeTime = Color.red(mFadeCounterColor);
-        mGreenValue = Color.red(mFadeCounterColor);
+        mGreenValue = Color.green(mFadeCounterColor);
         mBlueValue = Color.blue(mFadeCounterColor);
 
 
@@ -200,7 +200,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
 
     public void onFadeCountCancelled(Double seconds) {
         mTvFadeCounter.setText(String.format("%.2f", seconds));
-        mTvFadeCounter.setTextColor(getResources().getColor(R.color.blackRed));
+        mTvFadeCounter.setTextColor(mFadeCounterColor);
         int level = mState.getLevel();
         ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvFadeCounter);
         resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY);
@@ -223,11 +223,11 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         mTvFadeCounter.setTextColor(0xffff0000);
     }
 
-    @Override
-    public void onFragmentInteraction() {
-        Log.d(DEBUG_TAG, "onFragmentInteraction running in FadeOutCounterActivity");
-        mDialogFragment.dismiss();
-    }
+//    @Override
+//    public void onFragmentInteraction() {
+//        Log.d(DEBUG_TAG, "onFragmentInteraction running in FadeOutCounterActivity");
+//        mDialogFragment.dismiss();
+//    }
 
     private void compareUserValueToTarget(String userValue, String target, TextView tv) {
         if (userValue.equals(target)) {

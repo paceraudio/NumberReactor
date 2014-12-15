@@ -133,13 +133,14 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
 //        mAccelerator = mLevelAccelerator;
 
-
+//      TODO make sure this doesn't run when user hits back button from seeing game stats.  Level was rising. Set intent to null? Or make a boolean isIntentChecked?
         Intent intent = getIntent();
         if (doesOutIntentHaveExtras(intent)) {
             setGameValuesForNextLevel();
         } else {
             setInitialTimeValuesLevelOne();
         }
+        intent = null;
 
         mHandler = new Handler() {
 

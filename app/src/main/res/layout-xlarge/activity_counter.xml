@@ -10,7 +10,7 @@
                 tools:context="com.paceraudio.numberreactor.app.MainActivity">
 
     <LinearLayout
-        android:id="@+id/fade_linearLayout"
+        android:id="@+id/linearLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -21,47 +21,47 @@
         android:weightSum="100">
 
         <TextView
-            android:id="@+id/t_v_fade_target"
+            android:id="@+id/t_v_target"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="50"
             android:paddingLeft="0dp"
             android:text="@string/target"
             android:textColor="@color/red"
-            android:textSize="15sp"/>
+            android:textSize="25sp"/>
 
         <TextView
-            android:id="@+id/t_v_fade_accuracy_rating"
+            android:id="@+id/t_v_accuracy_rating"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="50"
             android:gravity="right"
             android:text="@string/accuracy"
             android:textColor="@color/red"
-            android:textSize="15sp"
+            android:textSize="25sp"
             />
 
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/fade_frame_counter"
+        android:id="@+id/frame_counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fade_linearLayout"
-        android:layout_marginTop="50dp"
+        android:layout_below="@+id/linearLayout"
+        android:layout_marginTop="91dp"
         android:background="@color/brown"
         android:padding="2dp"
-        android:layout_centerInParent="true">
+        android:layout_centerHorizontal="true">
 
         <TextView
-            android:id="@+id/t_v_fade_counter"
-            android:layout_width="280dp"
+            android:id="@+id/t_v_counter"
+            android:layout_width="560dp"
             android:layout_height="wrap_content"
-            android:background="@color/blackRed"
+            android:background="@android:color/black"
             android:gravity="center_horizontal"
             android:text="@string/zero_point_zero"
             android:textColor="@color/red"
-            android:textSize="110sp"
+            android:textSize="220sp"
             android:typeface="normal"
             />
 
@@ -69,7 +69,7 @@
 
 
     <LinearLayout
-        android:id="@+id/l_l_fade_game_info"
+        android:id="@+id/l_l_game_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -80,89 +80,97 @@
         android:weightSum="100">
 
         <TextView
-            android:id="@+id/t_v_fade_lives_remaining"
+            android:id="@+id/t_v_lives_remaining"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="33"
+            android:background="@color/darkBlackRed"
             android:gravity="left"
             android:text="@string/lives_remaining"
             android:textColor="@color/red"
-            android:textSize="15sp"
+            android:textSize="24sp"
             />
 
         <TextView
-            android:id="@+id/t_v_fade_score"
+            android:id="@+id/t_v_score"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="33"
+            android:background="@color/darkBlackRed"
             android:gravity="center_horizontal"
             android:text="@string/score"
             android:textColor="@color/red"
-            android:textSize="15sp"
+            android:textSize="24sp"
             />
 
         <TextView
-            android:id="@+id/t_v_fade_level"
+            android:id="@+id/t_v_level"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="33"
+            android:background="@color/darkBlackRed"
             android:gravity="right"
             android:text="@string/level"
             android:textColor="@color/red"
-            android:textSize="15sp"
+            android:textSize="24sp"
             />
 
     </LinearLayout>
 
 
     <FrameLayout
-        android:id="@+id/frame_fade_b_start"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_alignLeft="@+id/fade_frame_counter"
-        android:layout_alignTop="@+id/fade_frame_b_stop"
-        android:layout_marginLeft="15dp"
+        android:id="@+id/frame_b_start"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignLeft="@+id/frame_counter"
+        android:layout_alignTop="@+id/frame_b_stop"
+        android:layout_marginLeft="30dp"
         android:background="@color/brown"
         android:gravity="center"
         android:padding="2dp">
 
         <Button
-            android:id="@+id/fade_b_start"
+            android:id="@+id/b_start"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/darkBlackRed"
             android:text="@string/start"
             android:textColor="@color/grey"
-            android:textSize="45sp"
+            android:textSize="90sp"
             android:typeface="normal"
             />
 
 
-        ></FrameLayout>
+    ></FrameLayout>
 
     <FrameLayout
-        android:id="@+id/fade_frame_b_stop"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_above="@+id/l_l_fade_game_info"
-        android:layout_alignRight="@+id/fade_frame_counter"
-        android:layout_marginBottom="35dp"
-        android:layout_marginRight="15dp"
+        android:id="@+id/frame_b_stop"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_above="@+id/l_l_game_info"
+        android:layout_alignRight="@+id/frame_counter"
+        android:layout_marginBottom="58dp"
+        android:layout_marginRight="30dp"
         android:background="@color/brown"
         android:gravity="center"
         android:padding="2dp">
 
-        <Button
-            android:id="@+id/fade_b_stop"
+         <Button
+            android:id="@+id/b_stop"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/darkBlackRed"
             android:text="@string/stop"
             android:textColor="@color/grey"
-            android:textSize="45sp"
+            android:textSize="90sp"
             android:typeface="normal"
             />
 
-    </FrameLayout>
+
+
+        </FrameLayout>
+
+
+
 
 </RelativeLayout>

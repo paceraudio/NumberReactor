@@ -27,7 +27,7 @@
             android:layout_weight="50"
             android:paddingLeft="0dp"
             android:text="@string/target"
-            android:textColor="@color/red"
+            android:textColor="@color/lightBlue"
             android:textSize="15sp"/>
 
         <TextView
@@ -37,7 +37,7 @@
             android:layout_weight="50"
             android:gravity="right"
             android:text="@string/accuracy"
-            android:textColor="@color/red"
+            android:textColor="@color/lightBlue"
             android:textSize="15sp"
             />
 
@@ -48,20 +48,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fade_linearLayout"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="60dp"
         android:background="@color/brown"
         android:padding="2dp"
         android:layout_centerInParent="true">
 
         <TextView
             android:id="@+id/t_v_fade_counter"
-            android:layout_width="280dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:background="@color/blackRed"
             android:gravity="center_horizontal"
             android:text="@string/zero_point_zero"
-            android:textColor="@color/red"
-            android:textSize="110sp"
+            android:textColor="@color/lightBlue"
+            android:textSize="115sp"
             android:typeface="normal"
             />
 
@@ -86,7 +86,7 @@
             android:layout_weight="33"
             android:gravity="left"
             android:text="@string/lives_remaining"
-            android:textColor="@color/red"
+            android:textColor="@color/lightBlue"
             android:textSize="15sp"
             />
 
@@ -97,7 +97,7 @@
             android:layout_weight="33"
             android:gravity="center_horizontal"
             android:text="@string/score"
-            android:textColor="@color/red"
+            android:textColor="@color/lightBlue"
             android:textSize="15sp"
             />
 
@@ -108,7 +108,7 @@
             android:layout_weight="33"
             android:gravity="right"
             android:text="@string/level"
-            android:textColor="@color/red"
+            android:textColor="@color/lightBlue"
             android:textSize="15sp"
             />
 
