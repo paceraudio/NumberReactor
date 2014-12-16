@@ -49,7 +49,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
 
     private static final String FADE_COUNT_DIALOG_FRAGMENT = "customFadeCountDialogFragment";
     private static final String EXTRA_LIFE_FROM_FADE_COUNTER_ROUND = "extraLifeFromFadeCounterRound";
-    private static final String LEVEL_COMPLETED = "levelCompleted";
+//    private static final String LEVEL_COMPLETED = "levelCompleted";
 
     private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
     private static final int NORMAL_TURN_RESET = 0;
@@ -91,7 +91,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         mNextCount = .01;
         mFadeCounterColor = mTvFadeCounter.getCurrentTextColor();
         mAlphaValue = Color.alpha(mFadeCounterColor);
-        mRunningFadeTime = Color.red(mFadeCounterColor);
+        mRedValue= Color.red(mFadeCounterColor);
         mGreenValue = Color.green(mFadeCounterColor);
         mBlueValue = Color.blue(mFadeCounterColor);
 
@@ -213,8 +213,10 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         Intent intent = new Intent(this, CounterActivity.class);
 //        TODO make this t or f based on performance
         intent.putExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, true);
-        intent.putExtra(LEVEL_COMPLETED, true);
-        startActivity(intent);
+//        intent.putExtra(LEVEL_COMPLETED, true);
+        setResult(RESULT_OK, intent);
+//        startActivity(intent);
+        finish();
     }
 
     @Override
