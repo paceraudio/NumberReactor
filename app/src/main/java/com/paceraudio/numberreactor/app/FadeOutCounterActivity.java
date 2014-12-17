@@ -6,10 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -228,8 +225,8 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
     private void compareUserValueToTarget(String userValue, String target, TextView tv) {
         if (userValue.equals(target)) {
             tv.setTextColor(getResources().getColor(R.color.green));
-            int chancesLeft = mState.getLivesRemaining();
-            mState.setLivesRemaining(chancesLeft + 1);
+            int chancesLeft = mState.getLives();
+            mState.setLives(chancesLeft + 1);
         } else {
             tv.setTextColor(getResources().getColor(R.color.red));
         }

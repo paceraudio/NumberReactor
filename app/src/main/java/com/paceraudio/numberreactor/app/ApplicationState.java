@@ -5,7 +5,7 @@ package com.paceraudio.numberreactor.app;
  */
 
 import android.app.Application;
-import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,33 +14,39 @@ import java.util.List;
 
 public class ApplicationState extends Application{
 
-    private String formattedDate;
-    private int level;
-    private int runningScoreTotal;
-    private List<Integer> scoreList;
-    private int gameNumber;
+    private int turn;
     private double lastTarget;
+    private double target;
+    private int overallAccuracy;
+    private int turnAccuracy;
+    private int lives;
+    private int turnScore;
+    private int runningScoreTotal;
+    private int level;
+    private double accelerator;
 
-//    private SharedPreferences prefs;
+    private List<Integer> scoreList;
+    private List<Integer> accuracyList;
 
+    private static final int BEGINNING_NUMBER_OF_LIVES = 4;
+    private static final int LIFE_LOSS_THRESHOLD = 80;
 
-
-    private final int NUM_OF_LIVES_PER_LEVEL = 4;
-    private int livesRemaining;
-
+    private static final String DEBUG_TAG = "jwc";
 
     @Override
     public void onCreate() {
         level = 1;
         runningScoreTotal = 0;
         scoreList = new ArrayList<Integer>();
-        livesRemaining = NUM_OF_LIVES_PER_LEVEL;
-        gameNumber = 0;
-//        prefs = getSharedPreferences(getString(R.string.app_state_shared_prefs), MODE_PRIVATE);
-    }
-
-    public int getNumOfLivesPerLevel() {
-        return NUM_OF_LIVES_PER_LEVEL;
+        accuracyList = new ArrayList<Integer>();
+        lives = BEGINNING_NUMBER_OF_LIVES;
+//        To be set by the Activities when they begin.  We need ApplicationState to keep track of it
+//        in order to consolidate the code for updating the displayed game values in each Activity
+        target = 0;
+        turnAccuracy = 0;
+        turnScore = 0;
+        accelerator = 0;
+        turn = 0;
     }
 
     public int getLevel() {
@@ -51,25 +57,61 @@ public class ApplicationState extends Application{
         level = l;
     }
 
-    public List<Integer> getScoreList() {
-        return scoreList;
+
+
+    public int getLives() {
+        return lives;
     }
 
-    public void setScoreList(List<Integer> list) {
-        list = scoreList;
+    public void setLives(int lives) {
+        this.lives = lives;
     }
 
-
-    public int getLivesRemaining() {
-        return livesRemaining;
+    public double getTarget() {
+        return target;
     }
 
-    public void setLivesRemaining(int lives) {
-        livesRemaining = lives;
+    public void setTarget(double target) {
+        this.target = target;
     }
 
+    public int getTurn() {
+        return turn;
+    }
 
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
 
+    public double getAccelerator() {
+        return accelerator;
+    }
+
+    public void setAccelerator(double accelerator) {
+        this.accelerator = accelerator;
+    }
+
+    public int getTurnAccuracy() {
+        return turnAccuracy;
+    }
+
+    public void setTurnAccuracy(int turnAccuracy) {
+        this.turnAccuracy = turnAccuracy;
+    }
+
+    public int getOverallAccuracy() {return overallAccuracy; }
+
+    public void setOverallAccuracy(int accuracy) {
+        accuracyList.add(accuracy);
+        int listSize = accuracyList.size();
+        int accuracySum = 0;
+        for (int i = 0; i < listSize; i++) {
+            int accuracyTurnRating = accuracyList.get(i);
+            accuracySum += accuracyTurnRating;
+        }
+        double overallAccuracyDouble = accuracySum / listSize;
+        overallAccuracy = (int) Math.round(overallAccuracyDouble);
+    }
     public int getRunningScoreTotal() {
         return runningScoreTotal;
     }
@@ -82,12 +124,21 @@ public class ApplicationState extends Application{
         this.lastTarget = lastTarget;
     }
 
+    public int getTurnScore() {
+        return turnScore;
+    }
+
+    public void setTurnScore(int turnScore) {
+        this.turnScore = turnScore;
+    }
+
     public void setRunningScoreTotal(int newScore) {
         scoreList.add(newScore);
-        runningScoreTotal = 0;
-        for(int i = 0; i < scoreList.size(); i++) {
-            runningScoreTotal += scoreList.get(i);
-        }
+        runningScoreTotal += newScore;
+//        runningScoreTotal = 0;
+//        for(int i = 0; i < scoreList.size(); i++) {
+//            runningScoreTotal += scoreList.get(i);
+//        }
     }
 
     public void resetScoreForNewGame() {
@@ -99,13 +150,55 @@ public class ApplicationState extends Application{
         //TODO see if this is the best place for this?
         Calendar c = Calendar.getInstance();
         SimpleDateFormat gameDate = new SimpleDateFormat("dd-MMM-yyyy");
-        formattedDate = gameDate.format(c.getTime());
-        return formattedDate;
+        return gameDate.format(c.getTime());
     }
 
-//    public SharedPreferences getPrefs() {
-//        return prefs;
-//    }
+    public List<Integer> getScoreList() {
+        return scoreList;
+    }
+
+    public void setScoreList(List<Integer> list) {
+        list = scoreList;
+    }
 
 
+//    Methods for calculating the game values stored in this class
+    public double roundElapAccelCount(double accelCount) {
+        return ((int) (accelCount * 100)) /100d;
+    }
+    public int calcAccuracy(double target, double elapAccelCount) {
+//        double counterToHundredths = ((int) (counter * 100)) / 100d;
+        double error = Math.abs(target - elapAccelCount);
+        double accuracy = ((target - error) / target) * 100;
+        int accuracyInt = (int) Math.round(accuracy);
+        Log.d(DEBUG_TAG, "calcAccuracy()return accuracy: " + accuracy);
+        return accuracyInt;
+    }
+
+    public void checkAccuracyAgainstLives() {
+        if (turnAccuracy < LIFE_LOSS_THRESHOLD) {
+            lives -= 1;
+            Log.d(DEBUG_TAG, "should lose life: " + Boolean.toString(turnAccuracy <
+                    LIFE_LOSS_THRESHOLD) + " lives remaining: " + lives);
+        } else if (turnAccuracy >= 99) {
+            lives += 1;
+        }
+//        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + mState
+//                .getLives());
+        Log.d(DEBUG_TAG, "checkAccuracyAgainstLives lives remaining: " + lives);
+    }
+
+    public int calcAccuracyResult(double accuracy) {
+        return (int) Math.round(accuracy);
+    }
+
+    public int calcScore(int accuracy) {
+        int score = 0;
+        int margin = 80;
+        int scoreToCalc = accuracy - margin;
+        if (scoreToCalc > 0) {
+            score = scoreToCalc * 5;
+        }
+        return score;
+    }
 }
