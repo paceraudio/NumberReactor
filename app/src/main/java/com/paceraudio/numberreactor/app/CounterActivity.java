@@ -34,10 +34,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     //    private long startTime;
     private boolean mIsStartClickable;
 
-    private Random mGen;
     public double mTarget;
     public double mLevelTarget;
-    public int maxTarget = 8;
 
     // upper buffer over the mTarget number
     int upperBuffer = 5;
@@ -56,7 +54,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     private final static String OUT_OF_LIVES_DIALOG = "outOfLivesDialog";
     private DialogFragment mDialogFragment;
-//    TimeCounter mTimeCounter;
 
     Handler mHandler;
     Thread mCounterThread;
@@ -66,6 +63,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     long mStartTime;
     long mElapsedTimeMillis;
     double mElapsedAcceleratedCount;
+    String mAccelCountString;
     double mNextCount;
     double mAccelerator;
     double mLevelAccelerator;
@@ -100,14 +98,10 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private boolean mIsListeningForSharedPrefChanges = false;
 
 
-//    private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_counter);
-//        mCurrentTurn = 0;
         mState = (ApplicationState) getApplicationContext();
         mDbHelper = new DBHelper(this);
 
@@ -124,15 +118,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mFrameStopButton = (FrameLayout) findViewById(R.id.frame_b_stop);
 
         Log.d(DEBUG_TAG, "\n**********NEW GAME*********");
-
-//        Intent intent = getIntent();
-//        TODO this may not be needed with startActivityForResult no being used to launch
-// FadeCounter
-//        if (doesOurIntentHaveExtras(intent)) {
-//            setGameValuesForNextLevel();
-//        } else {
-//            setInitialTimeValuesLevelOne();
-//        }
 
         if (!mIsListeningForSharedPrefChanges) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -173,15 +158,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
         mIsStartClickable = true;
 
-//      TODO make sure this doesn't run when user hits back button from seeing game stats.  Level
-//      was rising. Set intent to null? Or make a boolean isIntentChecked?
-//        Intent intent = getIntent();
-//        if (doesOurIntentHaveExtras(intent)) {
-//            setGameValuesForNextLevel();
-//        } else {
-//            setInitialTimeValuesLevelOne();
-//        }
-
         mHandler = new Handler() {
 
             @Override
@@ -191,7 +167,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         };
 //      mAccelerator increases with every iteration of timing loop, so we always need to reset its
 //      value to the acceleration rate for the level (mLevelAccelerator)
-        mAccelerator = mLevelAccelerator;
+//        mAccelerator = mLevelAccelerator;
         mStartButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -235,7 +211,16 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                         mAccelerator *= 1.0004;
                                     }
                                 }
-                                if (mCounterThread.isInterrupted()) return;
+                                if (mCounterThread.isInterrupted()) {
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            onCounterStopped(mElapsedAcceleratedCount, mCount);
+                                        }
+                                    });
+                                    return;
+                                }
+
 
                                 if (mElapsedAcceleratedCount >= mTarget + upperBuffer) {
                                     mHandler.post(new Runnable() {
@@ -263,13 +248,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    mCounterThread.interrupt();
                     long stopClickMillis = SystemClock.elapsedRealtime() - mStartTime;
                     Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount of " +
                             "background thread cycles: %5d", stopClickMillis, mCount));
-                    onCounterStopped(mElapsedAcceleratedCount, mCount);
                     showStopButtonEngaged();
                     showStartButtonNotEngaged();
-                    mCounterThread.interrupt();
                 }
                 return false;
             }
@@ -336,20 +320,24 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     // runs when mCounter thread is  is cancelled
     public void onCounterStopped(double accelCount, int count) {
-        //Log.d(DEBUG_TAG, "Main Activity: Accelerated Count via onCounterStopped: " +
-        // accelCount);
 
-        // calc the accuracy
-        double accuracy = calcAccuracy(mTarget, accelCount);
+//      Round the elapsed accelerated count to 2 decimal places
+        double roundedCount = roundElapAccelCount(accelCount);
+
+//      Convert rounded value to a String to display
+        String roundedCountStr = String.format("%.2f", roundedCount);
+
+//        calc the accuracy
+        double accuracy = calcAccuracy(mTarget, roundedCount);
 
 //        calc the score
         int score = calcScore(accuracy);
 
 //        Display the accuracy
-        displayAccuracyResult(accuracy);
+        int accuracyPercentage = displayAccuracyResult(accuracy);
 
         long onCounterCancelledElapsedTime = SystemClock.elapsedRealtime() - mStartTime;
-        Log.d(DEBUG_TAG, "onCountCancElapsedTime: " + Long.toString(onCounterCancelledElapsedTime));
+        Log.d(DEBUG_TAG, "onCounterStopped() elapsed millis: " + Long.toString(onCounterCancelledElapsedTime));
 
         // subtract a life if score is poor
         checkScoreAgainstLives(score);
@@ -361,12 +349,20 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             score += 100;
 
             mTvCounter.setTextColor(getResources().getColor(R.color.green));
-        } else if (accuracy > LIFE_LOSS_THRESHOLD && accuracy < 98) {
+        } else if (accuracy > LIFE_LOSS_THRESHOLD && accuracy < 99) {
             mTvCounter.setTextColor(getResources().getColor(R.color.orange));
         } else {
             mTvCounter.setTextColor(getResources().getColor(R.color.red));
         }
-        mTvCounter.setText(String.format("%.2f", accelCount));
+
+        mTvCounter.setText(roundedCountStr);
+        Log.d(DEBUG_TAG, "**********onCounterStopped()**********" +
+            "\n  elapsed accelerated count: " + roundedCount +
+            "\n elapsed accelerated string: " + roundedCountStr +
+            "\n                     target: " + mTarget +
+            "\n                   accuracy: " + accuracyPercentage + "%");
+
+        mTvAccuracy.setText(getString(R.string.accuracy) + " " + accuracyPercentage + "%");
 
         // add the score to the ApplicationState score
         addToStateRunningScore(score);
@@ -377,13 +373,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
         updateScoreDbAsync.execute(mState.getRunningScoreTotal());
     }
-
-
-//    private double generateTarget() {
-////        mTarget = mGen.nextInt((maxTarget + 1) - mBeginningTargetLevelOne) +
-////         mBeginningTargetLevelOne;
-//        return mTarget;
-//    }
 
     private void showStartButtonEngaged() {
         mFrameStartButton.setBackgroundColor(getResources().getColor(R.color.green));
@@ -405,18 +394,17 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mStopButton.setTextColor(getResources().getColor(R.color.grey));
     }
 
-
     private void displayTarget(double target) {
         mTvTarget.setText(getString(R.string.target) + " " + String.format("%.2f", target));
     }
 
     private void displayAccuracy() {
-        mTvAccuracy.setText(getString(R.string.accuracy) + "    ");
+        mTvAccuracy.setText(getString(R.string.accuracy));
     }
 
-    private void displayAccuracyResult(double accuracy) {
-        int percentage = (int) accuracy;
-        mTvAccuracy.setText(getString(R.string.accuracy) + " " + percentage + "%");
+    private int displayAccuracyResult(double accuracy) {
+        int percentage = (int) Math.round(accuracy);
+        return percentage;
     }
 
     private void displayLives() {
@@ -439,16 +427,22 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         displayScore();
         displayLevel();
         Log.d(DEBUG_TAG, "displayAllGameInfo ()********" +
-                "\n Level: " + mState.getLevel() +
-                "\n Target: " + mTarget +
-                "\n Accelerator: " + mAccelerator +
-                "\n Turn: " + mCurrentTurn);
-
+                        "\n Level: " + mState.getLevel() +
+                        "\n Turn: " + mCurrentTurn +
+                        "\n Score: " + mState.getRunningScoreTotal() +
+                        "\n Target: " + mTarget +
+                        "\n Accelerator: " + mAccelerator);
     }
 
-    private double calcAccuracy(double target, double counter) {
-        double error = Math.abs(target - counter);
-        return ((target - error) / target) * 100;
+    private double roundElapAccelCount(double accelCount) {
+        return ((int) (accelCount * 100)) /100d;
+    }
+    private double calcAccuracy(double target, double elapAccelCount) {
+//        double counterToHundredths = ((int) (counter * 100)) / 100d;
+        double error = Math.abs(target - elapAccelCount);
+        double accuracy = ((target - error) / target) * 100;
+        Log.d(DEBUG_TAG, "calcAccuracy()return accuracy: " + accuracy);
+        return accuracy;
     }
 
     private int calcScore(double accuracy) {
@@ -460,7 +454,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         }
         return score;
     }
-
 
     private void resetBasicTimeValues() {
         mElapsedAcceleratedCount = 0;
@@ -505,7 +498,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mTarget++;
         mCurrentTurn++;
         resetCounterToZero();
-//        displayTarget(mTarget);
         displayAllGameInfo();
     }
 
@@ -523,8 +515,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         resetTurnsToFirstTurn();
         resetBasicTimeValues();
 
-//        resetLivesToDefaultLivesPerLevel();
-
 //        reset Counter text color to red, it is still at 0 alpha from the ResetNextTurnAsync
 //        because we didn't fade the counter back in before launching FadeCounter
         resetCounterToZero();
@@ -534,58 +524,17 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         displayAllGameInfo();
     }
 
-    //  TODO see if we still need this method
-    private boolean doesOurIntentHaveExtras(Intent intent) {
-        Bundle extras = intent.getExtras();
-        boolean hasExtras = false;
-        if (extras != null) {
-            if (extras.containsKey(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND) && extras.containsKey
-                    (LEVEL_COMPLETED)) {
-                hasExtras = true;
-            }
-        }
-        Log.d(DEBUG_TAG, "intent has extras: " + hasExtras);
-        return hasExtras;
-    }
-
-    //    TODO finish this method for checking for a bonus life from FadeCounter in
-    // game-structure branch
-    private void checkOurIntentValues(Intent intent) {
-
-    }
-
-
     private void resetCounterToZero() {
         mTvCounter.setText(getString(R.string.zero_point_zero));
         mTvCounter.setTextColor(getResources().getColor(R.color.red));
         mIsStartClickable = true;
     }
 
-//    private void resetAccuracy() {
-//        mTvAccuracy.setText(getString(R.string.accuracy));
-//    }
-
-//    private void resetLivesToDefaultLivesPerLevel() {
-//        int numOfLivesPerLevel = LIVES_PER_LEVEL;
-//        mState.setLivesRemaining(numOfLivesPerLevel);
-//    }
-
-    private void resetScoreToZero() {
-        for (int i = 0; i < mState.getScoreList().size(); i++) {
-            if (i == 0) {
-                mState.getScoreList().set(i, 0);
-            } else {
-                mState.getScoreList().remove(i);
-            }
-            mState.setRunningScoreTotal(0);
-        }
-    }
-
     private void resetTurnsToFirstTurn() {
         mCurrentTurn = 1;
     }
 
-    //    this needs to happen before every turn because the accelerator increases with every
+//    this needs to happen before every turn because the accelerator increases with every
 //    iteration of the timing loop
     private void resetAcceleratorToLevelAccelerator() {
         mAccelerator = mLevelAccelerator;
@@ -639,7 +588,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
 //    Checks whether or not to advance to the next Activity. Saves the last target played in mState
-
     private boolean isOutOfTurns(int currentTurn, int maxTurn) {
         if (currentTurn == maxTurn) {
             mState.setLastTarget(mTarget);
@@ -650,7 +598,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     private void launchFadeCounterActivity() {
         Intent intent = new Intent(CounterActivity.this, FadeOutCounterActivity.class);
-//        startActivity(intent);
         startActivityForResult(intent, FADE_COUNTER_REQUEST_CODE);
     }
 
@@ -666,7 +613,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         }
     }
 
-    //    Listener methods for AsyncTasks
+//    Listener methods for AsyncTasks
 //    After the db is updated, we reset for a new turn if we have lives left. We check if
 //    the turn just played was the last, if so, we send a different param to the ResetNextTurnAsync
 //    to avoid fading in a "0.00" fresh counter before launching the new activity.
@@ -688,7 +635,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         } else {
             launchOutOfLivesDialog();
         }
-
     }
 
     //    Runs in onPostExecute of ResetNextTurnAsync
@@ -700,19 +646,15 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             resetTimeValuesBetweenTurns();
             showStopButtonNotEngaged();
             mIsStartClickable = true;
-
         }
     }
 
-
-    //  Dialog fragment interaction methods
+//  Dialog fragment interaction methods
+//    TODO make sure a new row is created in db, because we are starting a new game
     @Override
     public void onOkClicked() {
         mDialogFragment.dismiss();
         setInitialTimeValuesLevelOne();
-//        resetCounterToZero();
-//        resetLivesToDefaultLivesPerLevel();
-//        resetScoreToZero();
     }
 
     @Override
@@ -744,12 +686,13 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 mLevelAccelerator *= ACCELERATOR_INCREASE_PER_LEVEL_FACTOR;
             }
 
+            resetAcceleratorToLevelAccelerator();
+
             Log.d(DEBUG_TAG, "updateDifficultyBasedOnPreferencesAndLevel() running" +
-                    "\n difficulty: " + difficulty +  "\n new accelerator: " + mLevelAccelerator);
+                    "\n difficulty: " + difficulty + "\n new accelerator: " + mLevelAccelerator);
         } else {
             Log.e(DEBUG_TAG, "Shared Prefs not working!!!!!!!!!!");
         }
-
     }
 }
 

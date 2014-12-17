@@ -225,12 +225,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         mTvFadeCounter.setTextColor(0xffff0000);
     }
 
-//    @Override
-//    public void onFragmentInteraction() {
-//        Log.d(DEBUG_TAG, "onFragmentInteraction running in FadeOutCounterActivity");
-//        mDialogFragment.dismiss();
-//    }
-
     private void compareUserValueToTarget(String userValue, String target, TextView tv) {
         if (userValue.equals(target)) {
             tv.setTextColor(getResources().getColor(R.color.green));
