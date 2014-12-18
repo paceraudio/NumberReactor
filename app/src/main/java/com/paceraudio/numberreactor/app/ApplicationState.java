@@ -20,7 +20,7 @@ public class ApplicationState extends Application{
     private int overallAccuracy;
     private int turnAccuracy;
     private int lives;
-    private int turnScore;
+    private int turnPoints;
     private int runningScoreTotal;
     private int level;
     private double accelerator;
@@ -29,7 +29,7 @@ public class ApplicationState extends Application{
     private List<Integer> accuracyList;
 
     private static final int BEGINNING_NUMBER_OF_LIVES = 4;
-    private static final int LIFE_LOSS_THRESHOLD = 80;
+    private static final int LIFE_LOSS_THRESHOLD = 90;
 
     private static final String DEBUG_TAG = "jwc";
 
@@ -44,7 +44,7 @@ public class ApplicationState extends Application{
 //        in order to consolidate the code for updating the displayed game values in each Activity
         target = 0;
         turnAccuracy = 0;
-        turnScore = 0;
+        turnPoints = 0;
         accelerator = 0;
         turn = 0;
     }
@@ -124,12 +124,12 @@ public class ApplicationState extends Application{
         this.lastTarget = lastTarget;
     }
 
-    public int getTurnScore() {
-        return turnScore;
+    public int getTurnPoints() {
+        return turnPoints;
     }
 
-    public void setTurnScore(int turnScore) {
-        this.turnScore = turnScore;
+    public void setTurnPoints(int turnPoints) {
+        this.turnPoints = turnPoints;
     }
 
     public void setRunningScoreTotal(int newScore) {
@@ -180,9 +180,10 @@ public class ApplicationState extends Application{
             lives -= 1;
             Log.d(DEBUG_TAG, "should lose life: " + Boolean.toString(turnAccuracy <
                     LIFE_LOSS_THRESHOLD) + " lives remaining: " + lives);
-        } else if (turnAccuracy >= 99) {
-            lives += 1;
         }
+//        else if (turnAccuracy >= 99) {
+//            lives += 1;
+//        }
 //        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + mState
 //                .getLives());
         Log.d(DEBUG_TAG, "checkAccuracyAgainstLives lives remaining: " + lives);
@@ -194,10 +195,10 @@ public class ApplicationState extends Application{
 
     public int calcScore(int accuracy) {
         int score = 0;
-        int margin = 80;
-        int scoreToCalc = accuracy - margin;
+//        int margin = 80;
+        int scoreToCalc = accuracy - LIFE_LOSS_THRESHOLD;
         if (scoreToCalc > 0) {
-            score = scoreToCalc * 5;
+            score = scoreToCalc;
         }
         return score;
     }

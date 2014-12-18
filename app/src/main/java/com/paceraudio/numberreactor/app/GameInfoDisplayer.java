@@ -60,11 +60,13 @@ public class GameInfoDisplayer {
                 .getLives());
     }
 
-    private void displayTurnScore(TextView tv) {
-        tv.setText(mContext.getString(R.string.score) + " " + mState.getTurnScore());
+    private void displayTurnPoints(TextView tv) {
+//        tv.setTextColor(mContext.getResources().getColor(R.color.orange));
+        tv.setText(mContext.getString(R.string.points) + " " + mState.getTurnPoints());
     }
 
     private void displayScore(TextView tv) {
+//        tv.setTextColor(mContext.getResources().getColor(R.id.));
         tv.setText(mContext.getString(R.string.score) + " " + mState.getRunningScoreTotal());
     }
 
@@ -75,19 +77,25 @@ public class GameInfoDisplayer {
     public void displayImmediateGameInfoAfterTurn(TextView accuracy, TextView lives, TextView score) {
 //        accuracy.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
 //        lives.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
-//        score.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
+//        score.setTextColor(mContext.getResources().getColor(R.color.red));
         displayTurnAccuracy(accuracy);
         displayLives(lives);
-        displayTurnScore(score);
+        displayTurnPoints(score);
+    }
+
+    public void displayImmediateGameInfoAfterFadeCountTurn(TextView accuracy, TextView lives, TextView score) {
+        displayTurnAccuracy(accuracy);
+        displayLives(lives);
     }
 
     public void displayAllGameInfo(TextView target, TextView accuracy, TextView lives, TextView score, TextView level) {
-        accuracy.setTextColor(mContext.getResources().getColor(R.color.red));
-        lives.setTextColor(mContext.getResources().getColor(R.color.red));
-        score.setTextColor(mContext.getResources().getColor(R.color.red));
+//        accuracy.setTextColor(mContext.getResources().getColor(R.color.red));
+//        lives.setTextColor(mContext.getResources().getColor(R.color.red));
+//        score.setTextColor(mContext.getResources().getColor(R.color.red));
         displayTarget(target);
 //        displayTurnAccuracy(accuracy, mState.getTurnAccuracy());
         displayOverallAccuracy(accuracy);
+//        displayTurnAccuracy(accuracy);
         displayLives(lives);
         displayScore(score);
         displayLevel(level);

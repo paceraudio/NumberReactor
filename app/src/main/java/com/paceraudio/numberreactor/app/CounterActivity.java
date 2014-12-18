@@ -207,7 +207,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                             }
                                         });
                                         mNextCount += 0.01;
-                                        mAccelerator *= 1.0004;
+                                        mAccelerator *= 1.0006;
                                     }
                                 }
                                 if (mCounterThread.isInterrupted()) {
@@ -314,7 +314,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     public void onCounterStopped(double accelCount, int count) {
 
 //      Round the elapsed accelerated count to 2 decimal places
-        double roundedCount = roundElapAccelCount(accelCount);
+        double roundedCount = mState.roundElapAccelCount(accelCount);
 
 //      Convert rounded value to a String to display
         String roundedCountStr = String.format("%.2f", roundedCount);
@@ -330,11 +330,11 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
         //  TODO write a method for setting the color based on accuracy
         // set the text color of the counter based on the score
-        if (accuracy >= 99) {
-            score += 100;
+        if (accuracy > 99) {
+            score *= 2;
 
             mTvCounter.setTextColor(getResources().getColor(R.color.green));
-        } else if (accuracy > LIFE_LOSS_THRESHOLD && accuracy < 99) {
+        } else if (accuracy > LIFE_LOSS_THRESHOLD && accuracy <= 99) {
             mTvCounter.setTextColor(getResources().getColor(R.color.orange));
         } else {
             mTvCounter.setTextColor(getResources().getColor(R.color.red));
@@ -348,14 +348,16 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 "\n                   accuracy: " + accuracy + "%");
 
 
-        mState.setTurnScore(score);
+        mState.setTurnPoints(score);
         mState.setRunningScoreTotal(score);
         long onCounterCancelledElapsedTime = SystemClock.elapsedRealtime() - mStartTime;
         Log.d(DEBUG_TAG, "onCounterStopped() elapsed millis: " + Long.toString(onCounterCancelledElapsedTime));
 
         // subtract a life if score is poor
         mState.checkAccuracyAgainstLives();
+//        mTvScore.setTextColor(getResources().getColor(R.color.orange));
         mGameInfoDisplayer.displayImmediateGameInfoAfterTurn(mTvAccuracy, mTvLivesRemaining, mTvScore);
+//        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel);
 
 
 //        async task updating the db score.  onDbScoreUpdatedEndOfTurn() runs in onPostExecute.
@@ -422,6 +424,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mState.setLevel(1);
         mState.resetScoreForNewGame();
         mIsStartClickable = true;
+//        mTvScore.setTextColor(getResources().getColor(R.color.red));
         mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel);
         //        TODO put this in async task
         mDbHelper.insertNewGameRowInDb();
@@ -437,6 +440,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mState.setTurn(mCurrentTurn + 1);
         mCurrentTurn = mState.getTurn();
         resetCounterToZero();
+//        mTvScore.setTextColor(getResources().getColor(R.color.red));
         mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel);
     }
 
@@ -527,9 +531,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == FADE_COUNTER_REQUEST_CODE) {
             boolean addExtraLife = data.getBooleanExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, false);
-            if (addExtraLife) {
-                addBonusLifeToApplicationState();
-            }
+//            if (addExtraLife) {
+//                addBonusLifeToApplicationState();
+//            }
             setGameValuesForNextLevel();
         }
     }
