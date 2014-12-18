@@ -173,7 +173,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
                     if (mIsStartClickable) {
                         mStartTime = SystemClock.elapsedRealtime();
-                        showStartButtonEngaged();
+//                        showStartButtonEngaged();
+                        mGameInfoDisplayer.showStartButtonEngaged(mStartButton, mFrameStartButton);
                         mCounterThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -219,14 +220,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                     return;
                                 }
 
-
+//                              TODO see if this works
                                 if (mElapsedAcceleratedCount >= mTarget + upperBuffer) {
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            onCounterMaxRangeHit(mElapsedAcceleratedCount);
-                                        }
-                                    });
+                                    mCounterThread.interrupt();
                                 }
                             }
                         });
@@ -249,8 +245,10 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                     long stopClickMillis = SystemClock.elapsedRealtime() - mStartTime;
                     Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount of " +
                             "background thread cycles: %5d", stopClickMillis, mCount));
-                    showStopButtonEngaged();
-                    showStartButtonNotEngaged();
+//                    showStopButtonEngaged();
+                    mGameInfoDisplayer.showStopButtonEngaged(mStopButton, mFrameStopButton);
+//                    showStartButtonNotEngaged();
+                    mGameInfoDisplayer.showStartButtonNotEngaged(mStartButton, mFrameStartButton);
                 }
                 return false;
             }
@@ -309,11 +307,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
 
-    public void onCounterMaxRangeHit(Double accelCount) {
-        mTvCounter.setTextColor(getResources().getColor(R.color.red));
-
-        mTvCounter.setText(String.format("%.2f", accelCount));
-    }
+//    public void onCounterMaxRangeHit(Double accelCount) {
+//    }
 
     // runs when mCounter thread is  is cancelled
     public void onCounterStopped(double accelCount, int count) {
@@ -370,6 +365,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         updateScoreDbAsync.execute(mState.getRunningScoreTotal());
     }
 
+/*
     private void showStartButtonEngaged() {
         mFrameStartButton.setBackgroundColor(getResources().getColor(R.color.green));
         mStartButton.setTextColor(getResources().getColor(R.color.green));
@@ -391,6 +387,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
 
+*/
     private double roundElapAccelCount(double accelCount) {
         return ((int) (accelCount * 100)) /100d;
     }
@@ -460,7 +457,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 //        because we didn't fade the counter back in before launching FadeCounter
         resetCounterToZero();
 //        "disengage" the stop button
-        showStopButtonNotEngaged();
+//        showStopButtonNotEngaged();
+        mGameInfoDisplayer.showStopButtonNotEngaged(mStopButton, mFrameStopButton);
 
         mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel);
     }
@@ -567,7 +565,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             launchFadeCounterActivity();
         } else {
             resetTimeValuesBetweenTurns();
-            showStopButtonNotEngaged();
+//            showStopButtonNotEngaged();
+            mGameInfoDisplayer.showStopButtonNotEngaged(mStopButton, mFrameStopButton);
             mIsStartClickable = true;
         }
     }
@@ -596,22 +595,27 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         int level = mState.getLevel();
         String difficulty = prefs.getString(getString(R.string.prefs_difficulty_key), "-1");
         if (!difficulty.equals("-1")) {
+            double tempAccelerator = 0;
             if (difficulty.equals(getString(R.string.prefs_difficulty_values_1))) {
-                mLevelAccelerator = BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY;
+                tempAccelerator = BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY;
+//                mState.setAccelerator(BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY);
             }
             if (difficulty.equals(getString(R.string.prefs_difficulty_values_2))) {
-                mLevelAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL;
+                tempAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL;
+//                mState.setAccelerator(BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL);
             }
             if (difficulty.equals(getString(R.string.prefs_difficulty_values_3))) {
-                mLevelAccelerator = BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD;
-            }
-            for (int i = 1; i < level; i++) {
-                mLevelAccelerator *= ACCELERATOR_INCREASE_PER_LEVEL_FACTOR;
+                tempAccelerator = BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD;
+//                mState.setAccelerator(BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD);
             }
 
+            for (int i = 1; i < level; i++) {
+                tempAccelerator *= ACCELERATOR_INCREASE_PER_LEVEL_FACTOR;
+            }
+            mState.setAccelerator(tempAccelerator);
             resetAcceleratorToStateAccelerator();
             Log.d(DEBUG_TAG, "updateDifficultyBasedOnPreferencesAndLevel() running" +
-                    "\n difficulty: " + difficulty + "\n new accelerator: " + mLevelAccelerator);
+                    "\n difficulty: " + difficulty + "\n new accelerator: " + mState.getAccelerator());
         } else {
             Log.e(DEBUG_TAG, "Shared Prefs not working!!!!!!!!!!");
         }

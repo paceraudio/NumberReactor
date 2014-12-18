@@ -3,6 +3,7 @@ package com.paceraudio.numberreactor.app;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 /**
@@ -21,23 +22,23 @@ public class GameInfoDisplayer {
         mState = (ApplicationState) mContext.getApplicationContext();
     }
 
-    private void showStartButtonEngaged(Button start) {
-        start.setBackgroundColor(mContext.getResources().getColor(R.color.green));
+    public void showStartButtonEngaged(Button start, FrameLayout frameStart) {
+        frameStart.setBackgroundColor(mContext.getResources().getColor(R.color.green));
         start.setTextColor(mContext.getResources().getColor(R.color.green));
     }
 
-    private void showStopButtonEngaged(Button stop) {
-        stop.setBackgroundColor(mContext.getResources().getColor(R.color.red));
+    public void showStopButtonEngaged(Button stop, FrameLayout frameStop) {
+        frameStop.setBackgroundColor(mContext.getResources().getColor(R.color.red));
         stop.setTextColor(mContext.getResources().getColor(R.color.red));
     }
 
-    private void showStartButtonNotEngaged(Button start) {
-        start.setBackgroundColor(mContext.getResources().getColor(R.color.brown));
+    public void showStartButtonNotEngaged(Button start, FrameLayout frameStart) {
+        frameStart.setBackgroundColor(mContext.getResources().getColor(R.color.brown));
         start.setTextColor(mContext.getResources().getColor(R.color.grey));
     }
 
-    private void showStopButtonNotEngaged(Button stop) {
-        stop.setBackgroundColor(mContext.getResources().getColor(R.color.brown));
+    public void showStopButtonNotEngaged(Button stop, FrameLayout frameStop) {
+        frameStop.setBackgroundColor(mContext.getResources().getColor(R.color.brown));
         stop.setTextColor(mContext.getResources().getColor(R.color.grey));
     }
 
@@ -72,9 +73,9 @@ public class GameInfoDisplayer {
     }
 
     public void displayImmediateGameInfoAfterTurn(TextView accuracy, TextView lives, TextView score) {
-        accuracy.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
-        lives.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
-        score.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
+//        accuracy.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
+//        lives.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
+//        score.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
         displayTurnAccuracy(accuracy);
         displayLives(lives);
         displayTurnScore(score);

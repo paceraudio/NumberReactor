@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 
@@ -28,6 +29,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
     private TextView mTvFadeLevel;
     private Button mFadeStartButton;
     private Button mFadeStopButton;
+    private FrameLayout mFadeStartFrame;
+    private FrameLayout mFadeStopFrame;
+
 
     private long mStartTime;
     private double mElapsedSeconds;
@@ -44,7 +48,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
     private int mGreenValue;
     private int mBlueValue;
 
-    private static final String FADE_COUNT_DIALOG_FRAGMENT = "customFadeCountDialogFragment";
     private static final String EXTRA_LIFE_FROM_FADE_COUNTER_ROUND = "extraLifeFromFadeCounterRound";
 //    private static final String LEVEL_COMPLETED = "levelCompleted";
 
@@ -57,6 +60,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
     Thread mFadeCounterThread;
     DBHelper mDbHelper;
     ApplicationState mState;
+    GameInfoDisplayer mGameInfoDisplayer;
 
 
     @Override
@@ -73,6 +77,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         mTvFadeLevel = (TextView) findViewById(R.id.t_v_fade_level);
         mFadeStartButton = (Button) findViewById(R.id.fade_b_start);
         mFadeStopButton = (Button) findViewById(R.id.fade_b_stop);
+        mFadeStartFrame = (FrameLayout) findViewById(R.id.fade_frame_b_start);
+        mFadeStopFrame = (FrameLayout) findViewById(R.id.fade_frame_b_stop);
+        mGameInfoDisplayer = new GameInfoDisplayer(this);
     }
 
     @Override
@@ -111,6 +118,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     mStartTime = SystemClock.elapsedRealtime();
+                   mGameInfoDisplayer.showStartButtonEngaged(mFadeStartButton, mFadeStartFrame );
                     Log.d(DEBUG_TAG, "start clicked at: " + mStartTime);
 //                    mFadeOutCounterAsync = new FadeOutCounterAsync(FadeOutCounterActivity.this, FadeOutCounterActivity.this);
 //                    mFadeOutCounterAsync.execute(mStartTime, mTarget);
@@ -138,17 +146,23 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
 
                             }
                             if (mFadeCounterThread.isInterrupted()) {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        onFadeCountStopped(mElapsedSeconds);
+                                    }
+                                });
 
                                 return;
                             }
                             if (mElapsedSeconds >= mOverTargetRange) {
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        onFadeCountComplete(mElapsedSeconds);
-                                    }
-                                });
-
+//                                mHandler.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        onFadeCountComplete(mElapsedSeconds);
+//                                    }
+//                                });
+                                mFadeCounterThread.interrupt();
                             }
                         }
                     });
@@ -164,8 +178,10 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
                     if (mFadeCounterThread.isInterrupted()) {
                         ;
                     } else {
-                        onFadeCountCancelled(mElapsedSeconds);
+
                         mFadeCounterThread.interrupt();
+                        mGameInfoDisplayer.showStopButtonEngaged(mFadeStopButton, mFadeStopFrame);
+                        mGameInfoDisplayer.showStartButtonNotEngaged(mFadeStartButton, mFadeStartFrame);
 //                        String mTarget = mTvFadeTarget.getText().toString();
 //                        String userValue = mTvFadeCounter.getText().toString();
 //                        compareUserValueToTarget(userValue, mTarget, mTvFadeCounter);
@@ -195,10 +211,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         return super.onOptionsItemSelected(item);
     }
 
-    public void onFadeCountCancelled(Double seconds) {
+    public void onFadeCountStopped(Double seconds) {
         mTvFadeCounter.setText(String.format("%.2f", seconds));
         mTvFadeCounter.setTextColor(mFadeCounterColor);
-        int level = mState.getLevel();
         ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvFadeCounter);
         resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY);
     }
@@ -218,8 +233,11 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
 
     @Override
     public void onFadeCountComplete(Double seconds) {
+        mGameInfoDisplayer.showStopButtonNotEngaged(mFadeStopButton, mFadeStopFrame);
         mTvFadeCounter.setText(String.format("%.2f", seconds));
         mTvFadeCounter.setTextColor(0xffff0000);
+        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvFadeCounter);
+        resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY);
     }
 
     private void compareUserValueToTarget(String userValue, String target, TextView tv) {

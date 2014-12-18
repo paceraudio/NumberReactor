@@ -115,7 +115,7 @@
 
 
     <FrameLayout
-        android:id="@+id/frame_fade_b_start"
+        android:id="@+id/fade_frame_b_start"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_alignLeft="@+id/fade_frame_counter"
