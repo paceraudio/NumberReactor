@@ -146,6 +146,10 @@ public class ApplicationState extends Application{
         runningScoreTotal = 0;
     }
 
+    public void resetLivesForNewGame() {
+        lives = BEGINNING_NUMBER_OF_LIVES;
+    }
+
     public String setGameDate() {
         //TODO see if this is the best place for this?
         Calendar c = Calendar.getInstance();
@@ -164,6 +168,9 @@ public class ApplicationState extends Application{
 
 //    Methods for calculating the game values stored in this class
     public double roundElapAccelCount(double accelCount) {
+        if (accelCount > 99.99) {
+            return 99.99;
+        }
         return ((int) (accelCount * 100)) /100d;
     }
     public int calcAccuracy(double target, double elapAccelCount) {
@@ -171,6 +178,9 @@ public class ApplicationState extends Application{
         double error = Math.abs(target - elapAccelCount);
         double accuracy = ((target - error) / target) * 100;
         int accuracyInt = (int) Math.round(accuracy);
+        if (accuracyInt < 0) {
+            accuracyInt = 0;
+        }
         Log.d(DEBUG_TAG, "calcAccuracy()return accuracy: " + accuracy);
         return accuracyInt;
     }
@@ -181,11 +191,10 @@ public class ApplicationState extends Application{
             Log.d(DEBUG_TAG, "should lose life: " + Boolean.toString(turnAccuracy <
                     LIFE_LOSS_THRESHOLD) + " lives remaining: " + lives);
         }
-//        else if (turnAccuracy >= 99) {
-//            lives += 1;
-//        }
-//        mTvLivesRemaining.setText(getString(R.string.lives_remaining) + " " + mState
-//                .getLives());
+        else if (turnAccuracy == 100) {
+            lives += 1;
+        }
+
         Log.d(DEBUG_TAG, "checkAccuracyAgainstLives lives remaining: " + lives);
     }
 
