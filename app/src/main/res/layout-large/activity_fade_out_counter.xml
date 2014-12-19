@@ -7,18 +7,11 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context="com.paceraudio.numberreactor.app.MainActivity">
+                tools:context="com.paceraudio.numberreactor.app.CounterActivity">
 
     <LinearLayout
         android:id="@+id/fade_linearLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:background="@color/darkBlackRed"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:weightSum="100">
+        style="@style/LinearLayoutContainingGameInfo.Top">
 
         <TextView
             android:id="@+id/t_v_fade_target"
@@ -27,8 +20,9 @@
             android:layout_weight="64"
             android:paddingLeft="0dp"
             android:text="@string/target"
-            android:textColor="@color/lightBlue"
-            android:textSize="25sp"/>
+            style="@style/NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity"
+
+            />
 
         <TextView
             android:id="@+id/t_v_fade_accuracy_rating"
@@ -37,31 +31,21 @@
             android:layout_weight="36"
             android:gravity="left"
             android:text="@string/accuracy"
-            android:textColor="@color/lightBlue"
-            android:textSize="25sp"
+            style="@style/NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity"
+
             />
 
     </LinearLayout>
 
     <FrameLayout
         android:id="@+id/fade_frame_counter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_below="@+id/fade_linearLayout"
         android:layout_marginTop="91dp"
-        android:background="@color/brown"
-        android:padding="2dp">
+        style="@style/NumberReactorFrameLayout.CounterFrame">
 
         <TextView
             android:id="@+id/t_v_fade_counter"
-            android:layout_width="560dp"
-            android:layout_height="wrap_content"
-            android:background="@android:color/black"
-            android:gravity="center_horizontal"
-            android:text="@string/zero_point_zero"
-            android:textColor="@color/lightBlue"
-            android:textSize="220sp"
-            android:typeface="normal"
+            style="@style/NumberReactorTextView.Counter.Large.FadeCounterActivity"
             />
 
     </FrameLayout>
@@ -69,14 +53,7 @@
 
     <LinearLayout
         android:id="@+id/l_l_fade_game_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
-        android:background="@color/darkBlackRed"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:weightSum="100">
+        style="@style/LinearLayoutContainingGameInfo.Bottom">
 
         <TextView
             android:id="@+id/t_v_fade_lives_remaining"
@@ -85,8 +62,8 @@
             android:layout_weight="43"
             android:gravity="left"
             android:text="@string/lives_remaining"
-            android:textColor="@color/lightBlue"
-            android:textSize="24sp"
+            style="@style/NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity"
+
             />
 
         <TextView
@@ -96,8 +73,8 @@
             android:layout_weight="33"
             android:gravity="left"
             android:text="@string/score"
-            android:textColor="@color/lightBlue"
-            android:textSize="24sp"
+            style="@style/NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity"
+
             />
 
         <TextView
@@ -107,8 +84,7 @@
             android:layout_weight="23"
             android:gravity="right"
             android:text="@string/level"
-            android:textColor="@color/lightBlue"
-            android:textSize="24sp"
+            style="@style/NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity"
             />
 
     </LinearLayout>
@@ -116,24 +92,14 @@
 
     <FrameLayout
         android:id="@+id/fade_frame_b_start"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
         android:layout_alignLeft="@+id/fade_frame_counter"
         android:layout_alignTop="@+id/fade_frame_b_stop"
         android:layout_marginLeft="30dp"
-        android:background="@color/brown"
-        android:gravity="center"
-        android:padding="2dp">
+        style="@style/NumberReactorFrameLayout.LargeButtons">
 
         <Button
             android:id="@+id/fade_b_start"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/darkBlackRed"
-            android:text="@string/start"
-            android:textColor="@color/grey"
-            android:textSize="90sp"
-            android:typeface="normal"
+            style="@style/NumberReactorButtonStyle.Large.Start"
             />
 
 
@@ -141,32 +107,17 @@
 
     <FrameLayout
         android:id="@+id/fade_frame_b_stop"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
         android:layout_above="@+id/l_l_fade_game_info"
         android:layout_alignRight="@+id/fade_frame_counter"
         android:layout_marginBottom="58dp"
         android:layout_marginRight="30dp"
-        android:background="@color/brown"
-        android:gravity="center"
-        android:padding="2dp">
+        style="@style/NumberReactorFrameLayout.LargeButtons">
 
         <Button
             android:id="@+id/fade_b_stop"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/darkBlackRed"
-            android:text="@string/stop"
-            android:textColor="@color/grey"
-            android:textSize="90sp"
-            android:typeface="normal"
+            style="@style/NumberReactorButtonStyle.Large.Stop"
             />
 
-
-
     </FrameLayout>
-
-
-
 
 </RelativeLayout>

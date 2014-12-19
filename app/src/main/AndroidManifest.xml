@@ -6,18 +6,18 @@
         android:name=".ApplicationState"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
+        android:label="@string/app_name"
+        android:theme="@style/NumberReactorAppTheme">
         <activity
             android:name=".FadeOutCounterActivity"
             android:label="@string/title_activity_fade_out_counter"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+             >
         </activity>
         <activity
             android:name=".CounterActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,8 +27,7 @@
         <activity
             android:name=".ViewStatsActivity"
             android:label="@string/title_activity_view_stats"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".SettingsActivity"

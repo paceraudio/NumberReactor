@@ -1,8 +1,119 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Black.NoTitleBar">
-        <!-- Customize your theme here. -->
+
+
+    <style name="NumberReactorFrameLayout">
+        <item name="android:padding">2dp</item>
+        <item name="android:background">@color/brown</item>
+    </style>
+
+
+    <!--********************BUTTON STYLES*********************-->
+    <!--all buttons must be placed in a framelayout with 2dp padding-->
+
+    <style name="NumberReactorFrameLayout.LargeButtons">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">150dp</item>
+        <item name="android:layout_height">150dp</item>
+    </style>
+
+    <style name="NumberReactorButtonStyle">
+        <item name="android:background">@color/darkBlackRed</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="NumberReactorButtonStyle.Large">
+        <item name="android:textSize">90sp</item>
+    </style>
+
+    <style name="NumberReactorButtonStyle.Large.Start">
+        <item name="android:text">@string/start</item>
+    </style>
+
+    <style name="NumberReactorButtonStyle.Large.Stop">
+        <item name="android:text">@string/stop</item>
+    </style>
+
+    <style name="NumberReactorFrameLayout.CounterFrame">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <!--********************LINEAR LAYOUT FOR GAME INFO TEXTVIEWS********************-->
+
+    <style name="LinearLayoutContainingGameInfo">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/darkBlackRed</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:weightSum">100</item>
+    </style>
+
+    <style name="LinearLayoutContainingGameInfo.Top">
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+
+    <style name="LinearLayoutContainingGameInfo.Bottom">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <!--********************BASIC TEXTVIEW STYLES********************-->
+
+    <style name="NumberReactorTextView">
+        <item name="android:typeface">normal</item>
+    </style>
+
+    <!--********************BASIC GAMEINFO TEXTVIEW STYLES********************-->
+
+    <style name="NumberReactorTextView.GameInfoTextViews">
+        <item name="android:background">@color/darkBlackRed</item>
+    </style>
+
+    <!--********************GAMEINFO TEXTVIEW STYLES FOR LAYOUT SIZES********************-->
+
+    <style name="NumberReactorTextView.GameInfoTextViews.Large">
+        <item name="android:textSize">25sp</item>
+    </style>
+
+    <!--********************GAMEINFO TEXTVIEW STYLES FOR LAYOUT SIZES********************-->
+
+    <style name="NumberReactorTextView.GameInfoTextViews.Large.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
+    </style>
+
+
+
+
+    <!--********************COUNTER TV STYLES********************-->
+
+    <style name="NumberReactorTextView.Counter">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/black</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:text">@string/zero_point_zero</item>
+    </style>
+
+    <style name="NumberReactorTextView.Counter.Large">
+        <item name="android:textSize">220sp</item>
+        <item name="android:layout_width">560dp</item>
+    </style>
+
+    <style name="NumberReactorTextView.Counter.Large.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NumberReactorTextView.Counter.Large.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
     </style>
 
 </resources>

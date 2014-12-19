@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="NumberReactorAppTheme" parent="android:Theme.Black.NoTitleBar">
+        <!-- Customize your theme here. -->
+        <item name="android:buttonStyle">@style/NumberReactorButtonStyle</item>
+        <item name="android:textViewStyle">@style/NumberReactorTextView</item>
+    </style>
+</resources>
