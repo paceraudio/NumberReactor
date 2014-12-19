@@ -17,7 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 
-public class FadeOutCounterActivity extends FragmentActivity implements FadeCounterListener,
+public class FadeOutCounterActivity extends FragmentActivity implements
         ResetNextTurnListener {
 
     static final String DEBUG_TAG = "jwc";
@@ -254,7 +254,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         mGameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(mTvFadeAccuracy,
                 mTvFadeLives, mTvFadeScore);
 //        mGameInfoDisplayer.displayAllGameInfo(mTvFadeTarget, mTvFadeAccuracy, mTvFadeLives,
-// mTvFadeScore, mTvFadeLevel);
+//        mTvFadeScore, mTvFadeLevel);
         ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvFadeCounter);
         resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY);
     }
@@ -274,14 +274,5 @@ public class FadeOutCounterActivity extends FragmentActivity implements FadeCoun
         }
         setResult(RESULT_OK, intent);
         finish();
-    }
-
-    @Override
-    public void onFadeCountComplete(Double seconds) {
-        mGameInfoDisplayer.showStopButtonNotEngaged(mFadeStopButton, mFadeStopFrame);
-        mTvFadeCounter.setText(String.format("%.2f", seconds));
-        mTvFadeCounter.setTextColor(0xffff0000);
-        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvFadeCounter);
-        resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY);
     }
 }
