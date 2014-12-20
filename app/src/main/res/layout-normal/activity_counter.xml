@@ -11,14 +11,7 @@
 
     <LinearLayout
         android:id="@+id/fade_linearLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:background="@color/darkBlackRed"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:weightSum="100">
+        style="@style/LinearLayoutContainingGameInfo.Top">
 
         <TextView
             android:id="@+id/t_v_fade_target"
@@ -27,8 +20,7 @@
             android:layout_weight="50"
             android:paddingLeft="0dp"
             android:text="@string/target"
-            android:textColor="@color/red"
-            android:textSize="15sp"/>
+            style="@style/NumberReactorTextView.GameInfoTextViews.Normal.CounterActivity"/>
 
         <TextView
             android:id="@+id/t_v_fade_accuracy_rating"
@@ -37,32 +29,21 @@
             android:layout_weight="50"
             android:gravity="right"
             android:text="@string/accuracy"
-            android:textColor="@color/red"
-            android:textSize="15sp"
+            style="@style/NumberReactorTextView.GameInfoTextViews.Normal.CounterActivity"
             />
 
     </LinearLayout>
 
     <FrameLayout
         android:id="@+id/fade_frame_counter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_below="@+id/fade_linearLayout"
         android:layout_marginTop="60dp"
-        android:background="@color/brown"
-        android:padding="2dp"
-        android:layout_centerInParent="true">
+        android:layout_centerHorizontal="true"
+        style="@style/NumberReactorFrameLayout.CounterFrame">
 
         <TextView
             android:id="@+id/t_v_fade_counter"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:background="@color/blackRed"
-            android:gravity="center_horizontal"
-            android:text="@string/zero_point_zero"
-            android:textColor="@color/red"
-            android:textSize="115sp"
-            android:typeface="normal"
+            style="@style/NumberReactorTextView.Counter.Normal.CounterActivity"
             />
 
     </FrameLayout>

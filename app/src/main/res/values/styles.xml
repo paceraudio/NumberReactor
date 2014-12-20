@@ -41,6 +41,7 @@
     <style name="NumberReactorFrameLayout.CounterFrame">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
     </style>
 
     <!--********************LINEAR LAYOUT FOR GAME INFO TEXTVIEWS********************-->
@@ -81,8 +82,13 @@
         <item name="android:textSize">25sp</item>
     </style>
 
+    <style name="NumberReactorTextView.GameInfoTextViews.Normal">
+        <item name="android:textSize">18sp</item>
+    </style>
+
     <!--********************GAMEINFO TEXTVIEW STYLES FOR LAYOUT SIZES********************-->
 
+    <!--LARGE-->
     <style name="NumberReactorTextView.GameInfoTextViews.Large.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
@@ -91,6 +97,14 @@
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
+    <!--NORMAL-->
+    <style name="NumberReactorTextView.GameInfoTextViews.Normal.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NumberReactorTextView.GameInfoTextViews.Normal.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
+    </style>
 
 
 
@@ -103,6 +117,9 @@
         <item name="android:text">@string/zero_point_zero</item>
     </style>
 
+    <!--********************COUNTER TV STYLES FOR LAYOUT SIZES********************-->
+
+    <!--LARGE-->
     <style name="NumberReactorTextView.Counter.Large">
         <item name="android:textSize">220sp</item>
         <item name="android:layout_width">560dp</item>
@@ -115,5 +132,22 @@
     <style name="NumberReactorTextView.Counter.Large.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
+
+    <!--NORMAL-->
+    <style name="NumberReactorTextView.Counter.Normal">
+        <item name="android:textSize">115sp</item>
+        <item name="android:layout_width">300dp</item>
+    </style>
+
+    <style name="NumberReactorTextView.Counter.Normal.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NumberReactorTextView.Counter.Normal.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
+    </style>
+
+
+
 
 </resources>
