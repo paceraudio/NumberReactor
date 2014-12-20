@@ -81,10 +81,10 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         mTvFadeLives = (TextView) findViewById(R.id.t_v_fade_lives_remaining);
         mTvFadeScore = (TextView) findViewById(R.id.t_v_fade_score);
         mTvFadeLevel = (TextView) findViewById(R.id.t_v_fade_level);
-        mFadeStartButton = (Button) findViewById(R.id.fade_b_start);
+        mFadeStartButton = (Button) findViewById(R.id.b_fade_start);
         mFadeStopButton = (Button) findViewById(R.id.fade_b_stop);
-        mFadeStartFrame = (FrameLayout) findViewById(R.id.fade_frame_b_start);
-        mFadeStopFrame = (FrameLayout) findViewById(R.id.fade_frame_b_stop);
+        mFadeStartFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_start);
+        mFadeStopFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_stop);
         mGameInfoDisplayer = new GameInfoDisplayer(this);
         mState.setTarget(DEFAULT_FADE_COUNTER_TARGET);
     }

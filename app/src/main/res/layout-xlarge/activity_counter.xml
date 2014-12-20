@@ -10,7 +10,7 @@
                 tools:context="com.paceraudio.numberreactor.app.MainActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/l_l_game_info_top"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -44,10 +44,10 @@
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/frame_counter"
+        android:id="@+id/f_l_for_t_v_counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout"
+        android:layout_below="@+id/l_l_game_info_top"
         android:layout_marginTop="91dp"
         android:background="@color/brown"
         android:padding="2dp"
@@ -69,7 +69,7 @@
 
 
     <LinearLayout
-        android:id="@+id/l_l_game_info"
+        android:id="@+id/l_l_game_info_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -119,10 +119,10 @@
 
 
     <FrameLayout
-        android:id="@+id/frame_b_start"
+        android:id="@+id/f_l_for_b_start"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_alignLeft="@+id/frame_counter"
+        android:layout_alignLeft="@+id/f_l_for_t_v_counter"
         android:layout_alignTop="@+id/frame_b_stop"
         android:layout_marginLeft="30dp"
         android:background="@color/brown"
@@ -147,8 +147,8 @@
         android:id="@+id/frame_b_stop"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_above="@+id/l_l_game_info"
-        android:layout_alignRight="@+id/frame_counter"
+        android:layout_above="@+id/l_l_game_info_bottom"
+        android:layout_alignRight="@+id/f_l_for_t_v_counter"
         android:layout_marginBottom="58dp"
         android:layout_marginRight="30dp"
         android:background="@color/brown"

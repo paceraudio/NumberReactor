@@ -3,7 +3,7 @@
     <!-- Base application theme. -->
     <style name="NumberReactorAppTheme" parent="android:Theme.Black.NoTitleBar">
         <!-- Customize your theme here. -->
-        <item name="android:buttonStyle">@style/NumberReactorButtonStyle</item>
-        <item name="android:textViewStyle">@style/NumberReactorTextView</item>
+        <item name="android:buttonStyle">@style/NR_ButtonStyle</item>
+        <item name="android:textViewStyle">@style/NR_TextView</item>
     </style>
 </resources>

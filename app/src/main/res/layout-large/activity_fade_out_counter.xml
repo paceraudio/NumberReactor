@@ -10,112 +10,83 @@
                 tools:context="com.paceraudio.numberreactor.app.CounterActivity">
 
     <LinearLayout
-        android:id="@+id/fade_linearLayout"
-        style="@style/LinearLayoutContainingGameInfo.Top">
+        android:id="@+id/l_l_fade_game_info_top"
+        style="@style/NR_LinearLayoutContainingGameInfo.Top">
 
         <TextView
             android:id="@+id/t_v_fade_target"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="64"
-            android:paddingLeft="0dp"
-            android:text="@string/target"
-            style="@style/NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity"
+            style="@style/NR_TextView.GameInfo.Target.Large.FadeCounterActivity"
 
             />
 
         <TextView
             android:id="@+id/t_v_fade_accuracy_rating"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="36"
-            android:gravity="left"
-            android:text="@string/accuracy"
-            style="@style/NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity"
+            style="@style/NR_TextView.GameInfo.Accuracy.Large.FadeCounterActivity"
 
             />
 
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/fade_frame_counter"
-        android:layout_below="@+id/fade_linearLayout"
-        android:layout_marginTop="91dp"
-        style="@style/NumberReactorFrameLayout.CounterFrame">
+        android:id="@+id/f_l_for_fade_t_v_counter"
+        android:layout_below="@id/l_l_fade_game_info_top"
+        style="@style/NR_FrameLayout.CounterFrame.Large">
 
         <TextView
             android:id="@+id/t_v_fade_counter"
-            style="@style/NumberReactorTextView.Counter.Large.FadeCounterActivity"
+            style="@style/NR_TextView.Counter.Large.FadeCounterActivity"
             />
 
     </FrameLayout>
 
 
     <LinearLayout
-        android:id="@+id/l_l_fade_game_info"
-        style="@style/LinearLayoutContainingGameInfo.Bottom">
+        android:id="@+id/l_l_fade_game_info_bottom"
+        style="@style/NR_LinearLayoutContainingGameInfo.Bottom">
 
         <TextView
             android:id="@+id/t_v_fade_lives_remaining"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="43"
-            android:gravity="left"
-            android:text="@string/lives_remaining"
-            style="@style/NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity"
+            style="@style/NR_TextView.GameInfo.Lives.Large.FadeCounterActivity"
 
             />
 
         <TextView
             android:id="@+id/t_v_fade_score"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="33"
-            android:gravity="left"
-            android:text="@string/score"
-            style="@style/NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity"
+            style="@style/NR_TextView.GameInfo.Score.Large.FadeCounterActivity"
 
             />
 
         <TextView
             android:id="@+id/t_v_fade_level"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="23"
-            android:gravity="right"
-            android:text="@string/level"
-            style="@style/NumberReactorTextView.GameInfoTextViews.Large.FadeCounterActivity"
+            style="@style/NR_TextView.GameInfo.Level.Large.FadeCounterActivity"
             />
 
     </LinearLayout>
 
 
     <FrameLayout
-        android:id="@+id/fade_frame_b_start"
-        android:layout_alignLeft="@+id/fade_frame_counter"
-        android:layout_alignTop="@+id/fade_frame_b_stop"
-        android:layout_marginLeft="30dp"
-        style="@style/NumberReactorFrameLayout.LargeButtons">
+        android:id="@+id/f_l_for_fade_b_start"
+        android:layout_alignLeft="@+id/f_l_for_fade_t_v_counter"
+        android:layout_alignTop="@+id/f_l_for_fade_b_stop"
+        style="@style/NR_FrameLayout.LargeButtons.Start">
 
         <Button
-            android:id="@+id/fade_b_start"
-            style="@style/NumberReactorButtonStyle.Large.Start"
+            android:id="@+id/b_fade_start"
+            style="@style/NR_ButtonStyle.Large.Start"
             />
 
 
         ></FrameLayout>
 
     <FrameLayout
-        android:id="@+id/fade_frame_b_stop"
-        android:layout_above="@+id/l_l_fade_game_info"
-        android:layout_alignRight="@+id/fade_frame_counter"
-        android:layout_marginBottom="58dp"
-        android:layout_marginRight="30dp"
-        style="@style/NumberReactorFrameLayout.LargeButtons">
+        android:id="@+id/f_l_for_fade_b_stop"
+        android:layout_above="@+id/l_l_fade_game_info_bottom"
+        android:layout_alignRight="@+id/f_l_for_fade_t_v_counter"
+        style="@style/NR_FrameLayout.LargeButtons.Stop">
 
         <Button
             android:id="@+id/fade_b_stop"
-            style="@style/NumberReactorButtonStyle.Large.Stop"
+            style="@style/NR_ButtonStyle.Large.Stop"
             />
 
     </FrameLayout>

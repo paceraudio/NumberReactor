@@ -10,96 +10,65 @@
                 tools:context="com.paceraudio.numberreactor.app.CounterActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
-        style="@style/LinearLayoutContainingGameInfo.Top">
+        android:id="@+id/l_l_game_info_top"
+        style="@style/NR_LinearLayoutContainingGameInfo.Top">
 
         <TextView
             android:id="@+id/t_v_target"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="64"
-            android:paddingLeft="0dp"
-            android:text="@string/target"
-            style="@style/NumberReactorTextView.GameInfoTextViews.Large.CounterActivity"
-
+            style="@style/NR_TextView.GameInfo.Target.Large.CounterActivity"
             />
 
         <TextView
             android:id="@+id/t_v_accuracy_rating"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="36"
-            android:gravity="left"
-            android:text="@string/accuracy"
-            style="@style/NumberReactorTextView.GameInfoTextViews.Large.CounterActivity"
-
+            style="@style/NR_TextView.GameInfo.Accuracy.Large.CounterActivity"
             />
 
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/frame_counter"
-        android:layout_below="@+id/linearLayout"
-        android:layout_marginTop="91dp"
-        style="@style/NumberReactorFrameLayout.CounterFrame">
+        android:id="@+id/f_l_for_t_v_counter"
+        android:layout_below="@+id/l_l_game_info_top"
+        style="@style/NR_FrameLayout.CounterFrame.Large">
 
         <TextView
             android:id="@+id/t_v_counter"
-            style="@style/NumberReactorTextView.Counter.Large.CounterActivity"
+            style="@style/NR_TextView.Counter.Large.CounterActivity"
             />
 
     </FrameLayout>
 
 
     <LinearLayout
-        android:id="@+id/l_l_game_info"
-        style="@style/LinearLayoutContainingGameInfo.Bottom">
+        android:id="@+id/l_l_game_info_bottom"
+        style="@style/NR_LinearLayoutContainingGameInfo.Bottom">
 
         <TextView
             android:id="@+id/t_v_lives_remaining"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="43"
-            android:gravity="left"
-            android:text="@string/lives_remaining"
-            style="@style/NumberReactorTextView.GameInfoTextViews.Large.CounterActivity"
-
+            style="@style/NR_TextView.GameInfo.Lives.Large.CounterActivity"
             />
 
         <TextView
             android:id="@+id/t_v_score"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="33"
-            android:gravity="left"
-            android:text="@string/score"
-            style="@style/NumberReactorTextView.GameInfoTextViews.Large.CounterActivity"
-
+            style="@style/NR_TextView.GameInfo.Score.Large.CounterActivity"
             />
 
         <TextView
             android:id="@+id/t_v_level"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="23"
-            android:gravity="right"
-            android:text="@string/level"
-            style="@style/NumberReactorTextView.GameInfoTextViews.Large.CounterActivity"
+            style="@style/NR_TextView.GameInfo.Level.Large.CounterActivity"
             />
 
     </LinearLayout>
 
 
     <FrameLayout
-        android:id="@+id/frame_b_start"
-        android:layout_alignLeft="@+id/frame_counter"
+        android:id="@+id/f_l_for_b_start"
+        android:layout_alignLeft="@+id/f_l_for_t_v_counter"
         android:layout_alignTop="@+id/frame_b_stop"
-        android:layout_marginLeft="30dp"
-        style="@style/NumberReactorFrameLayout.LargeButtons">
+        style="@style/NR_FrameLayout.LargeButtons.Start">
 
         <Button
             android:id="@+id/b_start"
-            style="@style/NumberReactorButtonStyle.Large.Start"
+            style="@style/NR_ButtonStyle.Large.Start"
             />
 
 
@@ -107,15 +76,13 @@
 
     <FrameLayout
         android:id="@+id/frame_b_stop"
-        android:layout_above="@+id/l_l_game_info"
-        android:layout_alignRight="@+id/frame_counter"
-        android:layout_marginBottom="58dp"
-        android:layout_marginRight="30dp"
-        style="@style/NumberReactorFrameLayout.LargeButtons">
+        android:layout_above="@id/l_l_game_info_bottom"
+        android:layout_alignRight="@id/f_l_for_t_v_counter"
+        style="@style/NR_FrameLayout.LargeButtons.Stop">
 
          <Button
             android:id="@+id/b_stop"
-            style="@style/NumberReactorButtonStyle.Large.Stop"
+            style="@style/NR_ButtonStyle.Large.Stop"
             />
 
         </FrameLayout>
