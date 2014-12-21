@@ -66,8 +66,8 @@
 
     <FrameLayout
         android:id="@+id/f_l_for_fade_b_start"
-        android:layout_alignLeft="@+id/f_l_for_fade_t_v_counter"
-        android:layout_alignTop="@+id/f_l_for_fade_b_stop"
+        android:layout_alignLeft="@id/f_l_for_fade_t_v_counter"
+        android:layout_alignTop="@id/f_l_for_fade_b_stop"
         style="@style/NR_FrameLayout.LargeButtons.Start">
 
         <Button
@@ -80,8 +80,8 @@
 
     <FrameLayout
         android:id="@+id/f_l_for_fade_b_stop"
-        android:layout_above="@+id/l_l_fade_game_info_bottom"
-        android:layout_alignRight="@+id/f_l_for_fade_t_v_counter"
+        android:layout_above="@id/l_l_fade_game_info_bottom"
+        android:layout_alignRight="@id/f_l_for_fade_t_v_counter"
         style="@style/NR_FrameLayout.LargeButtons.Stop">
 
         <Button

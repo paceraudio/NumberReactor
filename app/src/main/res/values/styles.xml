@@ -154,7 +154,7 @@
     <!--********************BASIC TEXTVIEW STYLES********************-->
 
     <style name="NR_TextView">
-        <item name="android:typeface">monospace</item>
+        <item name="android:typeface">normal</item>
     </style>
 
     <!--********************BASIC GAMEINFO TEXTVIEW STYLES********************-->

@@ -115,7 +115,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mStartButton = (Button) findViewById(R.id.b_start);
         mFrameStartButton = (FrameLayout) findViewById(R.id.f_l_for_b_start);
         mStopButton = (Button) findViewById(R.id.b_stop);
-        mFrameStopButton = (FrameLayout) findViewById(R.id.frame_b_stop);
+        mFrameStopButton = (FrameLayout) findViewById(R.id.f_l_for_b_stop);
 
         Log.d(DEBUG_TAG, "\n--------------------**********NEW GAME*********--------------------");
 
