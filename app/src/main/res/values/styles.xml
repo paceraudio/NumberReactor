@@ -157,6 +157,25 @@
         <item name="android:typeface">normal</item>
     </style>
 
+    <!--********************BASIC LISTVIEW STYLES********************-->
+
+    <style name="NR_TextView.ListViewItem">
+        <item name="android:textColor">@color/orange</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="NR_TextView.ListViewItem.XLarge">
+        <item name="android:textSize">25sp</item>
+    </style>
+
+    <style name="NR_TextView.ListViewItem.Large">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="NR_TextView.ListViewItem.Normal">
+        <item name="android:textSize">10sp</item>
+    </style>
+
     <!--********************BASIC GAMEINFO TEXTVIEW STYLES********************-->
 
     <style name="NR_TextView.GameInfo">
@@ -174,7 +193,7 @@
     </style>
 
     <style name="NR_TextView.GameInfo.Normal">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <!--********************GAMEINFO TARGET********************-->

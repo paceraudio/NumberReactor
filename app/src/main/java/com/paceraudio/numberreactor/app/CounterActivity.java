@@ -159,11 +159,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mIsStartClickable = true;
         mIsStopCLickable = false;
 
-        final double breakpoint1 = mTarget + 2.5;
-        final double breakpoint2 = mTarget + 7.5;
-        final double breakpoint3 = mTarget + 10.0;
-
-
         mHandler = new Handler() {
 
             @Override

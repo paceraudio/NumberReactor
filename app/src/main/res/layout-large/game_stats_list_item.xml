@@ -13,19 +13,18 @@
         android:layout_height="wrap_content"
         android:layout_weight="20"
         android:textColor="@color/orange"
-        android:textSize="45sp"
         android:gravity="right"
         android:paddingRight="20dp"
-        android:text="32"/>
+        android:textSize="45sp"
+        />
 
     <TextView
         android:id="@+id/list_t_v_game_date"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="40"
-        android:textColor="@color/orange"
         android:gravity="center"
-        android:textSize="20sp"/>
+        style="@style/NR_TextView.ListViewItem.Large"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -39,15 +38,13 @@
             android:id="@+id/list_t_v_game_level"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/orange"
-            android:textSize="20sp"/>
+            style="@style/NR_TextView.ListViewItem.Large"/>
 
         <TextView
             android:id="@+id/list_t_v_game_score"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/orange"
-            android:textSize="20sp"/>
+            style="@style/NR_TextView.ListViewItem.Large"/>
 
 
 
