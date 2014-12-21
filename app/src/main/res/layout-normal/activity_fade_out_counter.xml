@@ -15,11 +15,11 @@
 
         <TextView
             android:id="@+id/t_v_fade_target"
-            style="@style/NR_TextView.GameInfo.Target.Normal.FadeCounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Normal.Target.FadeCounterActivity"/>
 
         <TextView
             android:id="@+id/t_v_fade_accuracy_rating"
-            style="@style/NR_TextView.GameInfo.Accuracy.Normal.FadeCounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Normal.Accuracy.FadeCounterActivity"/>
 
     </LinearLayout>
 
@@ -40,15 +40,15 @@
 
         <TextView
             android:id="@+id/t_v_fade_lives_remaining"
-            style="@style/NR_TextView.GameInfo.Lives.Normal.FadeCounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Normal.Lives.FadeCounterActivity"/>
 
         <TextView
             android:id="@+id/t_v_fade_score"
-            style="@style/NR_TextView.GameInfo.Score.Normal.FadeCounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Normal.Score.FadeCounterActivity"/>
 
         <TextView
             android:id="@+id/t_v_fade_level"
-            style="@style/NR_TextView.GameInfo.Level.Normal.FadeCounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Normal.Level.FadeCounterActivity"/>
 
     </LinearLayout>
 

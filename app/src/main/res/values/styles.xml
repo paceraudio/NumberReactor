@@ -14,6 +14,11 @@
         <item name="android:layout_centerHorizontal">true</item>
     </style>
 
+    <!--X-LARGE-->
+    <style name="NR_FrameLayout.CounterFrame.XLarge">
+        <item name="android:layout_marginTop">100dp</item>
+    </style>
+
     <!--LARGE-->
     <style name="NR_FrameLayout.CounterFrame.Large">
         <item name="android:layout_marginTop">91dp</item>
@@ -21,10 +26,27 @@
 
     <!--NORMAL-->
     <style name="NR_FrameLayout.CounterFrame.Normal">
-        <item name="android:layout_marginTop">60dp</item>
+        <item name="android:layout_marginTop">80dp</item>
     </style>
 
     <!--FRAME LAYOUT FOR BUTTONS-->
+
+    <!--X-LARGE-->
+    <style name="NR_FrameLayout.XLargeButtons">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">180dp</item>
+        <item name="android:layout_height">180dp</item>
+    </style>
+
+    <style name="NR_FrameLayout.XLargeButtons.Start">
+        <item name="android:layout_marginLeft">30dp</item>
+    </style>
+
+    <style name="NR_FrameLayout.XLargeButtons.Stop">
+        <item name="android:layout_marginRight">30dp</item>
+        <item name="android:layout_marginBottom">58dp</item>
+    </style>
+
 
     <!--LARGE-->
     <style name="NR_FrameLayout.LargeButtons">
@@ -44,16 +66,16 @@
 
     <!--NORMAL-->
     <style name="NR_FrameLayout.NormalButtons">
-        <item name="android:layout_width">100dp</item>
-        <item name="android:layout_height">100dp</item>
+        <item name="android:layout_width">90dp</item>
+        <item name="android:layout_height">90dp</item>
     </style>
 
     <style name="NR_FrameLayout.NormalButtons.Start">
-        <item name="android:layout_marginLeft">15dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
     </style>
 
     <style name="NR_FrameLayout.NormalButtons.Stop">
-        <item name="android:layout_marginRight">15dp</item>
+        <item name="android:layout_marginRight">5dp</item>
         <item name="android:layout_marginBottom">35dp</item>
     </style>
     <!--********************BUTTON STYLES*********************-->
@@ -66,6 +88,19 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center</item>
+    </style>
+
+    <!--X-LARGE-->
+    <style name="NR_ButtonStyle.XLarge">
+        <item name="android:textSize">110sp</item>
+    </style>
+
+    <style name="NR_ButtonStyle.XLarge.Start">
+        <item name="android:text">@string/start</item>
+    </style>
+
+    <style name="NR_ButtonStyle.XLarge.Stop">
+        <item name="android:text">@string/stop</item>
     </style>
 
     <!--LARGE-->
@@ -130,169 +165,237 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="NR_TextView.GameInfo.XLarge">
+        <item name="android:textSize">34sp</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large">
+        <item name="android:textSize">26sp</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Normal">
+        <item name="android:textSize">18sp</item>
+    </style>
 
     <!--********************GAMEINFO TARGET********************-->
 
-    <style name="NR_TextView.GameInfo.Target">
+    <!--XLARGE-->
+    <style name="NR_TextView.GameInfo.XLarge.Target">
         <item name="android:text">@string/target</item>
         <item name="android:layout_weight">64</item>
     </style>
 
-    <!--LARGE-->
-    <style name="NR_TextView.GameInfo.Target.Large">
-        <item name="android:textSize">25sp</item>
-    </style>
-
-    <style name="NR_TextView.GameInfo.Target.Large.CounterActivity">
+    <style name="NR_TextView.GameInfo.XLarge.Target.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Target.Large.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.XLarge.Target.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
+    </style>
+
+    <!--LARGE-->
+    <style name="NR_TextView.GameInfo.Large.Target">
+        <item name="android:text">@string/target</item>
+        <item name="android:layout_weight">64</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large.Target.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large.Target.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
     <!--NORMAL-->
-    <style name="NR_TextView.GameInfo.Target.Normal">
-        <item name="android:textSize">18sp</item>
+    <style name="NR_TextView.GameInfo.Normal.Target">
+        <item name="android:text">@string/target</item>
+        <item name="android:layout_weight">64</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Target.Normal.CounterActivity">
+    <style name="NR_TextView.GameInfo.Normal.Target.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Target.Normal.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.Normal.Target.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
     <!--********************GAMEINFO ACCURACY********************-->
 
-    <style name="NR_TextView.GameInfo.Accuracy">
+
+    <!--XLARGE-->
+    <style name="NR_TextView.GameInfo.XLarge.Accuracy">
         <item name="android:text">@string/accuracy</item>
         <item name="android:layout_weight">36</item>
     </style>
 
-    <!--LARGE-->
-    <style name="NR_TextView.GameInfo.Accuracy.Large">
-        <item name="android:textSize">25sp</item>
-    </style>
-
-    <style name="NR_TextView.GameInfo.Accuracy.Large.CounterActivity">
+    <style name="NR_TextView.GameInfo.XLarge.Accuracy.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Accuracy.Large.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.XLarge.Accuracy.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
+    </style>
+
+
+    <!--LARGE-->
+    <style name="NR_TextView.GameInfo.Large.Accuracy">
+        <item name="android:text">@string/accuracy</item>
+        <item name="android:layout_weight">36</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large.Accuracy.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large.Accuracy.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
     <!--NORMAL-->
-    <style name="NR_TextView.GameInfo.Accuracy.Normal">
-        <item name="android:textSize">18sp</item>
+    <style name="NR_TextView.GameInfo.Normal.Accuracy">
+        <item name="android:text">@string/accuracy</item>
+        <item name="android:layout_weight">36</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Accuracy.Normal.CounterActivity">
+    <style name="NR_TextView.GameInfo.Normal.Accuracy.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Accuracy.Normal.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.Normal.Accuracy.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
     <!--********************GAMEINFO LIVES********************-->
 
-    <style name="NR_TextView.GameInfo.Lives">
+    <!--X-LARGE-->
+    <style name="NR_TextView.GameInfo.XLarge.Lives">
         <item name="android:text">@string/lives_remaining</item>
         <item name="android:layout_weight">40</item>
     </style>
 
-    <!--LARGE-->
-    <style name="NR_TextView.GameInfo.Lives.Large">
-        <item name="android:textSize">25sp</item>
-    </style>
-
-    <style name="NR_TextView.GameInfo.Lives.Large.CounterActivity">
+    <style name="NR_TextView.GameInfo.XLarge.Lives.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Lives.Large.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.XLarge.Lives.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
+    </style>
+    <!--LARGE-->
+    <style name="NR_TextView.GameInfo.Large.Lives">
+        <item name="android:text">@string/lives_remaining</item>
+        <item name="android:layout_weight">40</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large.Lives.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large.Lives.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
     <!--NORMAL-->
-    <style name="NR_TextView.GameInfo.Lives.Normal">
-        <item name="android:textSize">18sp</item>
+    <style name="NR_TextView.GameInfo.Normal.Lives">
+        <item name="android:text">@string/lives_remaining</item>
+        <item name="android:layout_weight">40</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Lives.Normal.CounterActivity">
+    <style name="NR_TextView.GameInfo.Normal.Lives.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Lives.Normal.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.Normal.Lives.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
     <!--********************GAMEINFO SCORE********************-->
 
-    <style name="NR_TextView.GameInfo.Score">
+    <!--X-LARGE-->
+    <style name="NR_TextView.GameInfo.XLarge.Score">
         <item name="android:text">@string/score</item>
         <item name="android:layout_weight">34</item>
     </style>
 
-    <!--LARGE-->
-    <style name="NR_TextView.GameInfo.Score.Large">
-        <item name="android:textSize">25sp</item>
-    </style>
-
-    <style name="NR_TextView.GameInfo.Score.Large.CounterActivity">
+    <style name="NR_TextView.GameInfo.XLarge.Score.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Score.Large.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.XLarge.Score.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
+    </style>
+
+
+    <!--LARGE-->
+    <style name="NR_TextView.GameInfo.Large.Score">
+        <item name="android:text">@string/score</item>
+        <item name="android:layout_weight">34</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large.Score.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large.Score.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
     <!--NORMAL-->
-    <style name="NR_TextView.GameInfo.Score.Normal">
-        <item name="android:textSize">18sp</item>
+    <style name="NR_TextView.GameInfo.Normal.Score">
+        <item name="android:text">@string/score</item>
+        <item name="android:layout_weight">34</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Score.Normal.CounterActivity">
+    <style name="NR_TextView.GameInfo.Normal.Score.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Score.Normal.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.Normal.Score.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
     <!--********************GAMEINFO LEVEL********************-->
 
-    <style name="NR_TextView.GameInfo.Level">
+    <!--LARGE-->
+    <style name="NR_TextView.GameInfo.XLarge.Level">
         <item name="android:text">@string/level</item>
         <item name="android:layout_weight">26</item>
     </style>
 
-    <!--LARGE-->
-    <style name="NR_TextView.GameInfo.Level.Large">
-        <item name="android:textSize">25sp</item>
-    </style>
-
-    <style name="NR_TextView.GameInfo.Level.Large.CounterActivity">
+    <style name="NR_TextView.GameInfo.XLarge.Level.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Level.Large.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.XLarge.Level.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
+    </style>
+
+    <!--LARGE-->
+    <style name="NR_TextView.GameInfo.Large.Level">
+        <item name="android:text">@string/level</item>
+        <item name="android:layout_weight">26</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large.Level.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NR_TextView.GameInfo.Large.Level.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
     <!--NORMAL-->
-    <style name="NR_TextView.GameInfo.Level.Normal">
-        <item name="android:textSize">18sp</item>
+    <style name="NR_TextView.GameInfo.Normal.Level">
+        <item name="android:text">@string/level</item>
+        <item name="android:layout_weight">26</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Level.Normal.CounterActivity">
+    <style name="NR_TextView.GameInfo.Normal.Level.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Level.Normal.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.Normal.Level.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
@@ -308,6 +411,20 @@
     </style>
 
     <!--********************COUNTER TV STYLES FOR LAYOUT SIZES********************-->
+
+    <!--X-LARGE-->
+    <style name="NR_TextView.Counter.XLarge">
+        <item name="android:textSize">280sp</item>
+        <item name="android:layout_width">650dp</item>
+    </style>
+
+    <style name="NR_TextView.Counter.XLarge.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NR_TextView.Counter.XLarge.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
+    </style>
 
     <!--LARGE-->
     <style name="NR_TextView.Counter.Large">
@@ -325,8 +442,8 @@
 
     <!--NORMAL-->
     <style name="NR_TextView.Counter.Normal">
-        <item name="android:textSize">115sp</item>
-        <item name="android:layout_width">300dp</item>
+        <item name="android:textSize">110sp</item>
+        <item name="android:layout_width">280dp</item>
     </style>
 
     <style name="NR_TextView.Counter.Normal.CounterActivity">

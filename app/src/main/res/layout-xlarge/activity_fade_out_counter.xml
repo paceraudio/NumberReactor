@@ -10,161 +10,72 @@
                 tools:context="com.paceraudio.numberreactor.app.MainActivity">
 
     <LinearLayout
-        android:id="@+id/l_l_game_info_top"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:background="@color/darkBlackRed"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:weightSum="100">
+        android:id="@+id/l_l_fade_game_info_top"
+        style="@style/NR_LinearLayoutContainingGameInfo.Top">
 
         <TextView
-            android:id="@+id/t_v_target"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="50"
-            android:paddingLeft="0dp"
-            android:text="@string/target"
-            android:textColor="@color/lightBlue"
-            android:textSize="25sp"/>
+            android:id="@+id/t_v_fade_target"
+            style="@style/NR_TextView.GameInfo.XLarge.Target.FadeCounterActivity"/>
 
         <TextView
-            android:id="@+id/t_v_accuracy_rating"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="50"
-            android:gravity="right"
-            android:text="@string/accuracy"
-            android:textColor="@color/lightBlue"
-            android:textSize="25sp"
-            />
+            android:id="@+id/t_v_fade_accuracy_rating"
+            style="@style/NR_TextView.GameInfo.XLarge.Accuracy.FadeCounterActivity"/>
 
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/f_l_for_t_v_counter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/l_l_game_info_top"
-        android:layout_marginTop="91dp"
-        android:background="@color/brown"
-        android:padding="2dp"
-        android:layout_centerHorizontal="true">
+        android:id="@+id/f_l_for_fade_t_v_counter"
+        android:layout_below="@+id/l_l_fade_game_info_top"
+        style="@style/NR_FrameLayout.CounterFrame.XLarge">
 
         <TextView
-            android:id="@+id/t_v_counter"
-            android:layout_width="560dp"
-            android:layout_height="wrap_content"
-            android:background="@android:color/black"
-            android:gravity="center_horizontal"
-            android:text="@string/zero_point_zero"
-            android:textColor="@color/lightBlue"
-            android:textSize="220sp"
-            android:typeface="normal"
-            />
+            android:id="@+id/t_v_fade_counter"
+            style="@style/NR_TextView.Counter.XLarge.FadeCounterActivity"/>
 
     </FrameLayout>
 
 
     <LinearLayout
-        android:id="@+id/l_l_game_info_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
-        android:background="@color/darkBlackRed"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:weightSum="100">
+        android:id="@+id/l_l_fade_game_info_bottom"
+        style="@style/NR_LinearLayoutContainingGameInfo.Bottom">
 
         <TextView
-            android:id="@+id/t_v_lives_remaining"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="33"
-            android:background="@color/darkBlackRed"
-            android:gravity="left"
-            android:text="@string/lives_remaining"
-            android:textColor="@color/lightBlue"
-            android:textSize="24sp"
-            />
+            android:id="@+id/t_v_fade_lives_remaining"
+            style="@style/NR_TextView.GameInfo.XLarge.Lives.FadeCounterActivity"/>
 
         <TextView
-            android:id="@+id/t_v_score"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="33"
-            android:background="@color/darkBlackRed"
-            android:gravity="center_horizontal"
-            android:text="@string/score"
-            android:textColor="@color/lightBlue"
-            android:textSize="24sp"
-            />
+            android:id="@+id/t_v_fade_score"
+            style="@style/NR_TextView.GameInfo.XLarge.Score.FadeCounterActivity"/>
 
         <TextView
-            android:id="@+id/t_v_level"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="33"
-            android:background="@color/darkBlackRed"
-            android:gravity="right"
-            android:text="@string/level"
-            android:textColor="@color/lightBlue"
-            android:textSize="24sp"
-            />
+            android:id="@+id/t_v_fade_level"
+            style="@style/NR_TextView.GameInfo.XLarge.Level.FadeCounterActivity"/>
 
     </LinearLayout>
 
 
     <FrameLayout
-        android:id="@+id/f_l_for_b_start"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_alignLeft="@+id/f_l_for_t_v_counter"
-        android:layout_alignTop="@+id/frame_b_stop"
-        android:layout_marginLeft="30dp"
-        android:background="@color/brown"
-        android:gravity="center"
-        android:padding="2dp">
+        android:id="@+id/f_l_for_fade_b_start"
+        android:layout_alignLeft="@id/f_l_for_fade_t_v_counter"
+        android:layout_alignTop="@id/f_l_for_fade_b_stop"
+        style="@style/NR_FrameLayout.XLargeButtons.Start">
 
         <Button
-            android:id="@+id/b_start"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/darkBlackRed"
-            android:text="@string/start"
-            android:textColor="@color/grey"
-            android:textSize="90sp"
-            android:typeface="normal"
-            />
+            android:id="@+id/b_fade_start"
+            style="@style/NR_ButtonStyle.XLarge.Start"/>
 
 
         ></FrameLayout>
 
     <FrameLayout
-        android:id="@+id/frame_b_stop"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_above="@+id/l_l_game_info_bottom"
-        android:layout_alignRight="@+id/f_l_for_t_v_counter"
-        android:layout_marginBottom="58dp"
-        android:layout_marginRight="30dp"
-        android:background="@color/brown"
-        android:gravity="center"
-        android:padding="2dp">
+        android:id="@+id/f_l_for_fade_b_stop"
+        android:layout_above="@id/l_l_fade_game_info_bottom"
+        android:layout_alignRight="@id/f_l_for_fade_t_v_counter"
+        style="@style/NR_FrameLayout.XLargeButtons.Stop">
 
         <Button
-            android:id="@+id/b_stop"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/darkBlackRed"
-            android:text="@string/stop"
-            android:textColor="@color/grey"
-            android:textSize="90sp"
-            android:typeface="normal"
-            />
+            android:id="@+id/b_fade_stop"
+            style="@style/NR_ButtonStyle.XLarge.Stop"/>
 
 
 

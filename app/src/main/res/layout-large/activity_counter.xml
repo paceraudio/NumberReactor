@@ -15,12 +15,12 @@
 
         <TextView
             android:id="@+id/t_v_target"
-            style="@style/NR_TextView.GameInfo.Target.Large.CounterActivity"
+            style="@style/NR_TextView.GameInfo.Large.Target.CounterActivity"
             />
 
         <TextView
             android:id="@+id/t_v_accuracy_rating"
-            style="@style/NR_TextView.GameInfo.Accuracy.Large.CounterActivity"
+            style="@style/NR_TextView.GameInfo.Large.Accuracy.CounterActivity"
             />
 
     </LinearLayout>
@@ -44,17 +44,17 @@
 
         <TextView
             android:id="@+id/t_v_lives_remaining"
-            style="@style/NR_TextView.GameInfo.Lives.Large.CounterActivity"
+            style="@style/NR_TextView.GameInfo.Large.Lives.CounterActivity"
             />
 
         <TextView
             android:id="@+id/t_v_score"
-            style="@style/NR_TextView.GameInfo.Score.Large.CounterActivity"
+            style="@style/NR_TextView.GameInfo.Large.Score.CounterActivity"
             />
 
         <TextView
             android:id="@+id/t_v_level"
-            style="@style/NR_TextView.GameInfo.Level.Large.CounterActivity"
+            style="@style/NR_TextView.GameInfo.Large.Level.CounterActivity"
             />
 
     </LinearLayout>
