@@ -14,6 +14,9 @@ public class GameInfoDisplayer {
     Context mContext;
     ApplicationState mState;
 
+    private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
+    private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
+
     private static final String DEBUG_TAG = "jwc";
 
 
@@ -61,12 +64,10 @@ public class GameInfoDisplayer {
     }
 
     private void displayTurnPoints(TextView tv) {
-//        tv.setTextColor(mContext.getResources().getColor(R.color.orange));
         tv.setText(mContext.getString(R.string.points) + " " + mState.getTurnPoints());
     }
 
     private void displayScore(TextView tv) {
-//        tv.setTextColor(mContext.getResources().getColor(R.id.));
         tv.setText(mContext.getString(R.string.score) + " " + mState.getRunningScoreTotal());
     }
 
@@ -74,34 +75,35 @@ public class GameInfoDisplayer {
         tv.setText(mContext.getString(R.string.level) + " " + mState.getLevel());
     }
 
-    public void displayImmediateGameInfoAfterTurn(TextView accuracy, TextView lives, TextView score) {
-//        accuracy.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
-//        lives.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
-//        score.setTextColor(mContext.getResources().getColor(R.color.red));
+    public void displayImmediateGameInfoAfterTurn(TextView accuracy) {
         displayTurnAccuracy(accuracy);
-        displayLives(lives);
-        displayTurnPoints(score);
+//        displayLives(lives);
+//        displayTurnPoints(score);
     }
 
-    public void displayImmediateGameInfoAfterFadeCountTurn(TextView accuracy, TextView lives, TextView score) {
+    public void displayImmediateGameInfoAfterFadeCountTurn(TextView accuracy) {
         displayTurnAccuracy(accuracy);
-        displayLives(lives);
     }
 
-    public void displayAllGameInfo(TextView target, TextView accuracy, TextView lives, TextView score, TextView level) {
-//        accuracy.setTextColor(mContext.getResources().getColor(R.color.red));
-//        lives.setTextColor(mContext.getResources().getColor(R.color.red));
-//        score.setTextColor(mContext.getResources().getColor(R.color.red));
+    public void displayAllGameInfo(TextView target, TextView accuracy, TextView lives, TextView score, TextView level, String fromActivity) {
         displayTarget(target);
-//        displayTurnAccuracy(accuracy, mState.getTurnAccuracy());
         displayOverallAccuracy(accuracy);
-//        displayTurnAccuracy(accuracy);
+        if (fromActivity.equals(FROM_COUNTER_ACTIVITY)){
+            lives.setTextColor(mContext.getResources().getColor(R.color.red));
+            score.setTextColor(mContext.getResources().getColor(R.color.red));
+        }
+        if (fromActivity.equals(FROM_FADE_COUNTER_ACTIVITY)){
+            lives.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
+            score.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
+        }
+
         displayLives(lives);
         displayScore(score);
         displayLevel(level);
         Log.d(DEBUG_TAG, "displayAllGameInfo ()********" +
                 "\n Level: " + mState.getLevel() +
                 "\n Turn: " + mState.getTurn() +
+                "\n Lives: " + mState.getLives() +
                 "\n Score: " + mState.getRunningScoreTotal() +
                 "\n Target: " + mState.getTarget() +
                 "\n Accelerator: " + mState.getAccelerator());

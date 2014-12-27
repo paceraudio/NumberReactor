@@ -189,7 +189,7 @@
     </style>
 
     <style name="NR_TextView.GameInfo.Large">
-        <item name="android:textSize">26sp</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Normal">
@@ -334,7 +334,7 @@
     <!--X-LARGE-->
     <style name="NR_TextView.GameInfo.XLarge.Score">
         <item name="android:text">@string/score</item>
-        <item name="android:layout_weight">34</item>
+        <item name="android:layout_weight">37</item>
     </style>
 
     <style name="NR_TextView.GameInfo.XLarge.Score.CounterActivity">
@@ -349,7 +349,7 @@
     <!--LARGE-->
     <style name="NR_TextView.GameInfo.Large.Score">
         <item name="android:text">@string/score</item>
-        <item name="android:layout_weight">34</item>
+        <item name="android:layout_weight">37</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Large.Score.CounterActivity">
@@ -363,7 +363,7 @@
     <!--NORMAL-->
     <style name="NR_TextView.GameInfo.Normal.Score">
         <item name="android:text">@string/score</item>
-        <item name="android:layout_weight">34</item>
+        <item name="android:layout_weight">37</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Normal.Score.CounterActivity">
@@ -379,7 +379,7 @@
     <!--LARGE-->
     <style name="NR_TextView.GameInfo.XLarge.Level">
         <item name="android:text">@string/level</item>
-        <item name="android:layout_weight">26</item>
+        <item name="android:layout_weight">23</item>
     </style>
 
     <style name="NR_TextView.GameInfo.XLarge.Level.CounterActivity">
@@ -393,7 +393,7 @@
     <!--LARGE-->
     <style name="NR_TextView.GameInfo.Large.Level">
         <item name="android:text">@string/level</item>
-        <item name="android:layout_weight">26</item>
+        <item name="android:layout_weight">23</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Large.Level.CounterActivity">
@@ -407,7 +407,7 @@
     <!--NORMAL-->
     <style name="NR_TextView.GameInfo.Normal.Level">
         <item name="android:text">@string/level</item>
-        <item name="android:layout_weight">26</item>
+        <item name="android:layout_weight">23</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Normal.Level.CounterActivity">

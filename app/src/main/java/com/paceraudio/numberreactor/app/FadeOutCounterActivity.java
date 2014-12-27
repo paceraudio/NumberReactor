@@ -52,9 +52,15 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
     private static final String EXTRA_LIFE_FROM_FADE_COUNTER_ROUND =
             "extraLifeFromFadeCounterRound";
+    private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
+
 //    private static final String LEVEL_COMPLETED = "levelCompleted";
 
     private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
+    private static final int LIFE_GAINED =  1;
+    private static final int LIFE_NEUTRAL = 0;
+    private static final int LIFE_LOST = -1;
+
     private static final int DEFAULT_FADE_COUNTER_TARGET = 11;
     private static final int DEFAULT_COUNTER_CEILING = DEFAULT_FADE_COUNTER_TARGET + 5;
     private static final double DEFAULT_FADE_RATIO = .60;
@@ -106,7 +112,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         mGreenValue = Color.green(mFadeCounterColor);
         mBlueValue = Color.blue(mFadeCounterColor);
         mGameInfoDisplayer.displayAllGameInfo(mTvFadeTarget, mTvFadeAccuracy, mTvFadeLives,
-                mTvFadeScore, mTvFadeLevel);
+                mTvFadeScore, mTvFadeLevel, FROM_FADE_COUNTER_ACTIVITY);
 
     }
 
@@ -244,19 +250,35 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
 //        calc the accuracy
         int accuracy = mState.calcAccuracy(DEFAULT_FADE_COUNTER_TARGET, roundedCount);
+
         mState.setTurnAccuracy(accuracy);
-        if (accuracy > 98) {
-            mIsGettingExtraLife = true;
-            int lives = mState.getLives();
-            mState.setLives(lives + 1);
-        }
+        mGameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(mTvFadeAccuracy);
+//        if (accuracy > 98) {
+//            mIsGettingExtraLife = true;
+//            int lives = mState.getLives();
+//            mState.setLives(lives + 1);
+//        }
 //        mTvFadeScore.setTextColor(getResources().getColor(R.color.orange));
-        mGameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(mTvFadeAccuracy,
-                mTvFadeLives, mTvFadeScore);
+//        mGameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(mTvFadeAccuracy,
+//                mTvFadeLives, mTvFadeScore);
 //        mGameInfoDisplayer.displayAllGameInfo(mTvFadeTarget, mTvFadeAccuracy, mTvFadeLives,
 //        mTvFadeScore, mTvFadeLevel);
-        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvFadeCounter);
-        resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY);
+        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvFadeCounter, mTvFadeLives, mTvFadeScore);
+
+        int param2;
+        int param3;
+
+        if (mState.isLifeGained()) {
+            param2 = LIFE_GAINED;
+        }
+        else {
+            param2 = LIFE_NEUTRAL;
+        }
+
+//        No score is awarded in this activity, so set the score to dummy value -1, so that the
+//        score textview does not blink in the reset turn async
+        param3 = -1;
+        resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY, param2, param3);
     }
 
     //    Listener method runs after ResetNextTurnAsync is finished
@@ -264,14 +286,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     public void onNextTurnReset() {
         Log.d(DEBUG_TAG, "ResetNextTurnAsync returning to FadeCounter!!!!");
         Intent intent = new Intent(this, CounterActivity.class);
-//        TODO make this t or f based on performance
-
-        if (mIsGettingExtraLife) {
-            intent.putExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, true);
-            mIsGettingExtraLife = false;
-        } else {
-            intent.putExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, false);
-        }
         setResult(RESULT_OK, intent);
         finish();
     }

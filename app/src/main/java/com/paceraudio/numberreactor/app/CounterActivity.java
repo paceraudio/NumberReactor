@@ -82,6 +82,15 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
     private static final int NORMAL_TURN_RESET = 0;
 
+    private static final int LIFE_GAINED =  1;
+    private static final int LIFE_NEUTRAL = 0;
+    private static final int LIFE_LOST = -1;
+
+    private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
+
+    private static final int TURN_SCORE_POSITIVE = 1;
+    private static final int TURN_SCORE_ZERO = 0;
+
     //    RequestCode for starting FadeCounter for a result
     private static final int FADE_COUNTER_REQUEST_CODE = 1;
 
@@ -381,9 +390,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         Log.d(DEBUG_TAG, "onCounterStopped() elapsed millis: " + Long.toString(onCounterCancelledElapsedTime));
 
         // subtract a life if score is poor
-        mState.checkAccuracyAgainstLives();
+
+//        mState.checkAccuracyAgainstLives();
 //        mTvScore.setTextColor(getResources().getColor(R.color.orange));
-        mGameInfoDisplayer.displayImmediateGameInfoAfterTurn(mTvAccuracy, mTvLivesRemaining, mTvScore);
+
+//        TODO make this info display when the turn resets
+        mGameInfoDisplayer.displayImmediateGameInfoAfterTurn(mTvAccuracy);
 //        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel);
 
 
@@ -453,7 +465,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mState.resetLivesForNewGame();
         mIsStartClickable = true;
 //        mTvScore.setTextColor(getResources().getColor(R.color.red));
-        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel);
+        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel, FROM_COUNTER_ACTIVITY);
         //        TODO put this in async task
         mDbHelper.insertNewGameRowInDb();
         Log.d(DEBUG_TAG, "newest game number in db: " + Integer.toString(mDbHelper
@@ -469,7 +481,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mCurrentTurn = mState.getTurn();
         resetCounterToZero();
 //        mTvScore.setTextColor(getResources().getColor(R.color.red));
-        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel);
+        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel, FROM_COUNTER_ACTIVITY);
     }
 
     private void setGameValuesForNextLevel() {
@@ -492,7 +504,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 //        showStopButtonNotEngaged();
         mGameInfoDisplayer.showStopButtonNotEngaged(mStopButton, mFrameStopButton);
 
-        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel);
+        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining, mTvScore, mTvLevel, FROM_COUNTER_ACTIVITY);
     }
 
     private void resetCounterToZero() {
@@ -558,10 +570,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == FADE_COUNTER_REQUEST_CODE) {
-            boolean addExtraLife = data.getBooleanExtra(EXTRA_LIFE_FROM_FADE_COUNTER_ROUND, false);
-//            if (addExtraLife) {
-//                addBonusLifeToApplicationState();
-//            }
             setGameValuesForNextLevel();
         }
     }
@@ -575,16 +583,45 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         Log.d(DEBUG_TAG, "updated score from update db async: " + Integer.toString(mDbHelper
                 .queryScoreFromDb()));
 
+        int param1;
+        int param2;
+        int param3;
+
+        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
+                mTvCounter, mTvLivesRemaining, mTvScore);
+
         if (checkIfLivesLeft()) {
+
+//            See if this was our last turn
             if (isOutOfTurnsState()) {
-                ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
-                        mTvCounter);
-                resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY);
+                param1 = LAST_TURN_RESET_BEFORE_NEW_ACTIVITY;
             } else {
-                ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
-                        mTvCounter);
-                resetNextTurnAsync.execute(NORMAL_TURN_RESET);
+                param1 = NORMAL_TURN_RESET;
             }
+
+//            See if there was a life gained or lost
+            if (mState.isLifeGained()) {
+                param2 = LIFE_GAINED;
+            }
+            else if (mState.isLifeLost()) {
+                param2 = LIFE_LOST;
+            }
+            else {
+                param2 = LIFE_NEUTRAL;
+            }
+
+//            See if there was a gain in points
+//            if (mState.getTurnPoints() > 0) {
+//                param3 = TURN_SCORE_POSITIVE;
+//            }
+//            else {
+//                param3 = TURN_SCORE_ZERO;
+//            }
+
+//            Send the turn points as third param
+            param3 = mState.getTurnPoints();
+            resetNextTurnAsync.execute(param1, param2, param3);
+
         } else {
             launchOutOfLivesDialog();
         }
@@ -609,7 +646,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     public void onOkClicked() {
         mDialogFragment.dismiss();
         mDbHelper.insertNewGameRowInDb();
-        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvCounter);
+        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvCounter, mTvLivesRemaining, mTvScore);
         resetNextTurnAsync.execute(NORMAL_TURN_RESET);
         setInitialTimeValuesLevelOne();
     }

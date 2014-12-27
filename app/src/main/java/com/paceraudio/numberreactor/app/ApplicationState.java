@@ -198,6 +198,22 @@ public class ApplicationState extends Application{
         Log.d(DEBUG_TAG, "checkAccuracyAgainstLives lives remaining: " + lives);
     }
 
+    public boolean isLifeLost() {
+        if (turnAccuracy < LIFE_LOSS_THRESHOLD) {
+            lives -= 1;
+            return true;
+        }
+        return false;
+    }
+
+   public boolean isLifeGained() {
+       if (turnAccuracy == 100) {
+           lives += 1;
+           return true;
+       }
+       return false;
+   }
+
     public int calcAccuracyResult(double accuracy) {
         return (int) Math.round(accuracy);
     }
