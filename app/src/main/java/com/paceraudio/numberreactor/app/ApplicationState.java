@@ -46,7 +46,7 @@ public class ApplicationState extends Application{
         turnAccuracy = 0;
         turnPoints = 0;
         accelerator = 0;
-        turn = 0;
+        turn = 1;
     }
 
     public int getLevel() {
@@ -199,7 +199,7 @@ public class ApplicationState extends Application{
     }
 
     public boolean isLifeLost() {
-        if (turnAccuracy < LIFE_LOSS_THRESHOLD) {
+        if (turnAccuracy <= LIFE_LOSS_THRESHOLD) {
             lives -= 1;
             return true;
         }

@@ -108,4 +108,9 @@ public class GameInfoDisplayer {
                 "\n Target: " + mState.getTarget() +
                 "\n Accelerator: " + mState.getAccelerator());
     }
+
+    public void resetCounterToZero(TextView counter) {
+        counter.setText(mContext.getString(R.string.zero_point_zero));
+        counter.setTextColor(mContext.getResources().getColor(R.color.red));
+    }
 }
