@@ -254,20 +254,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                         Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount " +
                                 "of " +
                                 "background thread cycles: %5d", stopClickMillis, mCount));
-//                        mGameInfoDisplayer.showStopButtonEngaged(mStopButton, mFrameStopButton);
-//                        mGameInfoDisplayer.showStartButtonNotEngaged(mStartButton,
-// mFrameStartButton);
-//                        mIsStopCLickable = false;
                     }
                 }
                 return false;
             }
         });
         Log.d(DEBUG_TAG, "onResume() end");
-    }
-
-    private void interuptCounterThread() {
-        mCounterThread.interrupt();
     }
 
     @Override
