@@ -58,9 +58,14 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     long mStartTime;
     long mElapsedTimeMillis;
+    long mLastElapsedTimeMillis = 0;
     double mElapsedAcceleratedCount;
     double mNextCount;
+    double mNextWholeCount = 1.00;
     double mAccelerator;
+    double mIncreaseRatio = 1.0005;
+    double mDuration = 10;
+    double mDurationIncrement = 9.99;
     int mCount;
     int mCurrentTurn;
 
@@ -68,7 +73,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static final int TURNS_PER_LEVEL = 4;
     private static final double BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY = .3;
     private static final double BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL = .7;
-    private static final double BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD = 1.1;
+    private static final double BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD = 1.0;
     private static final int LIFE_LOSS_THRESHOLD = 85;
     private static final double ACCELERATOR_INCREASE_PER_LEVEL_FACTOR = 1.05;
 //    private static final double MAX_COUNTER_VALUE;
@@ -174,23 +179,29 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-
+//                    mAccelerator = 6.0;
                     if (mIsStartClickable) {
                         mStartTime = SystemClock.elapsedRealtime();
                         mGameInfoDisplayer.showStartButtonEngaged(mStartButton, mFrameStartButton);
                         mCounterThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                while (mElapsedAcceleratedCount < mTarget * 4 &&
+                                while (mElapsedAcceleratedCount < 99.99 &&
                                         !mCounterThread.isInterrupted()) {
-                                    mElapsedAcceleratedCount = TimeCounter
-                                            .calcElapsedAcceleratedCount(mStartTime, mAccelerator);
+//                                    mElapsedAcceleratedCount = TimeCounter
+//                                            .calcElapsedAcceleratedCount(mStartTime, mAccelerator);
+//                                    mCount++;
 
 
 //                                    **********TODO for stepping in debug mode only!!!!!!
 //                                    **********TODO comment out for running the app!!!!!!
 //                                    mElapsedAcceleratedCount = mNextCount;
 
+                                    long elapsedTime = SystemClock.elapsedRealtime() - mStartTime;
+                                    if (elapsedTime >= mDuration) {
+                                        mElapsedAcceleratedCount += 0.01;
+
+                                    }
 
                                     if (mElapsedAcceleratedCount >= mNextCount) {
                                         mHandler.post(new Runnable() {
@@ -201,16 +212,51 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                                         () - mStartTime;
                                                 mTvCounter.setText(String.format("%.2f",
                                                         mElapsedAcceleratedCount));
+//                                                Log.d(DEBUG_TAG, "loop cycles per hundredths of accelerated count:" + mCount);
+
 
                                             }
                                         });
+                                        mNextCount += 0.01;
+                                        if (mDurationIncrement >= 2.5){
 
-                                        if (mElapsedAcceleratedCount < 30) {
-                                            mAccelerator *= 1.0005;
-                                            mNextCount += 0.01;
-                                        } else {
-                                            mNextCount += 0.03;
+                                            mDurationIncrement *= 0.9995;
                                         }
+                                        mDuration += (mDurationIncrement);
+
+//                                        mAccelerator *= mIncreaseRatio;
+//
+//                                        if (mIncreaseRatio > 1.0001) {
+//                                            mIncreaseRatio *= 0.99999991;
+//                                        }
+                                        if (mElapsedAcceleratedCount >= mNextWholeCount) {
+                                            long currentElapsedTime = mElapsedTimeMillis -
+                                                    mLastElapsedTimeMillis;
+                                            Log.d(DEBUG_TAG, ">>>>>>>>>>>>>>>whole number: " + (String.format("%" +
+                                                    ".2f", mElapsedAcceleratedCount)));
+                                            Log.d(DEBUG_TAG, "elapsed time since last whole " +
+                                                    "number: " + currentElapsedTime);
+                                            Log.d(DEBUG_TAG, "mDuration: " + mDuration);
+//                                            Log.d(DEBUG_TAG, "mAccelerator: " + mAccelerator);
+//                                            Log.d(DEBUG_TAG, "mIncreaseRatio: " + mIncreaseRatio);
+                                            mLastElapsedTimeMillis = mElapsedTimeMillis;
+                                            mNextWholeCount += 1;
+//                                            Log.d(DEBUG_TAG, "loop cycles per ones of accelerated count:" + mCount);
+                                            mCount = 0;
+                                        }
+
+
+//                                        if (mAccelerator <= 2.0) {
+//                                            mAccelerator *= mIncreaseRatio;
+//                                        } else if (mAccelerator > 2.0 && mAccelerator <= 3.0) {
+//                                            mAccelerator *= 1.0003;
+//                                        }
+//                                        else if (mAccelerator > 3.0 && mAccelerator <= 4.0) {
+//                                            mAccelerator *= 1.0001;
+//                                        }
+//                                        else if (mAccelerator > 4.0) {
+//                                            mAccelerator *= 1.0;
+//                                        }
 
                                     }
                                 }
@@ -250,10 +296,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     if (mIsStopCLickable) {
                         mCounterThread.interrupt();
+                        Log.d(DEBUG_TAG, "final accelerator: " + mAccelerator);
                         long stopClickMillis = SystemClock.elapsedRealtime() - mStartTime;
                         Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount " +
                                 "of " +
                                 "background thread cycles: %5d", stopClickMillis, mCount));
+
                     }
                 }
                 return false;
@@ -376,6 +424,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private void resetBasicTimeValues() {
         mElapsedAcceleratedCount = 0;
         mElapsedTimeMillis = 0;
+        mDuration = 10;
+        mDurationIncrement = 9.99;
+        mNextWholeCount = 1;
         mNextCount = 0.01;
         mCount = 0;
     }
@@ -453,7 +504,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mCurrentTurn = mState.getTurn();
     }
 
-//    This needs to happen before every turn because the accelerator increases with every
+    //    This needs to happen before every turn because the accelerator increases with every
 //    iteration of the timing loop
     private void resetAcceleratorToStateAccelerator() {
         mAccelerator = mState.getAccelerator();
