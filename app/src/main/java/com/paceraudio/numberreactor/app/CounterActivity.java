@@ -189,6 +189,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                             @Override
                             public void run() {
                                 boolean rapidUpdate = true;
+                                mDuration = 10;
+                                mDurationIncrement = 9.99;
                                 while (mElapsedAcceleratedCount < 99999 &&
                                         !mCounterThread.isInterrupted()) {
 
@@ -200,13 +202,22 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 //                                        Log.d(DEBUG_TAG, "elapsed time millis: " + mElapsedTimeMillis);
 //                                        Log.d(DEBUG_TAG, "mDuration: " + mDuration);
 
-                                        if (mDurationIncrement >= 3) {
-                                            mDurationIncrement *= 0.9992;
+                                        if (rapidUpdate) {
                                             mElapsedAcceleratedCount += 10;
+                                            mDurationIncrement *= 0.9992;
+                                            if (mDurationIncrement <= 3) {
+                                                rapidUpdate = false;
+                                                mDurationIncrement = 9;
+                                                Log.d(DEBUG_TAG, "~~~~~~~~~~~~~~~~~~~~rapidUpdate: ~~~~~~~~~~~~~~~~~~~~" + rapidUpdate);
+                                            }
+                                        } else {
+                                            mElapsedAcceleratedCount += 30;
+                                            if (mDurationIncrement >= 3) {
+                                                mDurationIncrement *= 0.9992;
+                                            }
                                         }
-                                       
 
-
+                                        mDuration += mDurationIncrement;
                                         mElapsedAccelCountDouble = mElapsedAcceleratedCount / 1000d;
 
 //                                        Log.d(DEBUG_TAG, "mElapsedAcceleratedCount: " + mElapsedAcceleratedCount);
@@ -224,6 +235,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
                                     }
 
+                                }
+                                if (!mCounterThread.isInterrupted()) {
+                                    mCounterThread.interrupt();
                                 }
 
                                 if (mCounterThread.isInterrupted()) {
