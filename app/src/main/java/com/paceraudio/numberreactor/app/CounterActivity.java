@@ -70,6 +70,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     int mCount;
     int mCurrentTurn;
 
+    private boolean mHasPosted;
+
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     private static final int TURNS_PER_LEVEL = 4;
     private static final double BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY = .3;
@@ -180,59 +182,59 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-//                    mAccelerator = 6.0;
                     if (mIsStartClickable) {
                         mStartTime = SystemClock.elapsedRealtime();
                         mGameInfoDisplayer.showStartButtonEngaged(mStartButton, mFrameStartButton);
                         mCounterThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                while (mElapsedAcceleratedCount < 9999 &&
+                                boolean rapidUpdate = true;
+                                while (mElapsedAcceleratedCount < 99999 &&
                                         !mCounterThread.isInterrupted()) {
-
 
                                     mElapsedTimeMillis = SystemClock.elapsedRealtime
                                             () - mStartTime;
                                     if (mElapsedTimeMillis >= mDuration) {
-                                        Log.d(DEBUG_TAG, "elapsed time millis: " + mElapsedTimeMillis);
-                                        Log.d(DEBUG_TAG, "mDuration :" + mDuration);
-                                        mElapsedAcceleratedCount += 10;
-                                        Log.d(DEBUG_TAG, "mElapsedAcceleratedCount: " + mElapsedAcceleratedCount);
-                                        mElapsedAccelCountDouble = mElapsedAcceleratedCount / 1000d;
-                                        Log.d(DEBUG_TAG, "mElapsedAccelCOuntDouble: " + mElapsedAccelCountDouble);
-                                        mHandler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                mTvCounter.setText(String.format("%.2f",
-                                                        mElapsedAccelCountDouble));
-                                                Log.d(DEBUG_TAG,
-                                                        "elapsedAccelCount:" +
-                                                                mElapsedAcceleratedCount);
-                                            }
-                                        });
-                                        if (mDurationIncrement >= 2.5) {
 
+//                                        Log.d(DEBUG_TAG, "\n- - - - - - - - - - - - - - - - - - - -");
+//                                        Log.d(DEBUG_TAG, "elapsed time millis: " + mElapsedTimeMillis);
+//                                        Log.d(DEBUG_TAG, "mDuration: " + mDuration);
+
+                                        if (mDurationIncrement >= 3) {
                                             mDurationIncrement *= 0.9992;
+                                            mElapsedAcceleratedCount += 10;
                                         }
-                                        mDuration += mDurationIncrement;
+                                       
+
+
+                                        mElapsedAccelCountDouble = mElapsedAcceleratedCount / 1000d;
+
+//                                        Log.d(DEBUG_TAG, "mElapsedAcceleratedCount: " + mElapsedAcceleratedCount);
+//                                        Log.d(DEBUG_TAG, "mElapsedAccelCountDouble: " + mElapsedAccelCountDouble);
+//                                        Log.d(DEBUG_TAG, "- - - - - - - - - - - - - - - - - - - -\n");
+
+                                            mHandler.postAtTime(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mTvCounter.setText(String.format("%.2f",
+                                                            mElapsedAccelCountDouble));
+                                                    Log.d(DEBUG_TAG, "posting: " + mElapsedAccelCountDouble);
+                                                }
+                                            }, mElapsedTimeMillis);
 
                                     }
 
                                 }
 
-
-                                if (!mCounterThread.isInterrupted()) {
-                                    mCounterThread.interrupt();
-                                }
                                 if (mCounterThread.isInterrupted()) {
-                                    mHandler.post(new Runnable() {
+                                    mHandler.postAtTime(new Runnable() {
                                         @Override
                                         public void run() {
                                             Log.d(DEBUG_TAG, "mCounterThread interrupted! final " +
                                                     "accelerator value: " + mAccelerator);
                                             onCounterStopped(mElapsedAcceleratedCount, mCount);
                                         }
-                                    });
+                                    }, mElapsedTimeMillis);
                                     return;
                                 }
 
@@ -257,7 +259,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     if (mIsStopCLickable) {
                         mCounterThread.interrupt();
-                        Log.d(DEBUG_TAG, "final accelerator: " + mAccelerator);
                         long stopClickMillis = SystemClock.elapsedRealtime() - mStartTime;
                         Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount " +
                                 "of " +
