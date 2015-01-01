@@ -173,6 +173,13 @@ public class ApplicationState extends Application{
         }
         return ((int) (accelCount * 100)) /100d;
     }
+
+    public double roundElapAccelCountLong(long accelCount) {
+        if (accelCount > 99999) {
+            return 99.99;
+        }
+        return accelCount / 1000d;
+    }
     public int calcAccuracy(double target, double elapAccelCount) {
 //        double counterToHundredths = ((int) (counter * 100)) / 100d;
         double error = Math.abs(target - elapAccelCount);

@@ -59,9 +59,10 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     long mStartTime;
     long mElapsedTimeMillis;
     long mLastElapsedTimeMillis = 0;
-    double mElapsedAcceleratedCount;
-    double mNextCount;
-    double mNextWholeCount = 1.00;
+    long mElapsedAcceleratedCount;
+    double mElapsedAccelCountDouble;
+    long mNextCount = 10;
+    long mNextWholeCount = 1000;
     double mAccelerator;
     double mIncreaseRatio = 1.0005;
     double mDuration = 10;
@@ -186,80 +187,40 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                         mCounterThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                while (mElapsedAcceleratedCount < 99.99 &&
+                                while (mElapsedAcceleratedCount < 9999 &&
                                         !mCounterThread.isInterrupted()) {
-//                                    mElapsedAcceleratedCount = TimeCounter
-//                                            .calcElapsedAcceleratedCount(mStartTime, mAccelerator);
-//                                    mCount++;
 
 
-//                                    **********TODO for stepping in debug mode only!!!!!!
-//                                    **********TODO comment out for running the app!!!!!!
-//                                    mElapsedAcceleratedCount = mNextCount;
-
-                                    long elapsedTime = SystemClock.elapsedRealtime() - mStartTime;
-                                    if (elapsedTime >= mDuration) {
-                                        mElapsedAcceleratedCount += 0.01;
-
-                                    }
-
-                                    if (mElapsedAcceleratedCount >= mNextCount) {
+                                    mElapsedTimeMillis = SystemClock.elapsedRealtime
+                                            () - mStartTime;
+                                    if (mElapsedTimeMillis >= mDuration) {
+                                        Log.d(DEBUG_TAG, "elapsed time millis: " + mElapsedTimeMillis);
+                                        Log.d(DEBUG_TAG, "mDuration :" + mDuration);
+                                        mElapsedAcceleratedCount += 10;
+                                        Log.d(DEBUG_TAG, "mElapsedAcceleratedCount: " + mElapsedAcceleratedCount);
+                                        mElapsedAccelCountDouble = mElapsedAcceleratedCount / 1000d;
+                                        Log.d(DEBUG_TAG, "mElapsedAccelCOuntDouble: " + mElapsedAccelCountDouble);
                                         mHandler.post(new Runnable() {
                                             @Override
                                             public void run() {
-
-                                                mElapsedTimeMillis = SystemClock.elapsedRealtime
-                                                        () - mStartTime;
                                                 mTvCounter.setText(String.format("%.2f",
-                                                        mElapsedAcceleratedCount));
-//                                                Log.d(DEBUG_TAG, "loop cycles per hundredths of accelerated count:" + mCount);
-
-
+                                                        mElapsedAccelCountDouble));
+                                                Log.d(DEBUG_TAG,
+                                                        "elapsedAccelCount:" +
+                                                                mElapsedAcceleratedCount);
                                             }
                                         });
-                                        mNextCount += 0.01;
-                                        if (mDurationIncrement >= 2.5){
+                                        if (mDurationIncrement >= 2.5) {
 
-                                            mDurationIncrement *= 0.9995;
+                                            mDurationIncrement *= 0.9992;
                                         }
-                                        mDuration += (mDurationIncrement);
-
-//                                        mAccelerator *= mIncreaseRatio;
-//
-//                                        if (mIncreaseRatio > 1.0001) {
-//                                            mIncreaseRatio *= 0.99999991;
-//                                        }
-                                        if (mElapsedAcceleratedCount >= mNextWholeCount) {
-                                            long currentElapsedTime = mElapsedTimeMillis -
-                                                    mLastElapsedTimeMillis;
-                                            Log.d(DEBUG_TAG, ">>>>>>>>>>>>>>>whole number: " + (String.format("%" +
-                                                    ".2f", mElapsedAcceleratedCount)));
-                                            Log.d(DEBUG_TAG, "elapsed time since last whole " +
-                                                    "number: " + currentElapsedTime);
-                                            Log.d(DEBUG_TAG, "mDuration: " + mDuration);
-//                                            Log.d(DEBUG_TAG, "mAccelerator: " + mAccelerator);
-//                                            Log.d(DEBUG_TAG, "mIncreaseRatio: " + mIncreaseRatio);
-                                            mLastElapsedTimeMillis = mElapsedTimeMillis;
-                                            mNextWholeCount += 1;
-//                                            Log.d(DEBUG_TAG, "loop cycles per ones of accelerated count:" + mCount);
-                                            mCount = 0;
-                                        }
-
-
-//                                        if (mAccelerator <= 2.0) {
-//                                            mAccelerator *= mIncreaseRatio;
-//                                        } else if (mAccelerator > 2.0 && mAccelerator <= 3.0) {
-//                                            mAccelerator *= 1.0003;
-//                                        }
-//                                        else if (mAccelerator > 3.0 && mAccelerator <= 4.0) {
-//                                            mAccelerator *= 1.0001;
-//                                        }
-//                                        else if (mAccelerator > 4.0) {
-//                                            mAccelerator *= 1.0;
-//                                        }
+                                        mDuration += mDurationIncrement;
 
                                     }
+
                                 }
+
+
                                 if (!mCounterThread.isInterrupted()) {
                                     mCounterThread.interrupt();
                                 }
@@ -361,14 +322,14 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     // runs when mCounter thread is  is cancelled
-    public void onCounterStopped(double accelCount, int count) {
+    public void onCounterStopped(long accelCount, int count) {
 
         mGameInfoDisplayer.showStopButtonEngaged(mStopButton, mFrameStopButton);
         mGameInfoDisplayer.showStartButtonNotEngaged(mStartButton, mFrameStartButton);
         mIsStopCLickable = false;
 
 //      Round the elapsed accelerated count to 2 decimal places
-        double roundedCount = mState.roundElapAccelCount(accelCount);
+        double roundedCount = mState.roundElapAccelCountLong(accelCount);
 
 //      Convert rounded value to a String to display
         String roundedCountStr = String.format("%.2f", roundedCount);
@@ -426,8 +387,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mElapsedTimeMillis = 0;
         mDuration = 10;
         mDurationIncrement = 9.99;
-        mNextWholeCount = 1;
-        mNextCount = 0.01;
+        mNextWholeCount = 1000;
+        mNextCount = 10;
         mCount = 0;
     }
 
