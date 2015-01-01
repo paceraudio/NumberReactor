@@ -68,6 +68,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     double mDuration = 10;
     double mDurationIncrement = 9.99;
     int mCount;
+    int mPostCount;
     int mCurrentTurn;
 
     private boolean mHasPosted;
@@ -185,6 +186,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                     if (mIsStartClickable) {
                         mStartTime = SystemClock.elapsedRealtime();
                         mGameInfoDisplayer.showStartButtonEngaged(mStartButton, mFrameStartButton);
+                        mPostCount = 1;
                         mCounterThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -205,24 +207,13 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                         if (rapidUpdate) {
                                             mElapsedAcceleratedCount += 10;
                                             mDurationIncrement *= 0.9992;
+                                            mDuration += mDurationIncrement;
+                                            mElapsedAccelCountDouble = mElapsedAcceleratedCount / 1000d;
                                             if (mDurationIncrement <= 3) {
                                                 rapidUpdate = false;
-                                                mDurationIncrement = 9;
+//                                                mDurationIncrement = 9;
                                                 Log.d(DEBUG_TAG, "~~~~~~~~~~~~~~~~~~~~rapidUpdate: ~~~~~~~~~~~~~~~~~~~~" + rapidUpdate);
                                             }
-                                        } else {
-                                            mElapsedAcceleratedCount += 30;
-                                            if (mDurationIncrement >= 3) {
-                                                mDurationIncrement *= 0.9992;
-                                            }
-                                        }
-
-                                        mDuration += mDurationIncrement;
-                                        mElapsedAccelCountDouble = mElapsedAcceleratedCount / 1000d;
-
-//                                        Log.d(DEBUG_TAG, "mElapsedAcceleratedCount: " + mElapsedAcceleratedCount);
-//                                        Log.d(DEBUG_TAG, "mElapsedAccelCountDouble: " + mElapsedAccelCountDouble);
-//                                        Log.d(DEBUG_TAG, "- - - - - - - - - - - - - - - - - - - -\n");
 
                                             mHandler.postAtTime(new Runnable() {
                                                 @Override
@@ -232,6 +223,35 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                                     Log.d(DEBUG_TAG, "posting: " + mElapsedAccelCountDouble);
                                                 }
                                             }, mElapsedTimeMillis);
+
+
+                                        } else {
+                                            if (mDurationIncrement >= 1) {
+
+                                                mDurationIncrement *= 0.9992;
+                                            }
+                                            mElapsedAcceleratedCount += 10;
+                                            mDuration += mDurationIncrement;
+                                            mPostCount++;
+
+                                            if (mPostCount % 3 == 0) {
+                                                mElapsedAccelCountDouble = mElapsedAcceleratedCount / 1000d;
+                                                mHandler.postAtTime(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        mTvCounter.setText(String.format("%.2f",
+                                                                mElapsedAccelCountDouble));
+                                                        Log.d(DEBUG_TAG, "posting: " + mElapsedAccelCountDouble);
+                                                    }
+                                                }, mElapsedTimeMillis);
+                                            }
+                                        }
+
+//                                        Log.d(DEBUG_TAG, "mElapsedAcceleratedCount: " + mElapsedAcceleratedCount);
+//                                        Log.d(DEBUG_TAG, "mElapsedAccelCountDouble: " + mElapsedAccelCountDouble);
+//                                        Log.d(DEBUG_TAG, "- - - - - - - - - - - - - - - - - - - -\n");
+
+
 
                                     }
 
