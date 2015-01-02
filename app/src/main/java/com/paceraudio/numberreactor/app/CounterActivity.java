@@ -1,5 +1,6 @@
 package com.paceraudio.numberreactor.app;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -58,30 +59,31 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     long mStartTime;
     long mElapsedTimeMillis;
-    long mLastElapsedTimeMillis = 0;
+    //long mLastElapsedTimeMillis = 0;
     long mElapsedAcceleratedCount;
     double mElapsedAccelCountDouble;
     long mNextCount = 10;
     long mNextWholeCount = 1000;
-    double mAccelerator;
-    double mIncreaseRatio = 1.0005;
+    //double mAccelerator;
+    //double mIncreaseRatio = 1.0005;
     double mDuration = 10;
     double mDurationIncrement = 9.99;
+    //private double mLevelDuration;
     int mCount;
     int mPostCount;
     int mCurrentTurn;
 
-    private boolean mHasPosted;
+    //private boolean mHasPosted;
 
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     private static final int TURNS_PER_LEVEL = 4;
-    private static final double BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY = .3;
-    private static final double BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL = .7;
-    private static final double BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD = 1.0;
+
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 30;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL = 20;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD = 10;
+
     private static final int LIFE_LOSS_THRESHOLD = 85;
-    private static final double ACCELERATOR_INCREASE_PER_LEVEL_FACTOR = 1.05;
-//    private static final double MAX_COUNTER_VALUE;
-//    private static int LIVES_PER_LEVEL = 4;
+    private static final double DURATION_DECREASE_PER_LEVEL_FACTOR = .95;
 
     //    Params for the ResetNextTurnAsync.execute()
     private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
@@ -96,9 +98,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     //    RequestCode for starting FadeCounter for a result
     private static final int FADE_COUNTER_REQUEST_CODE = 1;
 
-    private static final String EXTRA_LIFE_FROM_FADE_COUNTER_ROUND =
-            "extraLifeFromFadeCounterRound";
-    private static final String LEVEL_COMPLETED = "levelCompleted";
 
     private static final String DIGITAL_7_FONT_PATH =
             "fonts/digital-7-mono.ttf";
@@ -177,8 +176,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
             }
         };
-//      mAccelerator increases with every iteration of timing loop, so we always need to reset its
-//      value to the acceleration rate for the level (mLevelAccelerator)
         mStartButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -190,71 +187,51 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                         mCounterThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                boolean rapidUpdate = true;
-                                mDuration = 10;
-                                mDurationIncrement = 9.99;
                                 while (mElapsedAcceleratedCount < 99999 &&
                                         !mCounterThread.isInterrupted()) {
 
                                     mElapsedTimeMillis = SystemClock.elapsedRealtime
                                             () - mStartTime;
+
                                     if (mElapsedTimeMillis >= mDuration) {
 
-//                                        Log.d(DEBUG_TAG, "\n- - - - - - - - - - - - - - - - - - - -");
-//                                        Log.d(DEBUG_TAG, "elapsed time millis: " + mElapsedTimeMillis);
-//                                        Log.d(DEBUG_TAG, "mDuration: " + mDuration);
+                                        /*Log.d(DEBUG_TAG, "\n- - - - - - - - - - - - - - - - - - -");
 
-                                        if (rapidUpdate) {
-                                            mElapsedAcceleratedCount += 10;
-                                            mDurationIncrement *= 0.9992;
-                                            mDuration += mDurationIncrement;
-                                            mElapsedAccelCountDouble = mElapsedAcceleratedCount / 1000d;
-                                            if (mDurationIncrement <= 3) {
-                                                rapidUpdate = false;
-//                                                mDurationIncrement = 9;
-                                                Log.d(DEBUG_TAG, "~~~~~~~~~~~~~~~~~~~~rapidUpdate: ~~~~~~~~~~~~~~~~~~~~" + rapidUpdate);
-                                            }
+                                        Log.d(DEBUG_TAG, "elapsed time millis: " +
+                                                mElapsedTimeMillis);
+                                        Log.d(DEBUG_TAG, "mDuration: " + mDuration);*/
+
+                                        mElapsedAcceleratedCount += 10;
+                                        if (mDurationIncrement >= 1) {
+                                            mDurationIncrement *= 0.999;
+                                        }
+                                        mDuration += mDurationIncrement;
+                                        mPostCount++;
+
+                                        if (mDurationIncrement >= 3 || (mDurationIncrement < 3 &&
+                                                mPostCount % 3 == 0)) {
+
+                                            mElapsedAccelCountDouble = mElapsedAcceleratedCount /
+                                                    1000d;
 
                                             mHandler.postAtTime(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     mTvCounter.setText(String.format("%.2f",
                                                             mElapsedAccelCountDouble));
-                                                    Log.d(DEBUG_TAG, "posting: " + mElapsedAccelCountDouble);
+                                                    Log.d(DEBUG_TAG,
+                                                            "posting: " + mElapsedAccelCountDouble);
                                                 }
                                             }, mElapsedTimeMillis);
 
+                                            /*Log.d(DEBUG_TAG, "mElapsedAcceleratedCount: " +
+                                                    mElapsedAcceleratedCount);
+                                            Log.d(DEBUG_TAG, "mElapsedAccelCountDouble: " +
+                                                    mElapsedAccelCountDouble);
+                                            Log.d(DEBUG_TAG, "- - - - - - - - - - - - - - - - -\n");*/
 
-                                        } else {
-                                            if (mDurationIncrement >= 1) {
-
-                                                mDurationIncrement *= 0.9992;
-                                            }
-                                            mElapsedAcceleratedCount += 10;
-                                            mDuration += mDurationIncrement;
-                                            mPostCount++;
-
-                                            if (mPostCount % 3 == 0) {
-                                                mElapsedAccelCountDouble = mElapsedAcceleratedCount / 1000d;
-                                                mHandler.postAtTime(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        mTvCounter.setText(String.format("%.2f",
-                                                                mElapsedAccelCountDouble));
-                                                        Log.d(DEBUG_TAG, "posting: " + mElapsedAccelCountDouble);
-                                                    }
-                                                }, mElapsedTimeMillis);
-                                            }
                                         }
-
-//                                        Log.d(DEBUG_TAG, "mElapsedAcceleratedCount: " + mElapsedAcceleratedCount);
-//                                        Log.d(DEBUG_TAG, "mElapsedAccelCountDouble: " + mElapsedAccelCountDouble);
-//                                        Log.d(DEBUG_TAG, "- - - - - - - - - - - - - - - - - - - -\n");
-
-
-
                                     }
-
                                 }
                                 if (!mCounterThread.isInterrupted()) {
                                     mCounterThread.interrupt();
@@ -264,14 +241,10 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                     mHandler.postAtTime(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Log.d(DEBUG_TAG, "mCounterThread interrupted! final " +
-                                                    "accelerator value: " + mAccelerator);
                                             onCounterStopped(mElapsedAcceleratedCount, mCount);
                                         }
                                     }, mElapsedTimeMillis);
-                                    return;
                                 }
-
                             }
                         });
                         mCounterThread.start();
@@ -279,7 +252,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                         mIsStopCLickable = true;
                         Log.d(DEBUG_TAG, "Start clicked!");
                     }
-
                 }
                 return false;
             }
@@ -403,10 +375,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         Log.d(DEBUG_TAG, "onCounterStopped() elapsed millis: " + Long.toString
                 (onCounterCancelledElapsedTime));
 
-        // subtract a life if score is poor
-
-//        mState.checkAccuracyAgainstLives();
-//        mTvScore.setTextColor(getResources().getColor(R.color.orange));
 
 //        TODO make this info display when the turn resets
         mGameInfoDisplayer.displayImmediateGameInfoAfterTurn(mTvAccuracy);
@@ -420,8 +388,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private void resetBasicTimeValues() {
         mElapsedAcceleratedCount = 0;
         mElapsedTimeMillis = 0;
-        mDuration = 10;
-        mDurationIncrement = 9.99;
+        mDurationIncrement = mDuration;
         mNextWholeCount = 1000;
         mNextCount = 10;
         mCount = 0;
@@ -432,18 +399,18 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String difficultyLevel = prefs.getString(getString(R.string.prefs_difficulty_key), "1");
         if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_1))) {
-            mState.setAccelerator(BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY);
+            mState.setDuration(BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY);
         }
         if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_2))) {
-            mState.setAccelerator(BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL);
+            mState.setDuration(BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL);
         }
         if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_3))) {
-            mState.setAccelerator(BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD);
+            mState.setDuration(BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD);
         }
 
         mState.setTarget(BEGINNING_TARGET_LEVEL_ONE);
         mTarget = mState.getTarget();
-        resetAcceleratorToStateAccelerator();
+        resetDurationToStateDuration();
         resetBasicTimeValues();
         mState.setTurn(1);
         mCurrentTurn = mState.getTurn();
@@ -460,14 +427,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     private void resetTimeValuesBetweenTurns() {
-        resetAcceleratorToStateAccelerator();
+        resetDurationToStateDuration();
         resetBasicTimeValues();
         mState.setTarget(mTarget + 1);
         mTarget = mState.getTarget();
         mState.setTurn(mCurrentTurn + 1);
         mCurrentTurn = mState.getTurn();
-//        resetCounterToZero();
-//        mTvScore.setTextColor(getResources().getColor(R.color.red));
         mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining,
                 mTvScore, mTvLevel, FROM_COUNTER_ACTIVITY);
     }
@@ -479,8 +444,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 //        current level. Check the SharedPreferences for the difficulty level.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         updateDifficultyBasedOnPreferencesAndLevel(prefs);
-
-        resetAcceleratorToStateAccelerator();
+        resetDurationToStateDuration();
         resetTargetBasedOnLevel();
         resetTurnsToFirstTurn();
         resetBasicTimeValues();
@@ -500,10 +464,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mCurrentTurn = mState.getTurn();
     }
 
-    //    This needs to happen before every turn because the accelerator increases with every
-//    iteration of the timing loop
-    private void resetAcceleratorToStateAccelerator() {
-        mAccelerator = mState.getAccelerator();
+    private void resetDurationToStateDuration() {
+        mDuration = mState.getDuration();
     }
 
     private void resetTargetBasedOnLevel() {
@@ -522,11 +484,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         }
         return true;
     }
-
-//    private void addBonusLifeToApplicationState() {
-//        int lives = mState.getLives();
-//        mState.setLives(lives + 1);
-//    }
 
     private void launchOutOfLivesDialog() {
         FragmentManager fm = getSupportFragmentManager();
@@ -638,25 +595,26 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         int level = mState.getLevel();
         String difficulty = prefs.getString(getString(R.string.prefs_difficulty_key), "-1");
         if (!difficulty.equals("-1")) {
-            double tempAccelerator = 0;
+            //double tempAccelerator = 0;
+            double tempDuration = 0;
             if (difficulty.equals(getString(R.string.prefs_difficulty_values_1))) {
-                tempAccelerator = BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_EASY;
+                tempDuration = BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY;
             }
             if (difficulty.equals(getString(R.string.prefs_difficulty_values_2))) {
-                tempAccelerator = BEGINNING_ACCELERATOR_LEVEL_ONE_NORMAL;
+                tempDuration = BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL;
             }
             if (difficulty.equals(getString(R.string.prefs_difficulty_values_3))) {
-                tempAccelerator = BEGINNING_LEVEL_ACCELERATOR_LEVEL_ONE_HARD;
+                tempDuration = BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD;
             }
 
             for (int i = 1; i < level; i++) {
-                tempAccelerator *= ACCELERATOR_INCREASE_PER_LEVEL_FACTOR;
+                tempDuration *= DURATION_DECREASE_PER_LEVEL_FACTOR;
             }
-            mState.setAccelerator(tempAccelerator);
-            resetAcceleratorToStateAccelerator();
+            mState.setDuration(tempDuration);
+            resetDurationToStateDuration();
             Log.d(DEBUG_TAG, "updateDifficultyBasedOnPreferencesAndLevel() running" +
-                    "\n difficulty: " + difficulty + "\n new accelerator: " + mState
-                    .getAccelerator());
+                    "\n difficulty: " + difficulty + "\n new duration: " + mState
+                    .getDuration());
         } else {
             Log.e(DEBUG_TAG, "Shared Prefs not working!!!!!!!!!!");
         }

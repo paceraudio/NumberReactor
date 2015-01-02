@@ -24,6 +24,7 @@ public class ApplicationState extends Application{
     private int runningScoreTotal;
     private int level;
     private double accelerator;
+    private double duration;
 
     private List<Integer> scoreList;
     private List<Integer> accuracyList;
@@ -89,6 +90,14 @@ public class ApplicationState extends Application{
 
     public void setAccelerator(double accelerator) {
         this.accelerator = accelerator;
+    }
+
+    public double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(double duration) {
+        this.duration = duration;
     }
 
     public int getTurnAccuracy() {
