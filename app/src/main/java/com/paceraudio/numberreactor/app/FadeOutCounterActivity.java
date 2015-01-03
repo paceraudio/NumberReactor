@@ -40,6 +40,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     private long mStartTime;
     private double mElapsedSeconds;
     private double mNextCount;
+    private double mTarget;
     private double mFadeIncrement;
     private double mRunningFadeTime;
     private int mFadeCounterColor;
@@ -54,15 +55,15 @@ public class FadeOutCounterActivity extends FragmentActivity implements
             "extraLifeFromFadeCounterRound";
     private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
 
-//    private static final String LEVEL_COMPLETED = "levelCompleted";
+    //    private static final String LEVEL_COMPLETED = "levelCompleted";
 
     private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
-    private static final int LIFE_GAINED =  1;
+    private static final int LIFE_GAINED = 1;
     private static final int LIFE_NEUTRAL = 0;
     private static final int LIFE_LOST = -1;
 
-    private static final int DEFAULT_FADE_COUNTER_TARGET = 11;
-    private static final int DEFAULT_COUNTER_CEILING = DEFAULT_FADE_COUNTER_TARGET + 5;
+    private static final double DEFAULT_FADE_COUNTER_TARGET = 10.00;
+    private double mUpperLimit;
     private static final double DEFAULT_FADE_RATIO = .60;
     private static final int NORMAL_TURN_RESET = 0;
 
@@ -92,7 +93,8 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         mFadeStartFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_start);
         mFadeStopFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_stop);
         mGameInfoDisplayer = new GameInfoDisplayer(this);
-        mState.setTarget(DEFAULT_FADE_COUNTER_TARGET);
+//        mState.setTarget(DEFAULT_FADE_COUNTER_TARGET);
+        setStateTargetBasedOnLevel();
     }
 
     @Override
@@ -100,9 +102,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         super.onStart();
         UpdateLevelDbAsync updateLevelDbAsync = new UpdateLevelDbAsync(this);
         updateLevelDbAsync.execute(mState.getLevel());
-//        This is when the counter should have completely faded out.
+        //        This is when the counter should have completely faded out.
         double fadeRange = DEFAULT_FADE_COUNTER_TARGET * DEFAULT_FADE_RATIO;
-//        This assumes the alpha value of the color is at its max
+        //        This assumes the alpha value of the color is at its max
         mFadeIncrement = fadeRange / 255;
         mRunningFadeTime = mFadeIncrement;
         mNextCount = .01;
@@ -113,6 +115,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         mBlueValue = Color.blue(mFadeCounterColor);
         mGameInfoDisplayer.displayAllGameInfo(mTvFadeTarget, mTvFadeAccuracy, mTvFadeLives,
                 mTvFadeScore, mTvFadeLevel, FROM_FADE_COUNTER_ACTIVITY);
+
 
     }
 
@@ -141,7 +144,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                         mFadeCounterThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                while (mElapsedSeconds < DEFAULT_COUNTER_CEILING &&
+                                while (mElapsedSeconds < mUpperLimit &&
                                         !mFadeCounterThread.isInterrupted()) {
                                     mElapsedSeconds = TimeCounter.calcElapsedSeconds(mStartTime);
                                     if (mElapsedSeconds >= mNextCount) {
@@ -167,6 +170,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                                     }
 
                                 }
+                                if (!mFadeCounterThread.isInterrupted()) {
+                                    mFadeCounterThread.interrupt();
+                                }
                                 if (mFadeCounterThread.isInterrupted()) {
                                     mHandler.post(new Runnable() {
                                         @Override
@@ -174,19 +180,8 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                                             onFadeCountStopped(mElapsedSeconds);
                                         }
                                     });
+                                }
 
-                                    return;
-                                }
-                                if (mElapsedSeconds >= DEFAULT_COUNTER_CEILING) {
-                                    //                                mHandler.post(new Runnable() {
-                                    //                                    @Override
-                                    //                                    public void run() {
-                                    //                                        onFadeCountComplete
-                                    // (mElapsedSeconds);
-                                    //                                    }
-                                    //                                });
-                                    mFadeCounterThread.interrupt();
-                                }
                             }
                         });
                         mFadeCounterThread.start();
@@ -230,55 +225,63 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
+        }
+        if (id == R.id.action_view_game_stats) {
+            Intent intent = new Intent(this, ViewStatsActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
 
     public void onFadeCountStopped(Double seconds) {
-//        mTvFadeCounter.setText(String.format("%.2f", seconds));
-//        mTvFadeCounter.setTextColor(mFadeCounterColor);
+        //        mTvFadeCounter.setText(String.format("%.2f", seconds));
+        //        mTvFadeCounter.setTextColor(mFadeCounterColor);
 
         //      Round the elapsed accelerated count to 2 decimal places
         double roundedCount = mState.roundElapAccelCount(seconds);
 
-//      Convert rounded value to a String to display
+        //      Convert rounded value to a String to display
         String roundedCountStr = String.format("%.2f", roundedCount);
 
-        mTvFadeCounter.setTextColor(mFadeCounterColor);
-        mTvFadeCounter.setText(roundedCountStr);
-
-//        calc the accuracy
-        int accuracy = mState.calcAccuracy(DEFAULT_FADE_COUNTER_TARGET, roundedCount);
+        //        calc the accuracy
+        int accuracy = mState.calcAccuracy(mTarget, roundedCount);
 
         mState.setTurnAccuracy(accuracy);
+
+        if (roundedCount == mTarget) {
+            mTvFadeCounter.setTextColor(getResources().getColor(R.color.green));
+        } else {
+            mTvFadeCounter.setTextColor(mFadeCounterColor);
+        }
+        mTvFadeCounter.setText(roundedCountStr);
         mGameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(mTvFadeAccuracy);
-//        if (accuracy > 98) {
-//            mIsGettingExtraLife = true;
-//            int lives = mState.getLives();
-//            mState.setLives(lives + 1);
-//        }
-//        mTvFadeScore.setTextColor(getResources().getColor(R.color.orange));
-//        mGameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(mTvFadeAccuracy,
-//                mTvFadeLives, mTvFadeScore);
-//        mGameInfoDisplayer.displayAllGameInfo(mTvFadeTarget, mTvFadeAccuracy, mTvFadeLives,
-//        mTvFadeScore, mTvFadeLevel);
-        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this, mTvFadeCounter, mTvFadeLives, mTvFadeScore);
+
+        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
+                mTvFadeCounter, mTvFadeLives, mTvFadeScore);
 
         int param2;
         int param3;
 
         if (mState.isLifeGained()) {
             param2 = LIFE_GAINED;
-        }
-        else {
+        } else {
             param2 = LIFE_NEUTRAL;
         }
 
-//        No score is awarded in this activity, so set the score to dummy value -1, so that the
-//        score textview does not blink in the reset turn async
+        //        No score is awarded in this activity, so set the score to dummy value -1,
+        // so that the
+        //        score textview does not blink in the reset turn async
         param3 = -1;
         resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY, param2, param3);
+    }
+
+    private void setStateTargetBasedOnLevel() {
+        mTarget = DEFAULT_FADE_COUNTER_TARGET + mState.getLevel() - 1;
+        mUpperLimit = mTarget + 10;
+        mState.setTarget(mTarget);
     }
 
     //    Listener method runs after ResetNextTurnAsync is finished

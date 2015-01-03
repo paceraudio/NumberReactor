@@ -1,5 +1,6 @@
 package com.paceraudio.numberreactor.app;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,6 +13,7 @@ public class ViewStatsActivity extends ListActivity implements QueryDbListener{
 
     ViewStatsListAdapter mAdapter;
     DBHelper mDbHelper;
+
 //    ArrayList<GameStats> mStatsArrayList;
 
 
@@ -21,6 +23,8 @@ public class ViewStatsActivity extends ListActivity implements QueryDbListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_stats);
+        ActionBar actionBar = getActionBar();
+        actionBar.hide();
        // mDbHelper = new DBHelper(this);
     }
 

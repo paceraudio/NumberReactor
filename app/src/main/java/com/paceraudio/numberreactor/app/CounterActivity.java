@@ -1,6 +1,8 @@
 package com.paceraudio.numberreactor.app;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -59,30 +61,23 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     long mStartTime;
     long mElapsedTimeMillis;
-    //long mLastElapsedTimeMillis = 0;
     long mElapsedAcceleratedCount;
     double mElapsedAccelCountDouble;
     long mNextCount = 10;
     long mNextWholeCount = 1000;
-    //double mAccelerator;
-    //double mIncreaseRatio = 1.0005;
     double mDuration = 10;
     double mDurationIncrement = 9.99;
-    //private double mLevelDuration;
     int mCount;
     int mPostCount;
     int mCurrentTurn;
 
-    //private boolean mHasPosted;
-
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     private static final int TURNS_PER_LEVEL = 4;
 
-    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 30;
-    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL = 20;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 60;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL = 35;
     private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD = 10;
 
-    private static final int LIFE_LOSS_THRESHOLD = 85;
     private static final double DURATION_DECREASE_PER_LEVEL_FACTOR = .95;
 
     //    Params for the ResetNextTurnAsync.execute()
@@ -98,11 +93,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     //    RequestCode for starting FadeCounter for a result
     private static final int FADE_COUNTER_REQUEST_CODE = 1;
 
-
-    private static final String DIGITAL_7_FONT_PATH =
-            "fonts/digital-7-mono.ttf";
-    private static final String ROBOTO_THIN_FONT_PATH =
-            "fonts/Roboto-Thin.ttf";
 
     private boolean mIsListeningForSharedPrefChanges = false;
 
@@ -156,15 +146,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     @Override
     protected void onResume() {
         super.onResume();
-
-
-//        MyTypefaces myTypefaces = MyTypefaces.getInstance();
-
-//        Typeface tf = MyTypefaces.get(this, DIGITAL_7_FONT_PATH);
-//        mTvCounter.setTypeface(tf);
-
-//        Typeface tf = MyTypefaces.get(this, ROBOTO_THIN_FONT_PATH);
-//        mTvCounter.setTypeface(tf);
 
         mIsStartClickable = true;
         mIsStopCLickable = false;
@@ -353,12 +334,11 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         // set the text color of the counter based on the score
         if (accuracy > 99) {
             score *= 2;
+        }
 
+        if (roundedCount == mTarget) {
             mTvCounter.setTextColor(getResources().getColor(R.color.green));
-        } else if (accuracy > LIFE_LOSS_THRESHOLD && accuracy <= 99) {
-            mTvCounter.setTextColor(getResources().getColor(R.color.orange));
-        } else {
-            mTvCounter.setTextColor(getResources().getColor(R.color.red));
+            score *= 2;
         }
 
         mTvCounter.setText(roundedCountStr);
@@ -397,7 +377,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private void setInitialTimeValuesLevelOne() {
 //        Get shared prefs and see what the difficulty level is set to.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String difficultyLevel = prefs.getString(getString(R.string.prefs_difficulty_key), "1");
+        String difficultyLevel = prefs.getString(getString(R.string.prefs_difficulty_key), "2");
         if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_1))) {
             mState.setDuration(BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY);
         }
@@ -488,7 +468,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private void launchOutOfLivesDialog() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        mDialogFragment = new OutOfLivesDialogFragment();
+//        mDialogFragment = new OutOfLivesDialogFragment();
+        mDialogFragment = OutOfLivesDialogFragment.newInstance();
         mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
     }
 
@@ -573,7 +554,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     @Override
     public void onOkClicked() {
         mDialogFragment.dismiss();
-        mDbHelper.insertNewGameRowInDb();
+//        mDbHelper.insertNewGameRowInDb();
         setInitialTimeValuesLevelOne();
         mGameInfoDisplayer.showStopButtonNotEngaged(mStopButton, mFrameStopButton);
         mGameInfoDisplayer.resetCounterToZero(mTvCounter);
@@ -612,6 +593,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             }
             mState.setDuration(tempDuration);
             resetDurationToStateDuration();
+            mDurationIncrement = mDuration;
             Log.d(DEBUG_TAG, "updateDifficultyBasedOnPreferencesAndLevel() running" +
                     "\n difficulty: " + difficulty + "\n new duration: " + mState
                     .getDuration());

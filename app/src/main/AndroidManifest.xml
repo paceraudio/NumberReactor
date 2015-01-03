@@ -10,7 +10,7 @@
         android:theme="@style/NumberReactorAppTheme">
         <activity
             android:name=".FadeOutCounterActivity"
-            android:label="@string/title_activity_fade_out_counter"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
              >
         </activity>
@@ -31,7 +31,9 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings"
+            android:theme="@style/NR_SettingsActivity">
+
         </activity>
     </application>
 
