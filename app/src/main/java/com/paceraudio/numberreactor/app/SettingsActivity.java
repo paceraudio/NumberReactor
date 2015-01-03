@@ -1,5 +1,6 @@
 package com.paceraudio.numberreactor.app;
 
+import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -22,6 +23,8 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_general);
+        ActionBar actionBar = getActionBar();
+        actionBar.hide();
     }
 
 }

@@ -106,7 +106,7 @@ public class GameInfoDisplayer {
                 "\n Lives: " + mState.getLives() +
                 "\n Score: " + mState.getRunningScoreTotal() +
                 "\n Target: " + mState.getTarget() +
-                "\n Accelerator: " + mState.getAccelerator());
+                "\n Duration: " + mState.getDuration());
     }
 
     public void resetCounterToZero(TextView counter) {

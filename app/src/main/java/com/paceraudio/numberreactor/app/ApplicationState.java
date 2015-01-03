@@ -15,7 +15,6 @@ import java.util.List;
 public class ApplicationState extends Application{
 
     private int turn;
-    private double lastTarget;
     private double target;
     private int overallAccuracy;
     private int turnAccuracy;
@@ -23,7 +22,7 @@ public class ApplicationState extends Application{
     private int turnPoints;
     private int runningScoreTotal;
     private int level;
-    private double accelerator;
+    private double duration;
 
     private List<Integer> scoreList;
     private List<Integer> accuracyList;
@@ -45,7 +44,6 @@ public class ApplicationState extends Application{
         target = 0;
         turnAccuracy = 0;
         turnPoints = 0;
-        accelerator = 0;
         turn = 1;
     }
 
@@ -56,8 +54,6 @@ public class ApplicationState extends Application{
     public void setLevel(int l) {
         level = l;
     }
-
-
 
     public int getLives() {
         return lives;
@@ -83,12 +79,12 @@ public class ApplicationState extends Application{
         this.turn = turn;
     }
 
-    public double getAccelerator() {
-        return accelerator;
+    public double getDuration() {
+        return duration;
     }
 
-    public void setAccelerator(double accelerator) {
-        this.accelerator = accelerator;
+    public void setDuration(double duration) {
+        this.duration = duration;
     }
 
     public int getTurnAccuracy() {
@@ -116,14 +112,6 @@ public class ApplicationState extends Application{
         return runningScoreTotal;
     }
 
-    public double getLastTarget() {
-        return lastTarget;
-    }
-
-    public void setLastTarget(double lastTarget) {
-        this.lastTarget = lastTarget;
-    }
-
     public int getTurnPoints() {
         return turnPoints;
     }
@@ -135,10 +123,6 @@ public class ApplicationState extends Application{
     public void setRunningScoreTotal(int newScore) {
         scoreList.add(newScore);
         runningScoreTotal += newScore;
-//        runningScoreTotal = 0;
-//        for(int i = 0; i < scoreList.size(); i++) {
-//            runningScoreTotal += scoreList.get(i);
-//        }
     }
 
     public void resetScoreForNewGame() {
@@ -157,15 +141,6 @@ public class ApplicationState extends Application{
         return gameDate.format(c.getTime());
     }
 
-    public List<Integer> getScoreList() {
-        return scoreList;
-    }
-
-    public void setScoreList(List<Integer> list) {
-        list = scoreList;
-    }
-
-
 //    Methods for calculating the game values stored in this class
     public double roundElapAccelCount(double accelCount) {
         if (accelCount > 99.99) {
@@ -173,8 +148,15 @@ public class ApplicationState extends Application{
         }
         return ((int) (accelCount * 100)) /100d;
     }
+
+    public double roundElapAccelCountLong(long accelCount) {
+        if (accelCount > 99999) {
+            return 99.99;
+        }
+        return accelCount / 1000d;
+    }
+
     public int calcAccuracy(double target, double elapAccelCount) {
-//        double counterToHundredths = ((int) (counter * 100)) / 100d;
         double error = Math.abs(target - elapAccelCount);
         double accuracy = ((target - error) / target) * 100;
         int accuracyInt = (int) Math.round(accuracy);
@@ -183,19 +165,6 @@ public class ApplicationState extends Application{
         }
         Log.d(DEBUG_TAG, "calcAccuracy()return accuracy: " + accuracy);
         return accuracyInt;
-    }
-
-    public void checkAccuracyAgainstLives() {
-        if (turnAccuracy < LIFE_LOSS_THRESHOLD) {
-            lives -= 1;
-            Log.d(DEBUG_TAG, "should lose life: " + Boolean.toString(turnAccuracy <
-                    LIFE_LOSS_THRESHOLD) + " lives remaining: " + lives);
-        }
-        else if (turnAccuracy == 100) {
-            lives += 1;
-        }
-
-        Log.d(DEBUG_TAG, "checkAccuracyAgainstLives lives remaining: " + lives);
     }
 
     public boolean isLifeLost() {
@@ -214,13 +183,8 @@ public class ApplicationState extends Application{
        return false;
    }
 
-    public int calcAccuracyResult(double accuracy) {
-        return (int) Math.round(accuracy);
-    }
-
     public int calcScore(int accuracy) {
         int score = 0;
-//        int margin = 80;
         int scoreToCalc = accuracy - LIFE_LOSS_THRESHOLD;
         if (scoreToCalc > 0) {
             score = scoreToCalc;

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme. -->
-    <style name="NumberReactorAppTheme" parent="android:Theme.Black.NoTitleBar">
+    <style name="NumberReactorAppTheme" parent="android:Theme.Holo">
         <!-- Customize your theme here. -->
         <item name="android:buttonStyle">@style/NR_ButtonStyle</item>
         <item name="android:textViewStyle">@style/NR_TextView</item>
+        <item name="android:actionBarStyle">@style/NR_ActionBar</item>
+        <item name="android:listViewStyle">@style/NR_ListView</item>
+        <item name="android:alertDialogTheme">@style/NR_Dialog</item>
     </style>
 </resources>

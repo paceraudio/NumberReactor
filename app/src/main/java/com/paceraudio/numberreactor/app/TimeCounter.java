@@ -49,6 +49,10 @@ public class TimeCounter {
         return acceleratedCount;
     }
 
+//    public static double calcElapsedInterval(long startTime, long interval, double accelCount) {
+//        if ()
+//    }
+
 /*
     public TimeCounter calcElapsedAcceleratedCountObj(TimeCounter timeCounter) {
         timeCounter.elapsedTimeMillis = System.currentTimeMillis() - timeCounter.startTime;

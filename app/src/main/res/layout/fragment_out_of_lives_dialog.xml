@@ -6,25 +6,52 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/out_of_lives_dialog"/>
+        android:layout_height="45dp"
+        android:text="YOU ARE OUT OF LIVES"
+        android:background="@color/darkBlackRed"
+        android:typeface="monospace"
+        android:textColor="@color/grey"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textSize="24sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="PLAY AGAIN"
+        android:background="@color/darkBlackRed"
+        android:typeface="monospace"
+        android:textColor="@color/grey"
+        android:gravity="center"
+        android:textSize="16sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:weightSum="100">
 
         <Button
             android:id="@+id/b_yes_out_of_lives_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/OK"/>
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="50"
+            android:text="@string/OK"
+            android:background="@color/darkBlackRed"
+            android:typeface="monospace"
+            android:textColor="@color/darkGreen"
+            android:textSize="24sp"/>
 
         <Button
             android:id="@+id/b_exit_out_of_lives_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/exit"/>
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="50"
+            android:text="@string/exit"
+            android:background="@color/darkBlackRed"
+            android:typeface="monospace"
+            android:textColor="@color/red"
+            android:textSize="24sp"/>
         </LinearLayout>
 
 

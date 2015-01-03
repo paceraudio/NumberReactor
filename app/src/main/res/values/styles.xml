@@ -1,6 +1,51 @@
 <resources>
 
 
+    <!--********************ACTION BAR STYLES*********************-->
+
+    <style name="NR_ActionBar" parent="android:Widget.ActionBar">
+        <item name="android:background">@color/blackRed</item>
+        <item name="android:iconifiedByDefault">false</item>
+        <item name="android:icon">@color/lightBlue</item>
+        <item name="android:actionBarSize">wrap_content</item>
+        <item name="android:titleTextStyle">@style/NR_ActionBar_Title_Text</item>
+    </style>
+    
+    <style name="NR_ActionBar_Title_Text" parent="android:TextAppearance">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:title">@string/action_bar_app_name</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <!--********************DIALOG STYLES********************-->
+
+    <style name="NR_Dialog" parent="android:Theme.Dialog">
+        <item name="android:textAppearance">@color/lightBlue</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:titleTextStyle">@style/NR_AlertDialogTitle</item>
+        <item name="android:background">@color/darkBlackRed</item>
+    </style>
+
+    <style name="NR_AlertDialogTitle">
+        <item name="android:textColor">@color/red</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="NR_SettingsActivity">
+        <item name="android:dialogTheme">@style/NR_Dialog</item>
+        <item name="android:background">@color/darkBlackRed</item>
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+
+
+    <!--********************LIST VIEW STYLES*********************-->
+
+    <style name="NR_ListView">
+        <item name="android:background">@color/darkBlackRed</item>
+    </style>
+    <!--********************FRAME LAYOUT STYLES*********************-->
 
     <style name="NR_FrameLayout">
         <item name="android:padding">2dp</item>
@@ -21,7 +66,7 @@
 
     <!--LARGE-->
     <style name="NR_FrameLayout.CounterFrame.Large">
-        <item name="android:layout_marginTop">91dp</item>
+        <item name="android:layout_marginTop">60dp</item>
     </style>
 
     <!--NORMAL-->
@@ -143,7 +188,7 @@
 
     <style name="NR_LinearLayoutContainingGameInfo.Top">
         <item name="android:layout_alignParentTop">true</item>
-        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginTop">0dp</item>
     </style>
 
     <style name="NR_LinearLayoutContainingGameInfo.Bottom">
@@ -210,12 +255,14 @@
 
     <style name="NR_TextView.GameInfo.XLarge.Target.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
+
     </style>
 
     <!--LARGE-->
     <style name="NR_TextView.GameInfo.Large.Target">
         <item name="android:text">@string/target</item>
         <item name="android:layout_weight">64</item>
+        <item name="android:paddingLeft">15dp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Large.Target.CounterActivity">
@@ -292,6 +339,7 @@
     <style name="NR_TextView.GameInfo.XLarge.Lives">
         <item name="android:text">@string/lives_remaining</item>
         <item name="android:layout_weight">40</item>
+
     </style>
 
     <style name="NR_TextView.GameInfo.XLarge.Lives.CounterActivity">
@@ -305,6 +353,7 @@
     <style name="NR_TextView.GameInfo.Large.Lives">
         <item name="android:text">@string/lives_remaining</item>
         <item name="android:layout_weight">40</item>
+        <item name="android:paddingLeft">15dp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Large.Lives.CounterActivity">
