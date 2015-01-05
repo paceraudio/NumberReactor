@@ -1,7 +1,8 @@
-package com.paceraudio.numberreactor.app;
+package com.paceraudio.numberreactor.app.DB;
+
+import com.paceraudio.numberreactor.app.Utility.GameStats;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by jeffwconaway on 12/11/14.
@@ -10,5 +11,4 @@ public interface QueryDbListener {
 
     public ArrayList<GameStats> onAllDbQueried(ArrayList<GameStats> arrayList);
 
-    public int onLatestGameDbQueried(int gameNumber);
 }

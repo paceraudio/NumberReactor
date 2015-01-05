@@ -1,10 +1,10 @@
-package com.paceraudio.numberreactor.app;
+package com.paceraudio.numberreactor.app.DB;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import static com.paceraudio.numberreactor.app.CounterActivity.DEBUG_TAG;
+import static com.paceraudio.numberreactor.app.Activities.CounterActivity.DEBUG_TAG;
 
 /**
  * Created by jeffwconaway on 12/3/14.

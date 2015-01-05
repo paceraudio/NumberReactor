@@ -1,8 +1,5 @@
-package com.paceraudio.numberreactor.app;
+package com.paceraudio.numberreactor.app.Activities;
 
-import android.app.ActionBar;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -23,7 +20,17 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-// class using Threads and Handlers instead of AsyncTask. Performance seems to be the same.
+import com.paceraudio.numberreactor.app.State.ApplicationState;
+import com.paceraudio.numberreactor.app.DB.DBHelper;
+import com.paceraudio.numberreactor.app.DB.UpdateDbListener;
+import com.paceraudio.numberreactor.app.DB.UpdateLevelDbAsync;
+import com.paceraudio.numberreactor.app.DB.UpdateScoreDbAsync;
+import com.paceraudio.numberreactor.app.Utility.GameInfoDisplayer;
+import com.paceraudio.numberreactor.app.Dialogs.OutOfLivesDialogFragment;
+import com.paceraudio.numberreactor.app.R;
+import com.paceraudio.numberreactor.app.Utility.ResetNextTurnAsync;
+import com.paceraudio.numberreactor.app.Utility.ResetNextTurnListener;
+
 
 public class CounterActivity extends FragmentActivity implements UpdateDbListener,
         ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener,
@@ -61,6 +68,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     long mStartTime;
     long mElapsedTimeMillis;
+    long mUptimeMillis;
     long mElapsedAcceleratedCount;
     double mElapsedAccelCountDouble;
     long mNextCount = 10;
@@ -74,9 +82,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     private static final int TURNS_PER_LEVEL = 4;
 
-    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 60;
-    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL = 35;
-    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD = 10;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 30;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL = 10;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD = 7;
 
     private static final double DURATION_DECREASE_PER_LEVEL_FACTOR = .95;
 
@@ -84,6 +92,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
     private static final int NORMAL_TURN_RESET = 0;
 
+    private static final int DOUBLE_LIVES_GAINED = 2;
     private static final int LIFE_GAINED = 1;
     private static final int LIFE_NEUTRAL = 0;
     private static final int LIFE_LOST = -1;
@@ -105,7 +114,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mDbHelper = new DBHelper(this);
         mGameInfoDisplayer = new GameInfoDisplayer(this);
 
-//        Define all the UI elements
+        //        Define all the UI elements
         mTvCounter = (TextView) findViewById(R.id.t_v_counter);
         mTvTarget = (TextView) findViewById(R.id.t_v_target);
         mTvAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
@@ -126,7 +135,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             Log.d(DEBUG_TAG, "SharedPref Listener registered: " + mIsListeningForSharedPrefChanges);
         }
 
-//        TODO see if this works to always run this in onCreate() without checking the Intent
+        //        TODO see if this works to always run this in onCreate() without checking the
+        // Intent
         setInitialTimeValuesLevelOne();
         Log.d(DEBUG_TAG, "OnCreate() end");
     }
@@ -176,7 +186,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
                                     if (mElapsedTimeMillis >= mDuration) {
 
-                                        /*Log.d(DEBUG_TAG, "\n- - - - - - - - - - - - - - - - - - -");
+                                        /*Log.d(DEBUG_TAG, "\n- - - - - - - - - - - - - - - - - -
+                                         -");
 
                                         Log.d(DEBUG_TAG, "elapsed time millis: " +
                                                 mElapsedTimeMillis);
@@ -195,23 +206,28 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                             mElapsedAccelCountDouble = mElapsedAcceleratedCount /
                                                     1000d;
 
-                                            mHandler.postAtTime(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    mTvCounter.setText(String.format("%.2f",
-                                                            mElapsedAccelCountDouble));
-                                                    Log.d(DEBUG_TAG,
-                                                            "posting: " + mElapsedAccelCountDouble);
-                                                }
-                                            }, mElapsedTimeMillis);
+                                            if (!mCounterThread.isInterrupted()) {
+                                                mHandler.postAtTime(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        mTvCounter.setText(String.format("%.2f",
+                                                                mElapsedAccelCountDouble));
+                                                        Log.d(DEBUG_TAG,
+                                                                "posting: " +
+                                                                mElapsedAccelCountDouble);
+                                                    }
+                                                }, 0);
+                                            }
 
                                             /*Log.d(DEBUG_TAG, "mElapsedAcceleratedCount: " +
                                                     mElapsedAcceleratedCount);
                                             Log.d(DEBUG_TAG, "mElapsedAccelCountDouble: " +
                                                     mElapsedAccelCountDouble);
-                                            Log.d(DEBUG_TAG, "- - - - - - - - - - - - - - - - -\n");*/
+                                            Log.d(DEBUG_TAG, "- - - - - - - - - - - - - - - -
+                                            -\n");*/
 
                                         }
+                                        mCount++;
                                     }
                                 }
                                 if (!mCounterThread.isInterrupted()) {
@@ -224,7 +240,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                                         public void run() {
                                             onCounterStopped(mElapsedAcceleratedCount, mCount);
                                         }
-                                    }, mElapsedTimeMillis);
+                                    }, 0);
                                 }
                             }
                         });
@@ -237,7 +253,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 return false;
             }
         });
-
 
         mStopButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -287,7 +302,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     public boolean onCreateOptionsMenu(Menu menu) {
 
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.counter, menu);
         return true;
     }
 
@@ -316,23 +331,26 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mGameInfoDisplayer.showStartButtonNotEngaged(mStartButton, mFrameStartButton);
         mIsStopCLickable = false;
 
-//      Round the elapsed accelerated count to 2 decimal places
-        double roundedCount = mState.roundElapAccelCountLong(accelCount);
+        //      Round the elapsed accelerated count to 2 decimal places, give double param value 0,
+        //        we aren't going to use it from this Activity
+        double roundedCount = mState.roundElapsedCountLong(accelCount, FROM_COUNTER_ACTIVITY, 0);
 
-//      Convert rounded value to a String to display
+//        // TODO TESTING ONLY!!!!!!!!!!!!
+//        roundedCount = mTarget;
+
+        //      Convert rounded value to a String to display
         String roundedCountStr = String.format("%.2f", roundedCount);
 
-//        calc the accuracy
+        //        calc the accuracy
         int accuracy = mState.calcAccuracy(mTarget, roundedCount);
         mState.setTurnAccuracy(accuracy);
 
-//        calc the score
+        //        calc the score
         int score = mState.calcScore(accuracy);
-
 
         //  TODO write a method for setting the color based on accuracy
         // set the text color of the counter based on the score
-        if (accuracy > 99) {
+        if (accuracy > 98) {
             score *= 2;
         }
 
@@ -348,19 +366,19 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 "\n                     target: " + mTarget +
                 "\n                   accuracy: " + accuracy + "%");
 
-
         mState.setTurnPoints(score);
         mState.setRunningScoreTotal(score);
         long onCounterCancelledElapsedTime = SystemClock.elapsedRealtime() - mStartTime;
         Log.d(DEBUG_TAG, "onCounterStopped() elapsed millis: " + Long.toString
                 (onCounterCancelledElapsedTime));
 
-
-//        TODO make this info display when the turn resets
+        //        TODO make this info display when the turn resets
         mGameInfoDisplayer.displayImmediateGameInfoAfterTurn(mTvAccuracy);
-//        async task updating the db score.  onDbScoreUpdatedEndOfTurn() runs in onPostExecute.
-//        There we check to see if we have lives left, if we do, we start the  ResetNextTurnAsync,
-//        if not, we launch the OutOfLives Dialog
+        //        async task updating the db score.  onDbScoreUpdatedEndOfTurn() runs in
+        // onPostExecute.
+        //        There we check to see if we have lives left, if we do,
+        // we start the  ResetNextTurnAsync,
+        //        if not, we launch the OutOfLives Dialog
         UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
         updateScoreDbAsync.execute(mState.getRunningScoreTotal());
     }
@@ -375,7 +393,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     private void setInitialTimeValuesLevelOne() {
-//        Get shared prefs and see what the difficulty level is set to.
+        //        Get shared prefs and see what the difficulty level is set to.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String difficultyLevel = prefs.getString(getString(R.string.prefs_difficulty_key), "2");
         if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_1))) {
@@ -420,8 +438,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private void setGameValuesForNextLevel() {
         int currentLevel = mState.getLevel();
         mState.setLevel(currentLevel + 1);
-//        Set target and accelerator to their beginning levels, and increase them based on the
-//        current level. Check the SharedPreferences for the difficulty level.
+        //        Set target and accelerator to their beginning levels,
+        // and increase them based on the
+        //        current level. Check the SharedPreferences for the difficulty level.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         updateDifficultyBasedOnPreferencesAndLevel(prefs);
         resetDurationToStateDuration();
@@ -429,11 +448,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         resetTurnsToFirstTurn();
         resetBasicTimeValues();
 
-//        reset Counter text color to red, it is still at 0 alpha from the ResetNextTurnAsync
-//        because we didn't fade the counter back in before launching FadeCounter
+        //        reset Counter text color to red, it is still at 0 alpha from the
+        // ResetNextTurnAsync
+        //        because we didn't fade the counter back in before launching FadeCounter
         mGameInfoDisplayer.resetCounterToZero(mTvCounter);
         mIsStartClickable = true;
-//        "disengage" the stop button
+        //        "disengage" the stop button
         mGameInfoDisplayer.showStopButtonNotEngaged(mStopButton, mFrameStopButton);
         mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining,
                 mTvScore, mTvLevel, FROM_COUNTER_ACTIVITY);
@@ -468,7 +488,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private void launchOutOfLivesDialog() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-//        mDialogFragment = new OutOfLivesDialogFragment();
+        //        mDialogFragment = new OutOfLivesDialogFragment();
         mDialogFragment = OutOfLivesDialogFragment.newInstance();
         mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
     }
@@ -490,13 +510,16 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == FADE_COUNTER_REQUEST_CODE) {
             setGameValuesForNextLevel();
+            UpdateLevelDbAsync updateLevelDbAsync = new UpdateLevelDbAsync(this);
+            updateLevelDbAsync.execute(mState.getLevel());
         }
     }
 
     //    Listener methods for AsyncTasks
-//    After the db is updated, we reset for a new turn if we have lives left. We check if
-//    the turn just played was the last, if so, we send a different param to the ResetNextTurnAsync
-//    to avoid fading in a "0.00" fresh counter before launching the new activity.
+    //
+    // After the db is updated, we reset for a new turn if we have lives left. We check if
+    // the turn just played was the last, if so, we send a different param to the ResetNextTurnAsync
+    // to avoid fading in a "0.00" fresh counter before launching the new activity.
     @Override
     public void onDbScoreUpdatedEndOfTurn() {
         Log.d(DEBUG_TAG, "updated score from update db async: " + Integer.toString(mDbHelper
@@ -506,34 +529,35 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         int param2;
         int param3;
 
-//            See if this was our last turn
+        // See if this was our last turn
         if (isOutOfTurnsState()) {
             param1 = LAST_TURN_RESET_BEFORE_NEW_ACTIVITY;
         } else {
             param1 = NORMAL_TURN_RESET;
         }
 
-//            See if there was a life gained or lost
-        if (mState.isLifeGained()) {
+        // See if there was a life gained or lost
+        int livesGained = mState.numOfLivesGainedOrLost();
+        if (livesGained == DOUBLE_LIVES_GAINED) {
+            param2 = DOUBLE_LIVES_GAINED;
+        } else if (livesGained == LIFE_GAINED) {
             param2 = LIFE_GAINED;
-        } else if (mState.isLifeLost()) {
+        } else if (livesGained == LIFE_LOST) {
             param2 = LIFE_LOST;
         } else {
             param2 = LIFE_NEUTRAL;
         }
 
-//            Send the turn points as third param
+        // Send the turn points as third param
         param3 = mState.getTurnPoints();
-
 
         ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
                 mTvCounter, mTvLivesRemaining, mTvScore);
         resetNextTurnAsync.execute(param1, param2, param3);
 
-
     }
 
-    //    Runs in onPostExecute of ResetNextTurnAsync
+    // Runs in onPostExecute of ResetNextTurnAsync
     @Override
     public void onNextTurnReset() {
         if (checkIfLivesLeft()) {
@@ -550,11 +574,11 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     //  Dialog fragment interaction methods
-//    TODO make sure a new row is created in db, because we are starting a new game
+    //    TODO make sure a new row is created in db, because we are starting a new game
     @Override
     public void onOkClicked() {
         mDialogFragment.dismiss();
-//        mDbHelper.insertNewGameRowInDb();
+        //        mDbHelper.insertNewGameRowInDb();
         setInitialTimeValuesLevelOne();
         mGameInfoDisplayer.showStopButtonNotEngaged(mStopButton, mFrameStopButton);
         mGameInfoDisplayer.resetCounterToZero(mTvCounter);

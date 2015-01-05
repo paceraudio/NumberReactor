@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app;
+package com.paceraudio.numberreactor.app.State;
 
 /**
  * Created by jeffwconaway on 9/26/14.
@@ -29,6 +29,9 @@ public class ApplicationState extends Application{
 
     private static final int BEGINNING_NUMBER_OF_LIVES = 4;
     private static final int LIFE_LOSS_THRESHOLD = 90;
+
+    private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
+    private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
 
     private static final String DEBUG_TAG = "jwc";
 
@@ -149,9 +152,13 @@ public class ApplicationState extends Application{
         return ((int) (accelCount * 100)) /100d;
     }
 
-    public double roundElapAccelCountLong(long accelCount) {
-        if (accelCount > 99999) {
+    public double roundElapsedCountLong(long accelCount, String fromActivity, double fadeCountCeiling) {
+
+        if (accelCount > 99999 && fromActivity.equals(FROM_COUNTER_ACTIVITY)) {
             return 99.99;
+        }
+        if (accelCount > fadeCountCeiling && fromActivity.equals(FROM_FADE_COUNTER_ACTIVITY)) {
+            return fadeCountCeiling;
         }
         return accelCount / 1000d;
     }
@@ -159,7 +166,8 @@ public class ApplicationState extends Application{
     public int calcAccuracy(double target, double elapAccelCount) {
         double error = Math.abs(target - elapAccelCount);
         double accuracy = ((target - error) / target) * 100;
-        int accuracyInt = (int) Math.round(accuracy);
+//        int accuracyInt = (int) Math.round(accuracy);
+        int accuracyInt = (int) accuracy;
         if (accuracyInt < 0) {
             accuracyInt = 0;
         }
@@ -175,12 +183,19 @@ public class ApplicationState extends Application{
         return false;
     }
 
-   public boolean isLifeGained() {
+   public int numOfLivesGainedOrLost() {
+       int livesGained = 0;
        if (turnAccuracy == 100) {
-           lives += 1;
-           return true;
+           livesGained = 2;
        }
-       return false;
+       else if (turnAccuracy > 98) {
+           livesGained = 1;
+       }
+       else if (turnAccuracy <= LIFE_LOSS_THRESHOLD) {
+           livesGained = -1;
+       }
+       lives += livesGained;
+       return livesGained;
    }
 
     public int calcScore(int accuracy) {

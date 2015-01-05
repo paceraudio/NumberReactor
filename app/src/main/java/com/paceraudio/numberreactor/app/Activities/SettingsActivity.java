@@ -1,9 +1,11 @@
-package com.paceraudio.numberreactor.app;
+package com.paceraudio.numberreactor.app.Activities;
 
 import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import com.paceraudio.numberreactor.app.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app;
+package com.paceraudio.numberreactor.app.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,10 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.paceraudio.numberreactor.app.State.ApplicationState;
+import com.paceraudio.numberreactor.app.Utility.GameStats;
 
-import static com.paceraudio.numberreactor.app.CounterActivity.DEBUG_TAG;
+import java.util.ArrayList;
+
+import static com.paceraudio.numberreactor.app.Activities.CounterActivity.DEBUG_TAG;
 
 /**
  * Created by jeffwconaway on 10/9/14.
@@ -153,6 +155,16 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update(TABLE_GAME_PERFORMANCE, cv, C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER +
                 ") from " + TABLE_GAME_PERFORMANCE + ")", null);
         db.close();
+    }
+
+    public void clearAllGameDataFromDb() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_GAME_PERFORMANCE, null, null);
+        db.close();
+        ArrayList<GameStats> al = queryAllFromDb();
+//        insertNewGameRowInDb();
+//        updateLevelReached(mState.getLevel());
+//        updateScoreDB(mState.getRunningScoreTotal());
     }
 
 

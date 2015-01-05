@@ -206,6 +206,7 @@
 
     <style name="NR_TextView.ListViewItem">
         <item name="android:textColor">@color/orange</item>
+        <item name="android:typeface">monospace</item>
         <item name="android:gravity">center</item>
     </style>
 

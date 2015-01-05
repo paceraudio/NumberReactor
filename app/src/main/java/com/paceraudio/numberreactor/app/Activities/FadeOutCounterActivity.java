@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app;
+package com.paceraudio.numberreactor.app.Activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +15,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.paceraudio.numberreactor.app.State.ApplicationState;
+import com.paceraudio.numberreactor.app.DB.DBHelper;
+import com.paceraudio.numberreactor.app.Utility.GameInfoDisplayer;
+import com.paceraudio.numberreactor.app.R;
+import com.paceraudio.numberreactor.app.Utility.ResetNextTurnAsync;
+import com.paceraudio.numberreactor.app.Utility.ResetNextTurnListener;
 
 
 public class FadeOutCounterActivity extends FragmentActivity implements
@@ -38,8 +45,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
 
     private long mStartTime;
+    private long mElapsedMillis;
     private double mElapsedSeconds;
-    private double mNextCount;
+    private long mDuration;
     private double mTarget;
     private double mFadeIncrement;
     private double mRunningFadeTime;
@@ -58,12 +66,14 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     //    private static final String LEVEL_COMPLETED = "levelCompleted";
 
     private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
+
+    private static final int DOUBLE_LIVES_GAINED = 2;
     private static final int LIFE_GAINED = 1;
     private static final int LIFE_NEUTRAL = 0;
     private static final int LIFE_LOST = -1;
 
     private static final double DEFAULT_FADE_COUNTER_TARGET = 10.00;
-    private double mUpperLimit;
+    private double mCounterCeiling;
     private static final double DEFAULT_FADE_RATIO = .60;
     private static final int NORMAL_TURN_RESET = 0;
 
@@ -93,21 +103,17 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         mFadeStartFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_start);
         mFadeStopFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_stop);
         mGameInfoDisplayer = new GameInfoDisplayer(this);
-//        mState.setTarget(DEFAULT_FADE_COUNTER_TARGET);
         setStateTargetBasedOnLevel();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        UpdateLevelDbAsync updateLevelDbAsync = new UpdateLevelDbAsync(this);
-        updateLevelDbAsync.execute(mState.getLevel());
         //        This is when the counter should have completely faded out.
         double fadeRange = DEFAULT_FADE_COUNTER_TARGET * DEFAULT_FADE_RATIO;
         //        This assumes the alpha value of the color is at its max
         mFadeIncrement = fadeRange / 255;
         mRunningFadeTime = mFadeIncrement;
-        mNextCount = .01;
         mFadeCounterColor = mTvFadeCounter.getCurrentTextColor();
         mAlphaValue = Color.alpha(mFadeCounterColor);
         mRedValue = Color.red(mFadeCounterColor);
@@ -144,18 +150,19 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                         mFadeCounterThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                while (mElapsedSeconds < mUpperLimit &&
+                                mDuration = 10;
+                                while (mElapsedMillis < mCounterCeiling &&
                                         !mFadeCounterThread.isInterrupted()) {
-                                    mElapsedSeconds = TimeCounter.calcElapsedSeconds(mStartTime);
-                                    if (mElapsedSeconds >= mNextCount) {
-                                        mHandler.post(new Runnable() {
+                                    mElapsedMillis = SystemClock.elapsedRealtime() - mStartTime;
+
+                                    if (mElapsedMillis >= mDuration) {
+                                        mElapsedSeconds = mElapsedMillis / 1000d;
+
+                                        mHandler.postAtTime(new Runnable() {
                                             @Override
                                             public void run() {
                                                 mTvFadeCounter.setText(String.format("%.2f",
                                                         mElapsedSeconds));
-                                                //                                            Log
-                                                // .d(DEBUG_TAG, "mElapsed time seconds: " +
-                                                // mElapsedSeconds);
                                                 if (mAlphaValue > 0 && mElapsedSeconds >=
                                                         mRunningFadeTime) {
                                                     mAlphaValue--;
@@ -165,8 +172,8 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                                                     mRunningFadeTime += mFadeIncrement;
                                                 }
                                             }
-                                        });
-                                        mNextCount += 0.01;
+                                        }, 0);
+                                        mDuration += 10;
                                     }
 
                                 }
@@ -174,12 +181,12 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                                     mFadeCounterThread.interrupt();
                                 }
                                 if (mFadeCounterThread.isInterrupted()) {
-                                    mHandler.post(new Runnable() {
+                                    mHandler.postAtTime(new Runnable() {
                                         @Override
                                         public void run() {
-                                            onFadeCountStopped(mElapsedSeconds);
+                                            onFadeCountStopped(mElapsedMillis);
                                         }
-                                    });
+                                    }, 0);
                                 }
 
                             }
@@ -200,9 +207,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                     if (mIsStopClickable) {
 
                         mFadeCounterThread.interrupt();
-                        mGameInfoDisplayer.showStopButtonEngaged(mFadeStopButton, mFadeStopFrame);
-                        mGameInfoDisplayer.showStartButtonNotEngaged(mFadeStartButton,
-                                mFadeStartFrame);
+
                         mIsStopClickable = false;
                     }
                 }
@@ -236,12 +241,17 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void onFadeCountStopped(Double seconds) {
-        //        mTvFadeCounter.setText(String.format("%.2f", seconds));
-        //        mTvFadeCounter.setTextColor(mFadeCounterColor);
+    public void onFadeCountStopped(long millis) {
+
+        mGameInfoDisplayer.showStopButtonEngaged(mFadeStopButton, mFadeStopFrame);
+        mGameInfoDisplayer.showStartButtonNotEngaged(mFadeStartButton,
+                mFadeStartFrame);
 
         //      Round the elapsed accelerated count to 2 decimal places
-        double roundedCount = mState.roundElapAccelCount(seconds);
+        double roundedCount = mState.roundElapsedCountLong(millis, FROM_FADE_COUNTER_ACTIVITY, mCounterCeiling);
+
+//        //TODO TESTING ONLY!!!!!!!!!!!!!!
+//        roundedCount = mTarget;
 
         //      Convert rounded value to a String to display
         String roundedCountStr = String.format("%.2f", roundedCount);
@@ -265,22 +275,26 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         int param2;
         int param3;
 
-        if (mState.isLifeGained()) {
+        // See if there was a life gained or lost
+        int livesGained = mState.numOfLivesGainedOrLost();
+        if (livesGained == DOUBLE_LIVES_GAINED) {
+            param2 = DOUBLE_LIVES_GAINED;
+        } else if (livesGained == LIFE_GAINED) {
             param2 = LIFE_GAINED;
+
         } else {
             param2 = LIFE_NEUTRAL;
         }
 
-        //        No score is awarded in this activity, so set the score to dummy value -1,
-        // so that the
-        //        score textview does not blink in the reset turn async
+        // No score is awarded in this activity, so set the score to dummy value -1, so that the
+        // score textview does not blink in the reset turn async
         param3 = -1;
         resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY, param2, param3);
     }
 
     private void setStateTargetBasedOnLevel() {
         mTarget = DEFAULT_FADE_COUNTER_TARGET + mState.getLevel() - 1;
-        mUpperLimit = mTarget + 10;
+        mCounterCeiling = (mTarget + 10) * 1000;
         mState.setTarget(mTarget);
     }
 

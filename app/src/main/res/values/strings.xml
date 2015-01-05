@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">:NUMBER + REACTOR:</string>
+    <string name="app_name">: NUMBER + REACTOR :</string>
     <string name="action_bar_app_name">NR</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="action_view_game_stats">Game Stats</string>
+    <string name="action_view_game_stats">Game Data</string>
+    <string name="action_clear_database">Clear Game Data</string>
     <string name="zero_point_zero">0.00</string>
     <string name="zero">0</string>
     <string name="start">G</string>
@@ -32,6 +33,6 @@
     <string name="title_activity_fade_out_counter">FadeOutCounterActivity</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_counter">CounterActivity</string>
-    <string name="title_activity_view_stats">Number Reactor Game Stats</string>
+    <string name="title_activity_view_stats">: NUMBER + REACTOR : Game Data</string>
 
 </resources>

@@ -1,15 +1,16 @@
-package com.paceraudio.numberreactor.app;
+package com.paceraudio.numberreactor.app.Activities;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.paceraudio.numberreactor.app.Utility.GameStats;
+import com.paceraudio.numberreactor.app.R;
+
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by jeffwconaway on 12/11/14.
@@ -55,13 +56,13 @@ public class ViewStatsListAdapter extends BaseAdapter {
         gameNumberTV.setText(Integer.toString(gameStats.getmGameNumber()));
 
         TextView gameDateTV = (TextView) convertView.findViewById(R.id.list_t_v_game_date);
-        gameDateTV.setText("Date: " + gameStats.getmGameDate());
+        gameDateTV.setText("DATE: " + gameStats.getmGameDate());
 
         TextView gameLevelTV = (TextView) convertView.findViewById(R.id.list_t_v_game_level);
-        gameLevelTV.setText("Level Reached: " + Integer.toString(gameStats.getmGameLevelReached()));
+        gameLevelTV.setText("LEVEL: " + Integer.toString(gameStats.getmGameLevelReached()));
 
         TextView gameScoreTV = (TextView) convertView.findViewById(R.id.list_t_v_game_score);
-        gameScoreTV.setText("Points Scored: " + Integer.toString(gameStats.getmGamePointsScored()));
+        gameScoreTV.setText("SCORE: " + Integer.toString(gameStats.getmGamePointsScored()));
         return convertView;
     }
 
