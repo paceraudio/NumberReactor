@@ -1,13 +1,13 @@
-package com.paceraudio.numberreactor.app.activities;
+package com.paceraudio.numberreactor.app.Activities;
 
 import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.os.Bundle;
 
-import com.paceraudio.numberreactor.app.db.DBHelper;
-import com.paceraudio.numberreactor.app.db.QueryAllDbAsync;
-import com.paceraudio.numberreactor.app.db.QueryDbListener;
-import com.paceraudio.numberreactor.app.util.GameStats;
+import com.paceraudio.numberreactor.app.DB.DBHelper;
+import com.paceraudio.numberreactor.app.DB.QueryAllDbAsync;
+import com.paceraudio.numberreactor.app.DB.QueryDbListener;
+import com.paceraudio.numberreactor.app.Utilities.GameStats;
 import com.paceraudio.numberreactor.app.R;
 
 import java.util.ArrayList;

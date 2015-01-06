@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.activities;
+package com.paceraudio.numberreactor.app.Activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,12 +16,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.paceraudio.numberreactor.app.application.ApplicationState;
-import com.paceraudio.numberreactor.app.db.DBHelper;
-import com.paceraudio.numberreactor.app.util.GameInfoDisplayer;
+import com.paceraudio.numberreactor.app.State.ApplicationState;
+import com.paceraudio.numberreactor.app.DB.DBHelper;
+import com.paceraudio.numberreactor.app.Utilities.GameInfoDisplayer;
 import com.paceraudio.numberreactor.app.R;
-import com.paceraudio.numberreactor.app.util.ResetNextTurnAsync;
-import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
+import com.paceraudio.numberreactor.app.Utilities.ResetNextTurnAsync;
+import com.paceraudio.numberreactor.app.Utilities.ResetNextTurnListener;
 
 
 public class FadeOutCounterActivity extends FragmentActivity implements

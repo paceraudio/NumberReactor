@@ -1,9 +1,8 @@
-package com.paceraudio.numberreactor.app.activities;
+package com.paceraudio.numberreactor.app.Activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -20,67 +19,59 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.paceraudio.numberreactor.app.application.ApplicationState;
-import com.paceraudio.numberreactor.app.db.DBHelper;
-import com.paceraudio.numberreactor.app.db.UpdateDbListener;
-import com.paceraudio.numberreactor.app.db.UpdateLevelDbAsync;
-import com.paceraudio.numberreactor.app.db.UpdateScoreDbAsync;
-import com.paceraudio.numberreactor.app.util.GameInfoDisplayer;
-import com.paceraudio.numberreactor.app.dialogs.OutOfLivesDialogFragment;
+import com.paceraudio.numberreactor.app.State.ApplicationState;
+import com.paceraudio.numberreactor.app.DB.DBHelper;
+import com.paceraudio.numberreactor.app.DB.UpdateDbListener;
+import com.paceraudio.numberreactor.app.DB.UpdateLevelDbAsync;
+import com.paceraudio.numberreactor.app.DB.UpdateScoreDbAsync;
+import com.paceraudio.numberreactor.app.Utilities.GameInfoDisplayer;
+import com.paceraudio.numberreactor.app.Dialogs.OutOfLivesDialogFragment;
 import com.paceraudio.numberreactor.app.R;
-import com.paceraudio.numberreactor.app.util.ResetNextTurnAsync;
-import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
+import com.paceraudio.numberreactor.app.Utilities.ResetNextTurnAsync;
+import com.paceraudio.numberreactor.app.Utilities.ResetNextTurnListener;
 
 
 public class CounterActivity extends FragmentActivity implements UpdateDbListener,
         ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        SharedPreferences.OnSharedPreferenceChangeListener, View.OnTouchListener {
 
     public static final String DEBUG_TAG = "jwc";
 
 
     //    private long startTime;
-    private boolean mIsStartClickable;
-    private boolean mIsStopCLickable;
+    private static boolean isStartClickable;
+    private static boolean isStopCLickable;
 
     public double mTarget;
 
-    private TextView mTvCounter;
+    private static TextView tvCounter;
     private TextView mTvLivesRemaining;
     private TextView mTvScore;
     private TextView mTvAccuracy;
     private TextView mTvLevel;
     private TextView mTvTarget;
 
-    private Button mStartButton;
-    private FrameLayout mFrameStartButton;
-    private Button mStopButton;
-    private FrameLayout mFrameStopButton;
+    static Button startButton;
+    static FrameLayout frameStartButton;
+    static Button stopButton;
+    static FrameLayout frameStopButton;
 
     private final static String OUT_OF_LIVES_DIALOG = "outOfLivesDialog";
     private DialogFragment mDialogFragment;
 
-    Handler mHandler;
-    Thread mCounterThread;
     ApplicationState mState;
     DBHelper mDbHelper;
     GameInfoDisplayer mGameInfoDisplayer;
 
     long mStartTime;
-    long mElapsedTimeMillis;
-    long mUptimeMillis;
-    long mElapsedAcceleratedCount;
-    double mElapsedAccelCountDouble;
-    long mNextCount = 10;
-    long mNextWholeCount = 1000;
-    double mDuration = 10;
+    static long elapsedAcceleratedCount;
+    static double levelDuration = 10;
     double mDurationIncrement = 9.99;
-    int mCount;
-    int mPostCount;
     int mCurrentTurn;
 
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     private static final int TURNS_PER_LEVEL = 4;
+
 
     private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 30;
     private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL = 10;
@@ -97,11 +88,19 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static final int LIFE_NEUTRAL = 0;
     private static final int LIFE_LOST = -1;
 
+    // Constants for the accelerated count
+    private static final long MAX_COUNTER_VALUE_MILLIS = 99999;
+    private static final long COUNTER_INCREMENT_MILLIS = 10;
+    private static final double DURATION_DECREASE_CUTOFF = 1;
+    private static final double DURATION_DECREASE_UPDATE = 3;
+    private static final double DURATION_DECREASE_FACTOR = 0.999;
+
     private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
+    private static final String LOG_UPDATE_COUNTER = "update counter: ";
+    private static final String DOUBLE_FORMAT = "%.2f";
 
     //    RequestCode for starting FadeCounter for a result
     private static final int FADE_COUNTER_REQUEST_CODE = 1;
-
 
     private boolean mIsListeningForSharedPrefChanges = false;
 
@@ -115,16 +114,16 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mGameInfoDisplayer = new GameInfoDisplayer(this);
 
         //        Define all the UI elements
-        mTvCounter = (TextView) findViewById(R.id.t_v_counter);
+        tvCounter = (TextView) findViewById(R.id.t_v_counter);
         mTvTarget = (TextView) findViewById(R.id.t_v_target);
         mTvAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
         mTvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
         mTvScore = (TextView) findViewById(R.id.t_v_score);
         mTvLevel = (TextView) findViewById(R.id.t_v_level);
-        mStartButton = (Button) findViewById(R.id.b_start);
-        mFrameStartButton = (FrameLayout) findViewById(R.id.f_l_for_b_start);
-        mStopButton = (Button) findViewById(R.id.b_stop);
-        mFrameStopButton = (FrameLayout) findViewById(R.id.f_l_for_b_stop);
+        startButton = (Button) findViewById(R.id.b_start);
+        frameStartButton = (FrameLayout) findViewById(R.id.f_l_for_b_start);
+        stopButton = (Button) findViewById(R.id.b_stop);
+        frameStopButton = (FrameLayout) findViewById(R.id.f_l_for_b_stop);
 
         Log.d(DEBUG_TAG, "\n--------------------**********NEW GAME*********--------------------");
 
@@ -138,6 +137,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         //        TODO see if this works to always run this in onCreate() without checking the
         // Intent
         setInitialTimeValuesLevelOne();
+        startButton.setOnTouchListener(this);
+        stopButton.setOnTouchListener(this);
+
         Log.d(DEBUG_TAG, "OnCreate() end");
     }
 
@@ -157,120 +159,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     protected void onResume() {
         super.onResume();
 
-        mIsStartClickable = true;
-        mIsStopCLickable = false;
+        isStartClickable = true;
+        isStopCLickable = false;
 
-        mHandler = new Handler() {
-
-            @Override
-            public void handleMessage(Message msg) {
-
-            }
-        };
-        mStartButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    if (mIsStartClickable) {
-                        mStartTime = SystemClock.elapsedRealtime();
-                        mGameInfoDisplayer.showStartButtonEngaged(mStartButton, mFrameStartButton);
-                        mPostCount = 1;
-                        mCounterThread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                while (mElapsedAcceleratedCount < 99999 &&
-                                        !mCounterThread.isInterrupted()) {
-
-                                    mElapsedTimeMillis = SystemClock.elapsedRealtime
-                                            () - mStartTime;
-
-                                    if (mElapsedTimeMillis >= mDuration) {
-
-                                        /*Log.d(DEBUG_TAG, "\n- - - - - - - - - - - - - - - - - -
-                                         -");
-
-                                        Log.d(DEBUG_TAG, "elapsed time millis: " +
-                                                mElapsedTimeMillis);
-                                        Log.d(DEBUG_TAG, "mDuration: " + mDuration);*/
-
-                                        mElapsedAcceleratedCount += 10;
-                                        if (mDurationIncrement >= 1) {
-                                            mDurationIncrement *= 0.999;
-                                        }
-                                        mDuration += mDurationIncrement;
-                                        mPostCount++;
-
-                                        if (mDurationIncrement >= 3 || (mDurationIncrement < 3 &&
-                                                mPostCount % 3 == 0)) {
-
-                                            mElapsedAccelCountDouble = mElapsedAcceleratedCount /
-                                                    1000d;
-
-                                            if (!mCounterThread.isInterrupted()) {
-                                                mHandler.postAtTime(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        mTvCounter.setText(String.format("%.2f",
-                                                                mElapsedAccelCountDouble));
-                                                        Log.d(DEBUG_TAG,
-                                                                "posting: " +
-                                                                mElapsedAccelCountDouble);
-                                                    }
-                                                }, 0);
-                                            }
-
-                                            /*Log.d(DEBUG_TAG, "mElapsedAcceleratedCount: " +
-                                                    mElapsedAcceleratedCount);
-                                            Log.d(DEBUG_TAG, "mElapsedAccelCountDouble: " +
-                                                    mElapsedAccelCountDouble);
-                                            Log.d(DEBUG_TAG, "- - - - - - - - - - - - - - - -
-                                            -\n");*/
-
-                                        }
-                                        mCount++;
-                                    }
-                                }
-                                if (!mCounterThread.isInterrupted()) {
-                                    mCounterThread.interrupt();
-                                }
-
-                                if (mCounterThread.isInterrupted()) {
-                                    mHandler.postAtTime(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            onCounterStopped(mElapsedAcceleratedCount, mCount);
-                                        }
-                                    }, 0);
-                                }
-                            }
-                        });
-                        mCounterThread.start();
-                        mIsStartClickable = false;
-                        mIsStopCLickable = true;
-                        Log.d(DEBUG_TAG, "Start clicked!");
-                    }
-                }
-                return false;
-            }
-        });
-
-        mStopButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    if (mIsStopCLickable) {
-                        mCounterThread.interrupt();
-                        long stopClickMillis = SystemClock.elapsedRealtime() - mStartTime;
-                        Log.d(DEBUG_TAG, String.format("Stop onClick elapsed millis: %5d \ncount " +
-                                "of " +
-                                "background thread cycles: %5d", stopClickMillis, mCount));
-
-                    }
-                }
-                return false;
-            }
-        });
         Log.d(DEBUG_TAG, "onResume() end");
     }
 
@@ -325,18 +216,18 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     // runs when mCounter thread is  is cancelled
-    public void onCounterStopped(long accelCount, int count) {
+    public void onCounterStopped(long accelCount) {
 
-        mGameInfoDisplayer.showStopButtonEngaged(mStopButton, mFrameStopButton);
-        mGameInfoDisplayer.showStartButtonNotEngaged(mStartButton, mFrameStartButton);
-        mIsStopCLickable = false;
+        mGameInfoDisplayer.showStopButtonEngaged(stopButton, frameStopButton);
+        mGameInfoDisplayer.showStartButtonNotEngaged(startButton, frameStartButton);
+        isStopCLickable = false;
 
         //      Round the elapsed accelerated count to 2 decimal places, give double param value 0,
         //        we aren't going to use it from this Activity
         double roundedCount = mState.roundElapsedCountLong(accelCount, FROM_COUNTER_ACTIVITY, 0);
 
-//        // TODO TESTING ONLY!!!!!!!!!!!!
-//        roundedCount = mTarget;
+        //        // TODO TESTING ONLY!!!!!!!!!!!!
+        //        roundedCount = mTarget;
 
         //      Convert rounded value to a String to display
         String roundedCountStr = String.format("%.2f", roundedCount);
@@ -355,11 +246,11 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         }
 
         if (roundedCount == mTarget) {
-            mTvCounter.setTextColor(getResources().getColor(R.color.green));
+            tvCounter.setTextColor(getResources().getColor(R.color.green));
             score *= 2;
         }
 
-        mTvCounter.setText(roundedCountStr);
+        tvCounter.setText(roundedCountStr);
         Log.d(DEBUG_TAG, "**********onCounterStopped()**********" +
                 "\n  elapsed accelerated count: " + roundedCount +
                 "\n elapsed accelerated string: " + roundedCountStr +
@@ -374,22 +265,20 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
         //        TODO make this info display when the turn resets
         mGameInfoDisplayer.displayImmediateGameInfoAfterTurn(mTvAccuracy);
-        //        async task updating the db score.  onDbScoreUpdatedEndOfTurn() runs in
-        // onPostExecute.
-        //        There we check to see if we have lives left, if we do,
-        // we start the  ResetNextTurnAsync,
-        //        if not, we launch the OutOfLives Dialog
+        // async task updating the db score.  onDbScoreUpdatedEndOfTurn() runs in onPostExecute.
+        // There we check to see if we have lives left, if we do, we start the  ResetNextTurnAsync,
+        // if not, we launch the OutOfLives Dialog
         UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
         updateScoreDbAsync.execute(mState.getRunningScoreTotal());
     }
 
     private void resetBasicTimeValues() {
-        mElapsedAcceleratedCount = 0;
-        mElapsedTimeMillis = 0;
-        mDurationIncrement = mDuration;
-        mNextWholeCount = 1000;
-        mNextCount = 10;
-        mCount = 0;
+        elapsedAcceleratedCount = 0;
+        //        mElapsedTimeMillis = 0;
+        mDurationIncrement = levelDuration;
+        //        mNextWholeCount = 1000;
+        //        mNextCount = 10;
+        //        mCount = 0;
     }
 
     private void setInitialTimeValuesLevelOne() {
@@ -415,7 +304,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mState.setLevel(1);
         mState.resetScoreForNewGame();
         mState.resetLivesForNewGame();
-        mIsStartClickable = true;
+        isStartClickable = true;
         mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining,
                 mTvScore, mTvLevel, FROM_COUNTER_ACTIVITY);
         //        TODO put this in async task
@@ -438,9 +327,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private void setGameValuesForNextLevel() {
         int currentLevel = mState.getLevel();
         mState.setLevel(currentLevel + 1);
-        //        Set target and accelerator to their beginning levels,
+        // Set target and accelerator to their beginning levels,
         // and increase them based on the
-        //        current level. Check the SharedPreferences for the difficulty level.
+        // current level. Check the SharedPreferences for the difficulty level.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         updateDifficultyBasedOnPreferencesAndLevel(prefs);
         resetDurationToStateDuration();
@@ -448,13 +337,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         resetTurnsToFirstTurn();
         resetBasicTimeValues();
 
-        //        reset Counter text color to red, it is still at 0 alpha from the
-        // ResetNextTurnAsync
-        //        because we didn't fade the counter back in before launching FadeCounter
-        mGameInfoDisplayer.resetCounterToZero(mTvCounter);
-        mIsStartClickable = true;
+        // reset Counter text color to red, it is still at 0 alpha from the ResetNextTurnAsync
+        // because we didn't fade the counter back in before launching FadeCounter
+        mGameInfoDisplayer.resetCounterToZero(tvCounter);
+        isStartClickable = true;
         //        "disengage" the stop button
-        mGameInfoDisplayer.showStopButtonNotEngaged(mStopButton, mFrameStopButton);
+        mGameInfoDisplayer.showStopButtonNotEngaged(stopButton, frameStopButton);
         mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining,
                 mTvScore, mTvLevel, FROM_COUNTER_ACTIVITY);
     }
@@ -465,7 +353,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     private void resetDurationToStateDuration() {
-        mDuration = mState.getDuration();
+        //        mDuration = mState.getDuration();
+        levelDuration = mState.getDuration();
     }
 
     private void resetTargetBasedOnLevel() {
@@ -488,7 +377,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private void launchOutOfLivesDialog() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        //        mDialogFragment = new OutOfLivesDialogFragment();
         mDialogFragment = OutOfLivesDialogFragment.newInstance();
         mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
     }
@@ -552,7 +440,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         param3 = mState.getTurnPoints();
 
         ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
-                mTvCounter, mTvLivesRemaining, mTvScore);
+                tvCounter, mTvLivesRemaining, mTvScore);
         resetNextTurnAsync.execute(param1, param2, param3);
 
     }
@@ -565,8 +453,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 launchFadeCounterActivity();
             } else {
                 resetTimeValuesBetweenTurns();
-                mGameInfoDisplayer.showStopButtonNotEngaged(mStopButton, mFrameStopButton);
-                mIsStartClickable = true;
+                mGameInfoDisplayer.showStopButtonNotEngaged(stopButton, frameStopButton);
+                isStartClickable = true;
             }
         } else {
             launchOutOfLivesDialog();
@@ -578,10 +466,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     @Override
     public void onOkClicked() {
         mDialogFragment.dismiss();
-        //        mDbHelper.insertNewGameRowInDb();
         setInitialTimeValuesLevelOne();
-        mGameInfoDisplayer.showStopButtonNotEngaged(mStopButton, mFrameStopButton);
-        mGameInfoDisplayer.resetCounterToZero(mTvCounter);
+        mGameInfoDisplayer.showStopButtonNotEngaged(stopButton, frameStopButton);
+        mGameInfoDisplayer.resetCounterToZero(tvCounter);
     }
 
     @Override
@@ -600,7 +487,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         int level = mState.getLevel();
         String difficulty = prefs.getString(getString(R.string.prefs_difficulty_key), "-1");
         if (!difficulty.equals("-1")) {
-            //double tempAccelerator = 0;
             double tempDuration = 0;
             if (difficulty.equals(getString(R.string.prefs_difficulty_values_1))) {
                 tempDuration = BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY;
@@ -617,12 +503,103 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             }
             mState.setDuration(tempDuration);
             resetDurationToStateDuration();
-            mDurationIncrement = mDuration;
+
             Log.d(DEBUG_TAG, "updateDifficultyBasedOnPreferencesAndLevel() running" +
                     "\n difficulty: " + difficulty + "\n new duration: " + mState
                     .getDuration());
         } else {
             Log.e(DEBUG_TAG, "Shared Prefs not working!!!!!!!!!!");
+        }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (v == startButton && isStartClickable) {
+            mGameInfoDisplayer.showStartButtonEngaged(startButton, frameStartButton);
+            CounterRunnable counterRunnable = new CounterRunnable(this);
+            Thread counterThread = new Thread(counterRunnable);
+            counterThread.start();
+            isStartClickable = false;
+            isStopCLickable = true;
+        } else if (v == stopButton && isStopCLickable) {
+            //            mCounterThread.interrupt();
+            mGameInfoDisplayer.showStopButtonEngaged(stopButton, frameStopButton);
+            isStopCLickable = false;
+            onCounterStopped(elapsedAcceleratedCount);
+        }
+        return false;
+    }
+
+    public static void updateCounter(long accelCount) {
+        if (isStopCLickable) {
+            double elapsedAccelCountDouble = accelCount / 1000d;
+            tvCounter.setText(String.format(DOUBLE_FORMAT, elapsedAccelCountDouble));
+            Log.d(DEBUG_TAG, LOG_UPDATE_COUNTER + String.format(DOUBLE_FORMAT,
+                    elapsedAccelCountDouble));
+            elapsedAcceleratedCount = accelCount;
+        }
+    }
+
+    static class PostToCounterRunnable implements Runnable {
+
+        long accelCount;
+
+        public PostToCounterRunnable(long accelCount) {
+            this.accelCount = accelCount;
+        }
+
+        @Override
+        public void run() {
+            updateCounter(accelCount);
+        }
+    }
+
+
+    static class CounterRunnable implements Runnable {
+
+        Activity activity;
+
+        public CounterRunnable(Activity activity) {
+            this.activity = activity;
+        }
+
+
+        @Override
+        public void run() {
+            runCounter();
+        }
+
+        private void runCounter() {
+
+            long postCount = 1;
+            long elapsedTimeMillis;
+            long elapsedAcceleratedCount = 0;
+            double duration = levelDuration;
+            double durationIncrement = duration;
+
+            final long startTime = SystemClock.elapsedRealtime();
+
+            while (elapsedAcceleratedCount <= MAX_COUNTER_VALUE_MILLIS && isStopCLickable) {
+                elapsedTimeMillis = SystemClock.elapsedRealtime() - startTime;
+                if (elapsedTimeMillis >= duration) {
+                    elapsedAcceleratedCount += COUNTER_INCREMENT_MILLIS;
+
+                    if (durationIncrement >= DURATION_DECREASE_CUTOFF) {
+                        durationIncrement *= DURATION_DECREASE_FACTOR;
+                    }
+                    duration += durationIncrement;
+                    postCount++;
+
+                    if (durationIncrement >= DURATION_DECREASE_UPDATE ||
+                            (durationIncrement < DURATION_DECREASE_UPDATE && postCount % 3 == 0)) {
+
+
+                        PostToCounterRunnable postToCounterRunnable = new PostToCounterRunnable
+                                (elapsedAcceleratedCount);
+                        activity.runOnUiThread(postToCounterRunnable);
+                    }
+                }
+            }
         }
     }
 }

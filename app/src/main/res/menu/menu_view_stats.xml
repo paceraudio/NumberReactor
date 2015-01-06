@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.paceraudio.numberreactor.app.activities.ViewStatsActivity">
+      tools:context="com.paceraudio.numberreactor.app.Activities.ViewStatsActivity">
 
    <!-- <item android:id="@+id/action_clear_data"
           android:title="@string/action_clear_database"

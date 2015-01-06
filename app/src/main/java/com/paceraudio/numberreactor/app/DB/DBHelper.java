@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.db;
+package com.paceraudio.numberreactor.app.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,12 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.paceraudio.numberreactor.app.application.ApplicationState;
-import com.paceraudio.numberreactor.app.util.GameStats;
+import com.paceraudio.numberreactor.app.State.ApplicationState;
+import com.paceraudio.numberreactor.app.Utilities.GameStats;
 
 import java.util.ArrayList;
 
-import static com.paceraudio.numberreactor.app.activities.CounterActivity.DEBUG_TAG;
+import static com.paceraudio.numberreactor.app.Activities.CounterActivity.DEBUG_TAG;
 
 /**
  * Created by jeffwconaway on 10/9/14.

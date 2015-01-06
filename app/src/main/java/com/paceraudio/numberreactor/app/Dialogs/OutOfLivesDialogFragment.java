@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.dialogs;
+package com.paceraudio.numberreactor.app.Dialogs;
 
 import android.app.Activity;
 import android.os.Bundle;

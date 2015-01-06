@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.util;
+package com.paceraudio.numberreactor.app.Utilities;
 
 import android.content.Context;
 import android.util.Log;
@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.paceraudio.numberreactor.app.application.ApplicationState;
+import com.paceraudio.numberreactor.app.State.ApplicationState;
 import com.paceraudio.numberreactor.app.R;
 
 /**
@@ -28,7 +28,7 @@ public class GameInfoDisplayer {
         mState = (ApplicationState) mContext.getApplicationContext();
     }
 
-    public void showStartButtonEngaged(Button start, FrameLayout frameStart) {
+    public  void showStartButtonEngaged(Button start, FrameLayout frameStart) {
         frameStart.setBackgroundColor(mContext.getResources().getColor(R.color.green));
         start.setTextColor(mContext.getResources().getColor(R.color.green));
     }

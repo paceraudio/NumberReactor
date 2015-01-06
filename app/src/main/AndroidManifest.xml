@@ -3,19 +3,19 @@
     package="com.paceraudio.numberreactor.app" >
 
     <application
-        android:name=".application.ApplicationState"
+        android:name=".State.ApplicationState"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/NumberReactorAppTheme">
         <activity
-            android:name=".activities.FadeOutCounterActivity"
+            android:name=".Activities.FadeOutCounterActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
              >
         </activity>
         <activity
-            android:name=".activities.CounterActivity"
+            android:name=".Activities.CounterActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -25,12 +25,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ViewStatsActivity"
+            android:name=".Activities.ViewStatsActivity"
             android:label="@string/title_activity_view_stats"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".activities.SettingsActivity"
+            android:name=".Activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/NR_SettingsActivity">
 

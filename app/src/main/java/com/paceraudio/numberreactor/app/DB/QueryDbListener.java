@@ -1,6 +1,6 @@
-package com.paceraudio.numberreactor.app.db;
+package com.paceraudio.numberreactor.app.DB;
 
-import com.paceraudio.numberreactor.app.util.GameStats;
+import com.paceraudio.numberreactor.app.Utilities.GameStats;
 
 import java.util.ArrayList;
 
