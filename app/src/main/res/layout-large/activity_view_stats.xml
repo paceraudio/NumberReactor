@@ -7,7 +7,7 @@
                 android:paddingTop="2dp"
                 android:paddingBottom="2dp"
                 android:background="@color/darkBlackRed"
-                tools:context="com.paceraudio.numberreactor.app.Activities.ViewStatsActivity">
+                tools:context="com.paceraudio.numberreactor.app.activities.ViewStatsActivity">
 
     <ListView
         android:id="@android:id/list"

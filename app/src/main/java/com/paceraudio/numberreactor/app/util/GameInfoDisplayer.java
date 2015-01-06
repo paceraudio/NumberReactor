@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.Utility;
+package com.paceraudio.numberreactor.app.util;
 
 import android.content.Context;
 import android.util.Log;
@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.paceraudio.numberreactor.app.State.ApplicationState;
+import com.paceraudio.numberreactor.app.application.ApplicationState;
 import com.paceraudio.numberreactor.app.R;
 
 /**

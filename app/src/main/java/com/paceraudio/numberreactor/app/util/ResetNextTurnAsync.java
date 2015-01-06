@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.Utility;
+package com.paceraudio.numberreactor.app.util;
 
 import android.content.Context;
 import android.graphics.Color;
