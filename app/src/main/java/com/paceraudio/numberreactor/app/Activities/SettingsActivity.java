@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.Activities;
+package com.paceraudio.numberreactor.app.activities;
 
 import android.app.ActionBar;
 import android.os.Bundle;

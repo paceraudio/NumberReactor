@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.Utilities;
+package com.paceraudio.numberreactor.app.util;
 
 /**
  * Created by jeffwconaway on 12/8/14.

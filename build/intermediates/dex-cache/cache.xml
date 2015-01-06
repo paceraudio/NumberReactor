@@ -2,30 +2,30 @@
 <items version="2" >
 
     <item
-        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
+        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="686344a780033e4ba22b926cd225f8d4941247e6">
+        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/classes-746589e760bc09338b8200c15ad9d9347761d260.jar" />
+    </item>
+    <item
+        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
         jumboMode="false"
         revision="20.0.0"
+        sha1="686344a780033e4ba22b926cd225f8d4941247e6">
+        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/classes-746589e760bc09338b8200c15ad9d9347761d260.jar" />
+    </item>
+    <item
+        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
         sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0">
         <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-65612891578316cb92302c02218ae3892e14e0e4.jar" />
     </item>
     <item
-        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="686344a780033e4ba22b926cd225f8d4941247e6">
-        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/classes-746589e760bc09338b8200c15ad9d9347761d260.jar" />
-    </item>
-    <item
-        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="686344a780033e4ba22b926cd225f8d4941247e6">
-        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/classes-746589e760bc09338b8200c15ad9d9347761d260.jar" />
-    </item>
-    <item
         jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
         jumboMode="false"
-        revision="21.1.2"
+        revision="20.0.0"
         sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0">
         <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-65612891578316cb92302c02218ae3892e14e0e4.jar" />
     </item>

@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.Activities;
+package com.paceraudio.numberreactor.app.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -19,16 +19,16 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.paceraudio.numberreactor.app.State.ApplicationState;
-import com.paceraudio.numberreactor.app.DB.DBHelper;
-import com.paceraudio.numberreactor.app.DB.UpdateDbListener;
-import com.paceraudio.numberreactor.app.DB.UpdateLevelDbAsync;
-import com.paceraudio.numberreactor.app.DB.UpdateScoreDbAsync;
-import com.paceraudio.numberreactor.app.Utilities.GameInfoDisplayer;
-import com.paceraudio.numberreactor.app.Dialogs.OutOfLivesDialogFragment;
+import com.paceraudio.numberreactor.app.application.ApplicationState;
+import com.paceraudio.numberreactor.app.db.DBHelper;
+import com.paceraudio.numberreactor.app.db.UpdateDbListener;
+import com.paceraudio.numberreactor.app.db.UpdateLevelDbAsync;
+import com.paceraudio.numberreactor.app.db.UpdateScoreDbAsync;
+import com.paceraudio.numberreactor.app.util.GameInfoDisplayer;
+import com.paceraudio.numberreactor.app.dialogs.OutOfLivesDialogFragment;
 import com.paceraudio.numberreactor.app.R;
-import com.paceraudio.numberreactor.app.Utilities.ResetNextTurnAsync;
-import com.paceraudio.numberreactor.app.Utilities.ResetNextTurnListener;
+import com.paceraudio.numberreactor.app.util.ResetNextTurnAsync;
+import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
 
 
 public class CounterActivity extends FragmentActivity implements UpdateDbListener,
