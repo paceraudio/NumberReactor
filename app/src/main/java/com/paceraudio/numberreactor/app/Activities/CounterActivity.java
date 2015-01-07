@@ -71,7 +71,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     int mCurrentTurn;
 
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
-    private static final int TURNS_PER_LEVEL = 4;
+    private static final int TURNS_PER_LEVEL = 1;
 
 
     private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 30;
@@ -233,6 +233,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         //      Round the elapsed accelerated count to 2 decimal places, give double param value 0,
         //        we aren't going to use it from this Activity
         double roundedCount = mState.roundElapsedCountLong(accelCount, FROM_COUNTER_ACTIVITY, 0);
+        Log.d("jwc", "counter onCounterStopped roundedCount: " + roundedCount);
 
         //        // TODO TESTING ONLY!!!!!!!!!!!!
         //        roundedCount = mTarget;

@@ -173,17 +173,18 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         mGameInfoDisplayer.showStartButtonNotEngaged(fadeStartButton,
                 fadeStartFrame);
 
-        long counterCeilingSeconds = (long) (millis / MILLIS_IN_SECONDS);
+        double counterCeilingSeconds = (millis / 1000d);
 
         //      Round the elapsed accelerated count to 2 decimal places
-        double roundedCount = mState.roundElapsedCountLong(millis, FROM_FADE_COUNTER_ACTIVITY,
-                counterCeilingSeconds);
+        double roundedCount = mState.roundElapsedCountLong(millis, FROM_FADE_COUNTER_ACTIVITY, counterCeilingSeconds);
+        Log.d("jwc", "onFadeCountStopped millis: " + millis);
+        Log.d("jwc", "onFadeCountStopped roundedCount: " + roundedCount);
 
         //        //TODO TESTING ONLY!!!!!!!!!!!!!!
         //        roundedCount = mTarget;
 
         //      Convert rounded value to a String to display
-        String roundedCountStr = String.format(DOUBLE_FORMAT, roundedCount);
+        String roundedCountStr = String.format("%.2f", roundedCount);
 
         //        calc the accuracy
         int accuracy = mState.calcAccuracy(mTarget, roundedCount);
@@ -343,6 +344,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
             if (elapsedMillis >= counterCeilingMillis && isStopClickable) {
                 UpdateCounterAfterTimeoutRunnable runnable = new UpdateCounterAfterTimeoutRunnable(elapsedMillis);
                 runOnUiThread(runnable);
+                Log.d("jwc", "elapsed Millis from runnable: " + elapsedMillis);
             }
         }
     }

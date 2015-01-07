@@ -138,12 +138,16 @@ public class ApplicationState extends Application{
 
     public double roundElapsedCountLong(long accelCount, String fromActivity, double fadeCountCeiling) {
 
+        Log.d("jwc", "mState roundElapsedCountLong incoming param: " + accelCount);
+        Log.d("jwc", "mState roundElapsedCountLon rounded count: " + accelCount / 1000d);
+
         if (accelCount >= MAX_ACCEL_COUNT_VALUE && fromActivity.equals(FROM_COUNTER_ACTIVITY)) {
             return MAX_ACCEL_COUNT_DISPLAYED;
         }
         if (accelCount >= fadeCountCeiling && fromActivity.equals(FROM_FADE_COUNTER_ACTIVITY)) {
             return fadeCountCeiling;
         }
+
         return accelCount / MILLIS_IN_SECONDS;
     }
 
