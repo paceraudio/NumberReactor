@@ -54,11 +54,11 @@ public class GameInfoDisplayer {
     }
 
     private void displayTurnAccuracy(TextView tv) {
-        tv.setText(mContext.getString(R.string.accuracy) + " " + mState.getTurnAccuracy() + "%");
+        tv.setText(mContext.getString(R.string.accuracy) + " " + mState.getmTurnAccuracy() + "%");
     }
 
     private void displayOverallAccuracy(TextView tv) {
-        tv.setText(mContext.getString(R.string.accuracy) + " " + mState.getOverallAccuracy() + "%");
+        tv.setText(mContext.getString(R.string.accuracy) +  " 0%");
     }
 
     private void displayLives(TextView tv) {
@@ -67,11 +67,11 @@ public class GameInfoDisplayer {
     }
 
     private void displayTurnPoints(TextView tv) {
-        tv.setText(mContext.getString(R.string.points) + " " + mState.getTurnPoints());
+        tv.setText(mContext.getString(R.string.points) + " " + mState.getmTurnPoints());
     }
 
     private void displayScore(TextView tv) {
-        tv.setText(mContext.getString(R.string.score) + " " + mState.getRunningScoreTotal());
+        tv.setText(mContext.getString(R.string.score) + " " + mState.getmRunningScoreTotal());
     }
 
     private void displayLevel(TextView tv) {
@@ -105,9 +105,9 @@ public class GameInfoDisplayer {
         displayLevel(level);
         Log.d(DEBUG_TAG, "displayAllGameInfo ()********" +
                 "\n Level: " + mState.getLevel() +
-                "\n Turn: " + mState.getTurn() +
+                "\n Turn: " + mState.getmTurn() +
                 "\n Lives: " + mState.getLives() +
-                "\n Score: " + mState.getRunningScoreTotal() +
+                "\n Score: " + mState.getmRunningScoreTotal() +
                 "\n Target: " + mState.getTarget() +
                 "\n Duration: " + mState.getDuration());
     }

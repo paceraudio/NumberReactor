@@ -7,17 +7,16 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/NumberReactorAppTheme">
+        android:theme="@style/NumberReactorAppTheme" >
         <activity
             android:name=".activities.FadeOutCounterActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-             >
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".activities.CounterActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,8 +31,11 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/NR_SettingsActivity">
-
+            android:theme="@style/NR_SettingsActivity" >
+        </activity>
+        <activity
+            android:name=".activities.BlobertonTheThird"
+            android:label="@string/title_activity_bloberton_the_third" >
         </activity>
     </application>
 

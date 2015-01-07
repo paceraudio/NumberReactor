@@ -7,6 +7,7 @@ import android.os.SystemClock;
 import android.widget.TextView;
 
 import com.paceraudio.numberreactor.app.R;
+import com.paceraudio.numberreactor.app.activities.CounterActivity;
 
 
 /**
@@ -83,7 +84,10 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
         // modulo-ing the value.  Even is on, odd is off.  The other three integers[] values
         // are meaningless here.
         if (mIsDisplayingStats) {
-            if (mIsDoubleLifeGained) {
+
+            blinkTurnInfo(mIsDoubleLifeGained, mIsLifeGained, mIsLifeLost, integers[0], mTurnPoints);
+
+            /*if (mIsDoubleLifeGained) {
                 if (integers[0] % 2 == 0) {
                     mLivesTV.setText(mContext.getString(R.string.lives_remaining) + " +2");
                     mLivesTV.setTextColor(mContext.getResources().getColor(R.color.darkGreen));
@@ -111,7 +115,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
                 } else {
                     mScoreTV.setText("");
                 }
-            }
+            }*/
             // If we are not displaying the stats and, instead, producing the fade out/in,
             // integers[0] is used to set the alpha value of the Counter text.  The other three
             // values in integers[] are the r g b values for the color.
@@ -203,6 +207,37 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
                     publishProgress(currentValue, red, green, blue);
                     //Log.d("jwc", "Fade In Alpha: " + currentValue);
                 }
+            }
+        }
+    }
+
+    private void blinkTurnInfo(boolean plusLives, boolean plusLife, boolean minusLife, int time, int points) {
+        int green = mContext.getResources().getColor(R.color.darkGreen);
+        boolean timeIsEven = (time % 2 == 0);
+        boolean positivePoints = (points > 0);
+        if (plusLives || plusLife || minusLife) {
+
+            if (timeIsEven && plusLives) {
+                mLivesTV.setTextColor(green);
+                mLivesTV.setText(mContext.getString(R.string.lives_remaining) + " +2");
+            }
+            else if (timeIsEven && plusLife) {
+                mLivesTV.setTextColor(green);
+                mLivesTV.setText(mContext.getString(R.string.lives_remaining) + " +1");
+            }
+            else if (timeIsEven) {
+                mLivesTV.setText(mContext.getString(R.string.lives_remaining) + " -1");
+            }
+            if (!timeIsEven) {
+                mLivesTV.setText("");
+            }
+        }
+        if (positivePoints) {
+            mScoreTV.setTextColor(green);
+            if (timeIsEven) {
+                mScoreTV.setText(mContext.getText(R.string.points) + " +" + points);
+            } else {
+                mScoreTV.setText("");
             }
         }
     }

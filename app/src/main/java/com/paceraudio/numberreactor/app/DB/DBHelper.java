@@ -64,7 +64,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertNewGameRowInDb() {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        String date = mState.setGameDate();
+        String date = mState.obtainGameDate();
         cv.put(C_DATE_PLAYED, date);
         cv.put(C_LEVEL_REACHED, 1);
         cv.put(C_POINTS_SCORED, 0);
@@ -164,7 +164,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<GameStats> al = queryAllFromDb();
 //        insertNewGameRowInDb();
 //        updateLevelReached(mState.getLevel());
-//        updateScoreDB(mState.getRunningScoreTotal());
+//        updateScoreDB(mState.getmRunningScoreTotal());
     }
 
 
