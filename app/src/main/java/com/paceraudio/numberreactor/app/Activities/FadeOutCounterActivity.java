@@ -78,7 +78,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     private static final int BUFFER_OVER_TARGET = 10;
     private static final double MILLIS_IN_SECONDS = 1000;
     private static final String DOUBLE_FORMAT = "%.2f";
-    private static long counterCeiling;
+    private static long counterCeilingMillis;
     private static final double DEFAULT_FADE_RATIO = .60;
     private static final int ALPHA_VALUE_STEPS = 255;
     private static final int NORMAL_TURN_RESET = 0;
@@ -160,7 +160,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                             @Override
                             public void run() {
                                 mDuration = 10;
-                                while (elapsedTimeMillis < counterCeiling &&
+                                while (elapsedTimeMillis < counterCeilingMillis &&
                                         !mFadeCounterThread.isInterrupted()) {
                                     elapsedTimeMillis = SystemClock.elapsedRealtime() - mStartTime;
 
@@ -256,9 +256,11 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         mGameInfoDisplayer.showStartButtonNotEngaged(fadeStartButton,
                 fadeStartFrame);
 
+        long counterCeilingSeconds = (long) (millis / MILLIS_IN_SECONDS);
+
         //      Round the elapsed accelerated count to 2 decimal places
         double roundedCount = mState.roundElapsedCountLong(millis, FROM_FADE_COUNTER_ACTIVITY,
-                counterCeiling);
+                counterCeilingSeconds);
 
         //        //TODO TESTING ONLY!!!!!!!!!!!!!!
         //        roundedCount = mTarget;
@@ -305,7 +307,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     private void setStateTargetBasedOnLevel() {
         mTarget = DEFAULT_FADE_COUNTER_TARGET + (mState.getLevel() - 1);
         mState.setTarget(mTarget);
-        counterCeiling = (long) ((mTarget + BUFFER_OVER_TARGET) * MILLIS_IN_SECONDS);
+        counterCeilingMillis = (long) ((mTarget + BUFFER_OVER_TARGET) * MILLIS_IN_SECONDS);
     }
 
     //    Listener method runs after ResetNextTurnAsync is finished
@@ -346,8 +348,23 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
 
 
+    class UpdateCounterAfterTimeoutRunnable implements Runnable {
+        long maxElapsedMillis;
 
-    static class UpdateFadeCounterRunnable implements Runnable {
+        public UpdateCounterAfterTimeoutRunnable(long maxElapsedMillis) {
+            this.maxElapsedMillis = maxElapsedMillis;
+        }
+
+        @Override
+        public void run() {
+            onFadeCountStopped(maxElapsedMillis);
+        }
+    }
+
+
+
+
+    class UpdateFadeCounterRunnable implements Runnable {
 
         long elapsedMillis;
         int alphaValue;
@@ -366,7 +383,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
 
 
-    static class FadeCounterRunnable implements Runnable {
+    class FadeCounterRunnable implements Runnable {
 
         Activity activity;
 
@@ -392,7 +409,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
             long startTime = SystemClock.elapsedRealtime();
 
-            while (elapsedMillis <= counterCeiling && isStopClickable) {
+            while (elapsedMillis <= counterCeilingMillis && isStopClickable) {
                 elapsedMillis = SystemClock.elapsedRealtime() - startTime;
 
                 if (elapsedMillis >= duration) {
@@ -402,9 +419,13 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                     }
                     UpdateFadeCounterRunnable updateFadeCounterRunnable = new
                             UpdateFadeCounterRunnable(elapsedMillis, alphaValue);
-                    activity.runOnUiThread(updateFadeCounterRunnable);
+                    runOnUiThread(updateFadeCounterRunnable);
                     duration += durationIncrement;
                 }
+            }
+            if (elapsedMillis >= counterCeilingMillis && isStopClickable) {
+                UpdateCounterAfterTimeoutRunnable runnable = new UpdateCounterAfterTimeoutRunnable(elapsedMillis);
+                runOnUiThread(runnable);
             }
         }
     }

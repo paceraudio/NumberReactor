@@ -3,6 +3,7 @@ package com.paceraudio.numberreactor.app.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -45,11 +46,11 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     public double mTarget;
 
     private static TextView tvCounter;
-    private TextView mTvLivesRemaining;
-    private TextView mTvScore;
-    private TextView mTvAccuracy;
-    private TextView mTvLevel;
-    private TextView mTvTarget;
+    private static TextView tvLivesRemaining;
+    private static TextView tvScore;
+    private static TextView tvAccuracy;
+    private static TextView tvLevel;
+    private static TextView tvTarget;
 
     static Button startButton;
     static FrameLayout frameStartButton;
@@ -96,6 +97,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static final double DURATION_DECREASE_UPDATE = 3;
     private static final double DURATION_DECREASE_FACTOR = 0.999;
 
+    private static final double MAX_DISPLAYED_ACCEL_COUNT = 99.99;
+
     private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
     private static final String LOG_UPDATE_COUNTER = "update counter: ";
     private static final String DOUBLE_FORMAT = "%.2f";
@@ -104,6 +107,10 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static final int FADE_COUNTER_REQUEST_CODE = 1;
 
     private boolean mIsListeningForSharedPrefChanges = false;
+
+    private static boolean isMaxCountReached = false;
+
+    static CounterActivity counterActivity = new CounterActivity();
 
 
     @Override
@@ -116,11 +123,11 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
         //        Define all the UI elements
         tvCounter = (TextView) findViewById(R.id.t_v_counter);
-        mTvTarget = (TextView) findViewById(R.id.t_v_target);
-        mTvAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
-        mTvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
-        mTvScore = (TextView) findViewById(R.id.t_v_score);
-        mTvLevel = (TextView) findViewById(R.id.t_v_level);
+        tvTarget = (TextView) findViewById(R.id.t_v_target);
+        tvAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
+        tvLivesRemaining = (TextView) findViewById(R.id.t_v_lives_remaining);
+        tvScore = (TextView) findViewById(R.id.t_v_score);
+        tvLevel = (TextView) findViewById(R.id.t_v_level);
         startButton = (Button) findViewById(R.id.b_start);
         frameStartButton = (FrameLayout) findViewById(R.id.f_l_for_b_start);
         stopButton = (Button) findViewById(R.id.b_stop);
@@ -265,7 +272,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 (onCounterCancelledElapsedTime));
 
         //        TODO make this info display when the turn resets
-        mGameInfoDisplayer.displayImmediateGameInfoAfterTurn(mTvAccuracy);
+        mGameInfoDisplayer.displayImmediateGameInfoAfterTurn(tvAccuracy);
         // async task updating the db score.  onDbScoreUpdatedEndOfTurn() runs in onPostExecute.
         // There we check to see if we have lives left, if we do, we start the  ResetNextTurnAsync,
         // if not, we launch the OutOfLives Dialog
@@ -306,8 +313,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mState.resetScoreForNewGame();
         mState.resetLivesForNewGame();
         isStartClickable = true;
-        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining,
-                mTvScore, mTvLevel, FROM_COUNTER_ACTIVITY);
+        mGameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
+                tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
         //        TODO put this in async task
         mDbHelper.insertNewGameRowInDb();
         Log.d(DEBUG_TAG, "newest game number in db: " + Integer.toString(mDbHelper
@@ -321,8 +328,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mTarget = mState.getTarget();
         mState.setmTurn(mCurrentTurn + 1);
         mCurrentTurn = mState.getmTurn();
-        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining,
-                mTvScore, mTvLevel, FROM_COUNTER_ACTIVITY);
+        mGameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
+                tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
     }
 
     private void setGameValuesForNextLevel() {
@@ -344,8 +351,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         isStartClickable = true;
         //        "disengage" the stop button
         mGameInfoDisplayer.showStopButtonNotEngaged(stopButton, frameStopButton);
-        mGameInfoDisplayer.displayAllGameInfo(mTvTarget, mTvAccuracy, mTvLivesRemaining,
-                mTvScore, mTvLevel, FROM_COUNTER_ACTIVITY);
+        mGameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
+                tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
     }
 
     private void resetTurnsToFirstTurn() {
@@ -441,7 +448,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         param3 = mState.getmTurnPoints();
 
         ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
-                tvCounter, mTvLivesRemaining, mTvScore);
+                tvCounter, tvLivesRemaining, tvScore);
         resetNextTurnAsync.execute(param1, param2, param3);
 
     }
@@ -524,6 +531,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             isStopCLickable = true;
         } else if (v == stopButton && isStopCLickable) {
             mGameInfoDisplayer.showStopButtonEngaged(stopButton, frameStopButton);
+            mGameInfoDisplayer.showStartButtonNotEngaged(startButton, frameStartButton);
             isStopCLickable = false;
             onCounterStopped(elapsedAcceleratedCount);
         }
@@ -534,17 +542,38 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         if (isStopCLickable) {
             double elapsedAccelCountDouble = accelCount / MILLIS_IN_SECONDS;
             tvCounter.setText(String.format(DOUBLE_FORMAT, elapsedAccelCountDouble));
-            Log.d(DEBUG_TAG, LOG_UPDATE_COUNTER + String.format(DOUBLE_FORMAT,
-                    elapsedAccelCountDouble));
+            /*Log.d(DEBUG_TAG, LOG_UPDATE_COUNTER + String.format(DOUBLE_FORMAT,
+                    elapsedAccelCountDouble));*/
             elapsedAcceleratedCount = accelCount;
         }
     }
 
-    static class UpdateCounterRunnable implements Runnable {
 
+
+
+
+    class UpdateCounterAfterTimeoutRunnable implements Runnable {
+        long maxAccelCount;
+
+        public UpdateCounterAfterTimeoutRunnable(long maxAccelCount) {
+            this.maxAccelCount = maxAccelCount;
+        }
+
+        @Override
+        public void run() {
+            onCounterStopped(maxAccelCount);
+        }
+    }
+
+
+
+
+
+    class UpdateCounterRunnable implements Runnable {
+        Activity activity;
         long accelCount;
 
-        public UpdateCounterRunnable(long accelCount) {
+        public UpdateCounterRunnable(Activity activity,long accelCount) {
             this.accelCount = accelCount;
         }
 
@@ -555,18 +584,23 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
 
-    static class CounterRunnable implements Runnable {
+
+
+    class CounterRunnable implements Runnable {
 
         Activity activity;
+//        Handler handler;
 
         public CounterRunnable(Activity activity) {
             this.activity = activity;
+//            this.handler = handler;
         }
 
 
         @Override
         public void run() {
             runCounter();
+
         }
 
         private void runCounter() {
@@ -595,10 +629,15 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
 
                         UpdateCounterRunnable updateCounterRunnable = new UpdateCounterRunnable
-                                (elapsedAcceleratedCount);
-                        activity.runOnUiThread(updateCounterRunnable);
+                                (activity, elapsedAcceleratedCount);
+                        runOnUiThread(updateCounterRunnable);
                     }
                 }
+            }
+            if (elapsedAcceleratedCount >= MAX_COUNTER_VALUE_MILLIS && isStopCLickable) {
+                UpdateCounterAfterTimeoutRunnable runnable = new UpdateCounterAfterTimeoutRunnable(elapsedAcceleratedCount);
+
+                runOnUiThread(runnable);
             }
         }
     }
