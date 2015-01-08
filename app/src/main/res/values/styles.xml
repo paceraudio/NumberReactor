@@ -71,7 +71,7 @@
 
     <!--NORMAL-->
     <style name="NR_FrameLayout.CounterFrame.Normal">
-        <item name="android:layout_marginTop">80dp</item>
+        <item name="android:layout_marginTop">45dp</item>
     </style>
 
     <!--FRAME LAYOUT FOR BUTTONS-->
@@ -263,7 +263,7 @@
     <style name="NR_TextView.GameInfo.Large.Target">
         <item name="android:text">@string/target</item>
         <item name="android:layout_weight">64</item>
-        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingLeft">18dp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Large.Target.CounterActivity">
@@ -278,6 +278,7 @@
     <style name="NR_TextView.GameInfo.Normal.Target">
         <item name="android:text">@string/target</item>
         <item name="android:layout_weight">64</item>
+        <item name="android:paddingLeft">15dp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Normal.Target.CounterActivity">
@@ -354,7 +355,7 @@
     <style name="NR_TextView.GameInfo.Large.Lives">
         <item name="android:text">@string/lives_remaining</item>
         <item name="android:layout_weight">40</item>
-        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingLeft">18dp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Large.Lives.CounterActivity">
@@ -369,6 +370,7 @@
     <style name="NR_TextView.GameInfo.Normal.Lives">
         <item name="android:text">@string/lives_remaining</item>
         <item name="android:layout_weight">40</item>
+        <item name="android:paddingLeft">15dp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Normal.Lives.CounterActivity">

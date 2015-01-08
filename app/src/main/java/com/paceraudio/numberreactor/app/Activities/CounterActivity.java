@@ -71,7 +71,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     int mCurrentTurn;
 
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
-    private static final int TURNS_PER_LEVEL = 1;
+    private static final int TURNS_PER_LEVEL = 4;
 
 
     private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 30;
