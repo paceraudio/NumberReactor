@@ -3,6 +3,7 @@ package com.paceraudio.numberreactor.app.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -25,6 +26,7 @@ import com.paceraudio.numberreactor.app.db.DBHelper;
 import com.paceraudio.numberreactor.app.db.UpdateDbListener;
 import com.paceraudio.numberreactor.app.db.UpdateLevelDbAsync;
 import com.paceraudio.numberreactor.app.db.UpdateScoreDbAsync;
+import com.paceraudio.numberreactor.app.util.ButtonDrawableView;
 import com.paceraudio.numberreactor.app.util.GameInfoDisplayer;
 import com.paceraudio.numberreactor.app.dialogs.OutOfLivesDialogFragment;
 import com.paceraudio.numberreactor.app.R;
@@ -132,6 +134,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         frameStartButton = (FrameLayout) findViewById(R.id.f_l_for_b_start);
         stopButton = (Button) findViewById(R.id.b_stop);
         frameStopButton = (FrameLayout) findViewById(R.id.f_l_for_b_stop);
+
 
         Log.d(DEBUG_TAG, "\n--------------------**********NEW GAME*********--------------------");
 
@@ -377,7 +380,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     private boolean checkIfLivesLeft() {
-        if (mState.getLives() == 0) {
+        if (mState.getLives() <= 0) {
             return false;
         }
         return true;

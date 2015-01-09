@@ -28,6 +28,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
     boolean mIsLifeGained = false;
     boolean mIsLiveNeutral = false;
     boolean mIsLifeLost = false;
+    boolean mIsFadeOutDone = false;
     int mBlinks = 8;
     int mTurnPoints;
 
@@ -72,6 +73,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
         }
         if (integers[0] == NORMAL_TURN_RESET) {
             fadeTextOut(getTextColor(mCounterTV), 2000);
+            mIsFadeOutDone = true;
             fadeTextIn(mContext.getResources().getColor(R.color.red), 1000);
         }
         return null;
@@ -123,8 +125,9 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
             mCounterTV.setTextColor(Color.argb(integers[0], integers[1], integers[2],
                     integers[3]));
             // Set the counter to 0.00 when the alpha value is at 0 before the fade in
-            if (integers[0] == 0) {
+            if (mIsFadeOutDone) {
                 mCounterTV.setText(mContext.getString(R.string.zero_point_zero));
+                mIsFadeOutDone = false;
             }
         }
     }
