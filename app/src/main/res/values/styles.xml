@@ -102,6 +102,7 @@
 
     <style name="NR_FrameLayout.LargeButtons.Start">
         <item name="android:layout_marginLeft">30dp</item>
+        <item name="android:background">@color/red</item>
     </style>
 
     <style name="NR_FrameLayout.LargeButtons.Stop">

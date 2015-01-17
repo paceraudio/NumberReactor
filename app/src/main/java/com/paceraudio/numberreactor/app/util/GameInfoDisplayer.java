@@ -30,6 +30,7 @@ public class GameInfoDisplayer {
 
     public  void showStartButtonEngaged(Button start, FrameLayout frameStart) {
         frameStart.setBackgroundColor(mContext.getResources().getColor(R.color.green));
+        start.setBackgroundDrawable(new ButtonDrawableView(mContext).mStartTriangle);
         start.setTextColor(mContext.getResources().getColor(R.color.green));
     }
 

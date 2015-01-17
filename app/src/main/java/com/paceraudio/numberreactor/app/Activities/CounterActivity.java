@@ -131,6 +131,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         tvScore = (TextView) findViewById(R.id.t_v_score);
         tvLevel = (TextView) findViewById(R.id.t_v_level);
         startButton = (Button) findViewById(R.id.b_start);
+        startButton.setBackgroundDrawable(new ButtonDrawableView(this).mStartTriangle);
+        startButton.setPadding(20, 20, 20, 20);
         frameStartButton = (FrameLayout) findViewById(R.id.f_l_for_b_start);
         stopButton = (Button) findViewById(R.id.b_stop);
         frameStopButton = (FrameLayout) findViewById(R.id.f_l_for_b_stop);
