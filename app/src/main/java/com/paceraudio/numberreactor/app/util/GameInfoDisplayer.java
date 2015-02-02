@@ -1,6 +1,10 @@
 package com.paceraudio.numberreactor.app.util;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -28,10 +32,14 @@ public class GameInfoDisplayer {
         mState = (ApplicationState) mContext.getApplicationContext();
     }
 
-    public  void showStartButtonEngaged(Button start, FrameLayout frameStart) {
+    /*public void showStartButtonEngaged(Button start, FrameLayout frameStart) {
         frameStart.setBackgroundColor(mContext.getResources().getColor(R.color.green));
-        start.setBackgroundDrawable(new ButtonDrawableView(mContext).mStartTriangle);
+        start.setBackgroundDrawable(new ButtonDrawableView(mContext).mStartTriangleDisengaged);
         start.setTextColor(mContext.getResources().getColor(R.color.green));
+    }*/
+
+    public void showStartButtonEngaged(Button start, ShapeDrawable triangle) {
+        start.setBackgroundDrawable(triangle);
     }
 
     public void showStopButtonEngaged(Button stop, FrameLayout frameStop) {
@@ -39,9 +47,13 @@ public class GameInfoDisplayer {
         stop.setTextColor(mContext.getResources().getColor(R.color.red));
     }
 
-    public void showStartButtonNotEngaged(Button start, FrameLayout frameStart) {
+    /*public void showStartButtonDisengaged(Button start, FrameLayout frameStart) {
         frameStart.setBackgroundColor(mContext.getResources().getColor(R.color.brown));
         start.setTextColor(mContext.getResources().getColor(R.color.grey));
+    }*/
+
+    public void showStartButtonDisengaged(Button start, ShapeDrawable triangle) {
+        start.setBackgroundDrawable(triangle);
     }
 
     public void showStopButtonNotEngaged(Button stop, FrameLayout frameStop) {

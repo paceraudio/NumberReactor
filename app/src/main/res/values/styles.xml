@@ -102,7 +102,7 @@
 
     <style name="NR_FrameLayout.LargeButtons.Start">
         <item name="android:layout_marginLeft">30dp</item>
-        <item name="android:background">@color/red</item>
+        <item name="android:background">@color/darkBlackRed</item>
     </style>
 
     <style name="NR_FrameLayout.LargeButtons.Stop">
@@ -155,7 +155,6 @@
     </style>
 
     <style name="NR_ButtonStyle.Large.Start">
-        <item name="android:text">@string/start</item>
     </style>
 
     <style name="NR_ButtonStyle.Large.Stop">
