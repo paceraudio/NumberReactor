@@ -3,6 +3,7 @@ package com.paceraudio.numberreactor.app.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -54,11 +55,18 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static TextView tvTarget;
 
     static Button startButton;
-    static ShapeDrawable startTriangleDisengaged;
-    static ShapeDrawable startTriangleEngaged;
+
+
     static FrameLayout frameStartButton;
     static Button stopButton;
     static FrameLayout frameStopButton;
+
+    //TODO see if this works
+    private ButtonDrawableView mButtonDrawableView;
+    private LayerDrawable mStartButtonDisengagedDrawables;
+    private LayerDrawable mStartButtonEngagedDrawables;
+    private ShapeDrawable mStartTriangleDisengaged;
+    private ShapeDrawable mStartTriangleEngaged;
 
     private final static String OUT_OF_LIVES_DIALOG = "outOfLivesDialog";
     private DialogFragment mDialogFragment;
@@ -132,9 +140,13 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         tvScore = (TextView) findViewById(R.id.t_v_score);
         tvLevel = (TextView) findViewById(R.id.t_v_level);
         startButton = (Button) findViewById(R.id.b_start);
-        startTriangleDisengaged = new ButtonDrawableView(this).mStartTriangleDisengaged;
-        startTriangleEngaged = new ButtonDrawableView(this).mStartTriangleEngaged;
-        startButton.setBackgroundDrawable(startTriangleDisengaged);
+        mButtonDrawableView = new ButtonDrawableView(this);
+        //mStartTriangleDisengaged = mButtonDrawableView.mStartTriangleDisengaged;
+        //mStartTriangleEngaged = mButtonDrawableView.mStartTriangleEngaged;
+        mStartButtonDisengagedDrawables = mButtonDrawableView.mStartDisengagedDrawables;
+        mStartButtonEngagedDrawables = mButtonDrawableView.mStartEngagedDrawables;
+        startButton.setBackgroundDrawable(mStartButtonDisengagedDrawables);
+        //startButton.setBackgroundDrawable(mStartTriangleDisengaged);
         startButton.setPadding(20, 20, 20, 20);
         frameStartButton = (FrameLayout) findViewById(R.id.f_l_for_b_start);
         stopButton = (Button) findViewById(R.id.b_stop);
@@ -235,7 +247,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     public void onCounterStopped(long accelCount) {
 
         mGameInfoDisplayer.showStopButtonEngaged(stopButton, frameStopButton);
-        mGameInfoDisplayer.showStartButtonDisengaged(startButton, startTriangleDisengaged);
+        mGameInfoDisplayer.showStartButtonDisengaged(startButton, mStartButtonDisengagedDrawables);
         isStopCLickable = false;
 
         //      Round the elapsed accelerated count to 2 decimal places, give double param value 0,
@@ -532,8 +544,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (v == startButton && isStartClickable) {
-            mGameInfoDisplayer.showStartButtonEngaged(startButton, startTriangleEngaged);
-            //startButton.setBackgroundDrawable(startTriangleEngaged);
+            mGameInfoDisplayer.showStartButtonEngaged(startButton, mStartButtonEngagedDrawables);
+            //startButton.setBackgroundDrawable(mStartTriangleEngaged);
             CounterRunnable counterRunnable = new CounterRunnable(this);
             Thread counterThread = new Thread(counterRunnable);
             counterThread.start();
@@ -541,7 +553,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             isStopCLickable = true;
         } else if (v == stopButton && isStopCLickable) {
             mGameInfoDisplayer.showStopButtonEngaged(stopButton, frameStopButton);
-            mGameInfoDisplayer.showStartButtonDisengaged(startButton, startTriangleDisengaged);
+            mGameInfoDisplayer.showStartButtonDisengaged(startButton, mStartButtonDisengagedDrawables);
             isStopCLickable = false;
             onCounterStopped(elapsedAcceleratedCount);
         }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.util.Log;
 import android.widget.Button;
@@ -38,8 +39,12 @@ public class GameInfoDisplayer {
         start.setTextColor(mContext.getResources().getColor(R.color.green));
     }*/
 
-    public void showStartButtonEngaged(Button start, ShapeDrawable triangle) {
+    /*public void showStartButtonEngaged(Button start, ShapeDrawable triangle) {
         start.setBackgroundDrawable(triangle);
+    }*/
+
+    public void showStartButtonEngaged(Button start, LayerDrawable drawable) {
+        start.setBackgroundDrawable(drawable);
     }
 
     public void showStopButtonEngaged(Button stop, FrameLayout frameStop) {
@@ -52,8 +57,12 @@ public class GameInfoDisplayer {
         start.setTextColor(mContext.getResources().getColor(R.color.grey));
     }*/
 
-    public void showStartButtonDisengaged(Button start, ShapeDrawable triangle) {
+    /*public void showStartButtonDisengaged(Button start, ShapeDrawable triangle) {
         start.setBackgroundDrawable(triangle);
+    }*/
+
+    public void showStartButtonDisengaged(Button start, LayerDrawable drawable) {
+        start.setBackgroundDrawable(drawable);
     }
 
     public void showStopButtonNotEngaged(Button stop, FrameLayout frameStop) {

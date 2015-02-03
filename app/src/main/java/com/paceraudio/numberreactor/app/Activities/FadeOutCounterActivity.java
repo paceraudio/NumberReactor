@@ -3,6 +3,7 @@ package com.paceraudio.numberreactor.app.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,7 +40,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     private TextView mTvFadeLevel;
 
     private static Button fadeStartButton;
-    static ShapeDrawable startTriangle;
+    //static ShapeDrawable startTriangle;
+    private LayerDrawable mStartButtonDisengagedDrawables;
+    private LayerDrawable mStartButtonEngagedDrawables;
     private static Button fadeStopButton;
     private static FrameLayout fadeStartFrame;
     private static FrameLayout fadeStopFrame;
@@ -111,7 +114,11 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         mTvFadeScore = (TextView) findViewById(R.id.t_v_fade_score);
         mTvFadeLevel = (TextView) findViewById(R.id.t_v_fade_level);
         fadeStartButton = (Button) findViewById(R.id.b_fade_start);
-        startTriangle = new ButtonDrawableView(this).mStartTriangleDisengaged;
+        //startTriangle = new ButtonDrawableView(this).mStartTriangleDisengaged;
+        ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
+        mStartButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
+        mStartButtonEngagedDrawables = buttonDrawableView.mStartEngagedDrawables;
+        fadeStartButton.setBackgroundDrawable(mStartButtonDisengagedDrawables);
         fadeStopButton = (Button) findViewById(R.id.b_fade_stop);
         fadeStartFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_start);
         fadeStopFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_stop);
@@ -175,7 +182,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
         mGameInfoDisplayer.showStopButtonEngaged(fadeStopButton, fadeStopFrame);
         mGameInfoDisplayer.showStartButtonDisengaged(fadeStartButton,
-                startTriangle);
+                mStartButtonDisengagedDrawables);
 
         double counterCeilingSeconds = (millis / 1000d);
 
@@ -245,7 +252,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (v == fadeStartButton && isStartClickable) {
-            mGameInfoDisplayer.showStartButtonEngaged(fadeStartButton, startTriangle);
+            mGameInfoDisplayer.showStartButtonEngaged(fadeStartButton, mStartButtonEngagedDrawables);
             FadeCounterRunnable fadeCounterRunnable = new FadeCounterRunnable(this);
             Thread fadeCounterThread = new Thread(fadeCounterRunnable);
             fadeCounterThread.start();
