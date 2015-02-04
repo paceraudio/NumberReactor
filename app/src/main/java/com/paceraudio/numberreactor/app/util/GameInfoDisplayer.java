@@ -43,14 +43,12 @@ public class GameInfoDisplayer {
         start.setBackgroundDrawable(triangle);
     }*/
 
-    public void showStartButtonEngaged(Button start, LayerDrawable drawable) {
-        start.setBackgroundDrawable(drawable);
-    }
 
-    public void showStopButtonEngaged(Button stop, FrameLayout frameStop) {
+
+    /*public void showStopButtonEngaged(Button stop, FrameLayout frameStop) {
         frameStop.setBackgroundColor(mContext.getResources().getColor(R.color.red));
         stop.setTextColor(mContext.getResources().getColor(R.color.red));
-    }
+    }*/
 
     /*public void showStartButtonDisengaged(Button start, FrameLayout frameStart) {
         frameStart.setBackgroundColor(mContext.getResources().getColor(R.color.brown));
@@ -61,14 +59,28 @@ public class GameInfoDisplayer {
         start.setBackgroundDrawable(triangle);
     }*/
 
+    /*public void showStopButtonDisengaged(Button stop, FrameLayout frameStop) {
+        frameStop.setBackgroundColor(mContext.getResources().getColor(R.color.brown));
+        stop.setTextColor(mContext.getResources().getColor(R.color.grey));
+    }*/
+
+    public void showStartButtonEngaged(Button start, LayerDrawable drawable) {
+        start.setBackgroundDrawable(drawable);
+    }
+
     public void showStartButtonDisengaged(Button start, LayerDrawable drawable) {
         start.setBackgroundDrawable(drawable);
     }
 
-    public void showStopButtonNotEngaged(Button stop, FrameLayout frameStop) {
-        frameStop.setBackgroundColor(mContext.getResources().getColor(R.color.brown));
-        stop.setTextColor(mContext.getResources().getColor(R.color.grey));
+    public void showStopButtonEngaged(Button stop, LayerDrawable drawable) {
+        stop.setBackgroundDrawable(drawable);
     }
+
+    public void showStopButtonDisengaged(Button stop, LayerDrawable drawable) {
+        stop.setBackgroundDrawable(drawable);
+    }
+
+
 
     private void displayTarget(TextView tv) {
         tv.setText(mContext.getString(R.string.target) + " " + String.format("%.2f",

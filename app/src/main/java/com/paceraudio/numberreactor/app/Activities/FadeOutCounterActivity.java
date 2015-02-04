@@ -43,6 +43,8 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     //static ShapeDrawable startTriangle;
     private LayerDrawable mStartButtonDisengagedDrawables;
     private LayerDrawable mStartButtonEngagedDrawables;
+    private LayerDrawable mStopButtonDisengagedDrawables;
+    private LayerDrawable mStopButtonEngagedDrawables;
     private static Button fadeStopButton;
     private static FrameLayout fadeStartFrame;
     private static FrameLayout fadeStopFrame;
@@ -114,15 +116,20 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         mTvFadeScore = (TextView) findViewById(R.id.t_v_fade_score);
         mTvFadeLevel = (TextView) findViewById(R.id.t_v_fade_level);
         fadeStartButton = (Button) findViewById(R.id.b_fade_start);
-        //startTriangle = new ButtonDrawableView(this).mStartTriangleDisengaged;
-        ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
-        mStartButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
-        mStartButtonEngagedDrawables = buttonDrawableView.mStartEngagedDrawables;
-        fadeStartButton.setBackgroundDrawable(mStartButtonDisengagedDrawables);
         fadeStopButton = (Button) findViewById(R.id.b_fade_stop);
         fadeStartFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_start);
         fadeStopFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_stop);
         mGameInfoDisplayer = new GameInfoDisplayer(this);
+        //startTriangle = new ButtonDrawableView(this).mStartTriangleDisengaged;
+        ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
+        mStartButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
+        mStartButtonEngagedDrawables = buttonDrawableView.mStartEngagedDrawables;
+        mStopButtonDisengagedDrawables = buttonDrawableView.mStopDisengagedDrawables;
+        mStopButtonEngagedDrawables = buttonDrawableView.mStopEngagedDrawables;
+        //fadeStartButton.setBackgroundDrawable(mStartButtonDisengagedDrawables);
+        mGameInfoDisplayer.showStartButtonDisengaged(fadeStartButton, mStartButtonDisengagedDrawables);
+        mGameInfoDisplayer.showStopButtonDisengaged(fadeStopButton, mStopButtonDisengagedDrawables);
+
         setStateTargetBasedOnLevel();
     }
 
@@ -180,7 +187,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
     public void onFadeCountStopped(long millis) {
 
-        mGameInfoDisplayer.showStopButtonEngaged(fadeStopButton, fadeStopFrame);
+        mGameInfoDisplayer.showStopButtonEngaged(fadeStopButton, mStopButtonEngagedDrawables);
         mGameInfoDisplayer.showStartButtonDisengaged(fadeStartButton,
                 mStartButtonDisengagedDrawables);
 
@@ -259,7 +266,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
             isStartClickable = false;
             isStopClickable = true;
         } else if (v == fadeStopButton && isStopClickable) {
-            mGameInfoDisplayer.showStopButtonEngaged(fadeStopButton, fadeStopFrame);
+            mGameInfoDisplayer.showStopButtonEngaged(fadeStopButton, mStopButtonEngagedDrawables);
             isStopClickable = false;
             onFadeCountStopped(elapsedTimeMillis);
         }

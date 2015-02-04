@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.PathShape;
-import android.graphics.drawable.shapes.RectShape;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -18,25 +17,25 @@ import com.paceraudio.numberreactor.app.R;
  */
 public class ButtonDrawableView extends View {
 
-    public ShapeDrawable mStartTriangleDisengaged;
-    public ShapeDrawable mStartFrameDisengaged;
-    public ShapeDrawable mStartTriangleEngaged;
-    public ShapeDrawable mStartFrameEngaged;
     public LayerDrawable mStartEngagedDrawables;
     public LayerDrawable mStartDisengagedDrawables;
-    public ShapeDrawable mStopSquare;
+    public LayerDrawable mStopEngagedDrawables;
+    public LayerDrawable mStopDisengagedDrawables;
 
     private static final float ZERO = 0;
-    private static final float SQUARE_SIDE_LENGTH = 800;
-    private static final float TRIANGLE_SIDE_LENGTH = 300;
+    private static final float FRAME_SIDE_LENGTH = 800;
+    private static final float TRIANGLE_SIDE_LENGTH = 350;
+    private static final float SQUARE_SIDE_LENGTH = 300;
     private static final float HALF_TRIANGLE_SIDE_LENGTH = TRIANGLE_SIDE_LENGTH / 2;
     private static final float TRIANGLE_SIDE_SQUARED = (float) Math.pow(TRIANGLE_SIDE_LENGTH, 2);
     private static final float HALF_TRIANGLE_SIDE_SQUARED = (float) Math.pow(TRIANGLE_SIDE_LENGTH / 2, 2);
     private static final float TRIANGLE_WIDTH_SQUARED = TRIANGLE_SIDE_SQUARED - HALF_TRIANGLE_SIDE_SQUARED;
     private static final float TRIANGLE_WIDTH = (float) Math.sqrt(TRIANGLE_WIDTH_SQUARED);
-    private static final float TRIANGLE_X_INSET = (SQUARE_SIDE_LENGTH - TRIANGLE_WIDTH) / 2;
-    private static final float TRIANGLE_Y_INSET = (SQUARE_SIDE_LENGTH - TRIANGLE_SIDE_LENGTH) / 2;
-    private static final float ICON_STROKE_WIDTH = 30;
+    private static final float TRIANGLE_X_INSET = (FRAME_SIDE_LENGTH - TRIANGLE_WIDTH) / 2;
+    private static final float TRIANGLE_Y_INSET = (FRAME_SIDE_LENGTH - TRIANGLE_SIDE_LENGTH) / 2;
+    private static final float SQUARE_X_INSET = (FRAME_SIDE_LENGTH - SQUARE_SIDE_LENGTH) / 2;
+    private static final float SQUARE_Y_INSET = SQUARE_X_INSET;
+    private static final float ICON_STROKE_WIDTH = 15;
     private static final float FRAME_STROKE_WIDTH = 10;
 
 
@@ -45,52 +44,52 @@ public class ButtonDrawableView extends View {
 
 //        Log.d("jwc", "triangle side squared")
 
+        int brown = context.getResources().getColor(R.color.brown);
         int grey = context.getResources().getColor(R.color.grey);
         int green = context.getResources().getColor(R.color.green);
-        int brown = context.getResources().getColor(R.color.brown);
+        int red = context.getResources().getColor(R.color.red);
 
-        Path frame = new Path();
-        frame.moveTo(ZERO, ZERO);
-        frame.lineTo(SQUARE_SIDE_LENGTH, ZERO);
-        frame.lineTo(SQUARE_SIDE_LENGTH, SQUARE_SIDE_LENGTH);
-        frame.lineTo(ZERO, SQUARE_SIDE_LENGTH);
-        frame.close();
+        PathShape frame = makeButtonFrame();
+        PathShape startTriangle = makeButtonTriangleIcon();
+        PathShape stopSquare = makeButtonSquareIcon();
 
-        Path triangle = new Path();
-        /*triangle.moveTo(ZERO, ZERO);
-        triangle.lineTo(SQUARE_SIDE_LENGTH, ZERO);
-        triangle.lineTo(SQUARE_SIDE_LENGTH, SQUARE_SIDE_LENGTH);
-        triangle.lineTo(ZERO, SQUARE_SIDE_LENGTH);
-        triangle.close();*/
-        triangle.moveTo(TRIANGLE_X_INSET, TRIANGLE_Y_INSET);
-        triangle.lineTo(TRIANGLE_WIDTH + TRIANGLE_X_INSET, HALF_TRIANGLE_SIDE_LENGTH + TRIANGLE_Y_INSET);
-        triangle.lineTo(TRIANGLE_X_INSET, TRIANGLE_SIDE_LENGTH + TRIANGLE_Y_INSET);
-        triangle.close();
-
-
-        mStartTriangleDisengaged = new ShapeDrawable(new PathShape(triangle, SQUARE_SIDE_LENGTH, SQUARE_SIDE_LENGTH));
-        definePaintTraitsForButtonDrawables(mStartTriangleDisengaged, grey, ICON_STROKE_WIDTH);
-        mStartFrameDisengaged = new ShapeDrawable(new PathShape(frame, SQUARE_SIDE_LENGTH, SQUARE_SIDE_LENGTH));
-        definePaintTraitsForButtonDrawables(mStartFrameDisengaged, brown, FRAME_STROKE_WIDTH);
-        Drawable[] startDisengagedDrawables = {mStartFrameDisengaged, mStartTriangleDisengaged};
-        mStartDisengagedDrawables = new LayerDrawable(startDisengagedDrawables);
-
-        mStartTriangleEngaged = new ShapeDrawable(new PathShape(triangle, SQUARE_SIDE_LENGTH, SQUARE_SIDE_LENGTH));
-        definePaintTraitsForButtonDrawables(mStartTriangleEngaged, green, ICON_STROKE_WIDTH);
-        mStartFrameEngaged = new ShapeDrawable(new PathShape(frame, SQUARE_SIDE_LENGTH, SQUARE_SIDE_LENGTH));
-        definePaintTraitsForButtonDrawables(mStartFrameEngaged, green, FRAME_STROKE_WIDTH);
-        Drawable[]startEngagedDrawables = {mStartFrameEngaged, mStartTriangleEngaged};
-        mStartEngagedDrawables = new LayerDrawable(startEngagedDrawables);
-
-
-        mStopSquare = new ShapeDrawable(new RectShape());
-        mStopSquare.setIntrinsicHeight(50);
-        mStopSquare.setIntrinsicWidth(50);
-        mStopSquare.getPaint().setColor(green);
+        mStartDisengagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), brown, grey);
+        mStartEngagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), green, green);
+        mStopDisengagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), brown, grey);
+        mStopEngagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), red, red);
     }
 
     public ButtonDrawableView(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    private PathShape makeButtonFrame() {
+        Path path = new Path();
+        path.moveTo(ZERO, ZERO);
+        path.lineTo(FRAME_SIDE_LENGTH, ZERO);
+        path.lineTo(FRAME_SIDE_LENGTH, FRAME_SIDE_LENGTH);
+        path.lineTo(ZERO, FRAME_SIDE_LENGTH);
+        path.close();
+        return new PathShape(path, FRAME_SIDE_LENGTH, FRAME_SIDE_LENGTH);
+    }
+
+    private PathShape makeButtonTriangleIcon() {
+        Path path = new Path();
+        path.moveTo(TRIANGLE_X_INSET, TRIANGLE_Y_INSET);
+        path.lineTo(TRIANGLE_WIDTH + TRIANGLE_X_INSET, HALF_TRIANGLE_SIDE_LENGTH + TRIANGLE_Y_INSET);
+        path.lineTo(TRIANGLE_X_INSET, TRIANGLE_SIDE_LENGTH + TRIANGLE_Y_INSET);
+        path.close();
+        return new PathShape(path, FRAME_SIDE_LENGTH, FRAME_SIDE_LENGTH);
+    }
+
+    private PathShape makeButtonSquareIcon() {
+        Path path = new Path();
+        path.moveTo(SQUARE_X_INSET, SQUARE_Y_INSET);
+        path.lineTo(SQUARE_X_INSET + SQUARE_SIDE_LENGTH, SQUARE_Y_INSET);
+        path.lineTo(SQUARE_X_INSET + SQUARE_SIDE_LENGTH, SQUARE_Y_INSET + SQUARE_SIDE_LENGTH);
+        path.lineTo(SQUARE_X_INSET, SQUARE_Y_INSET + SQUARE_SIDE_LENGTH);
+        path.close();
+        return new PathShape(path, FRAME_SIDE_LENGTH, FRAME_SIDE_LENGTH);
     }
 
     private void definePaintTraitsForButtonDrawables(ShapeDrawable shapeDrawable, int color, float strokeWidth) {
@@ -98,5 +97,12 @@ public class ButtonDrawableView extends View {
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(color);
         paint.setStrokeWidth(strokeWidth);
+    }
+
+    private LayerDrawable layerButtonDrawables(ShapeDrawable frame, ShapeDrawable icon, int frameColor, int iconColor ) {
+        definePaintTraitsForButtonDrawables(frame, frameColor, FRAME_STROKE_WIDTH);
+        definePaintTraitsForButtonDrawables(icon, iconColor, ICON_STROKE_WIDTH);
+        Drawable[] drawables = {frame, icon};
+        return new LayerDrawable(drawables);
     }
 }

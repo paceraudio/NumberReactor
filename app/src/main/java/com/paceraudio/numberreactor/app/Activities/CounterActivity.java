@@ -65,6 +65,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private ButtonDrawableView mButtonDrawableView;
     private LayerDrawable mStartButtonDisengagedDrawables;
     private LayerDrawable mStartButtonEngagedDrawables;
+    private LayerDrawable mStopButtonDisengagedDrawables;
+    private LayerDrawable mStopButtonEngagedDrawables;
     private ShapeDrawable mStartTriangleDisengaged;
     private ShapeDrawable mStartTriangleEngaged;
 
@@ -140,17 +142,21 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         tvScore = (TextView) findViewById(R.id.t_v_score);
         tvLevel = (TextView) findViewById(R.id.t_v_level);
         startButton = (Button) findViewById(R.id.b_start);
-        mButtonDrawableView = new ButtonDrawableView(this);
-        //mStartTriangleDisengaged = mButtonDrawableView.mStartTriangleDisengaged;
-        //mStartTriangleEngaged = mButtonDrawableView.mStartTriangleEngaged;
-        mStartButtonDisengagedDrawables = mButtonDrawableView.mStartDisengagedDrawables;
-        mStartButtonEngagedDrawables = mButtonDrawableView.mStartEngagedDrawables;
-        startButton.setBackgroundDrawable(mStartButtonDisengagedDrawables);
-        //startButton.setBackgroundDrawable(mStartTriangleDisengaged);
-        startButton.setPadding(20, 20, 20, 20);
         frameStartButton = (FrameLayout) findViewById(R.id.f_l_for_b_start);
         stopButton = (Button) findViewById(R.id.b_stop);
         frameStopButton = (FrameLayout) findViewById(R.id.f_l_for_b_stop);
+
+        mButtonDrawableView = new ButtonDrawableView(this);
+        mStartButtonDisengagedDrawables = mButtonDrawableView.mStartDisengagedDrawables;
+        mStartButtonEngagedDrawables = mButtonDrawableView.mStartEngagedDrawables;
+        mStopButtonDisengagedDrawables = mButtonDrawableView.mStopDisengagedDrawables;
+        mStopButtonEngagedDrawables = mButtonDrawableView.mStopEngagedDrawables;
+        mGameInfoDisplayer.showStartButtonDisengaged(startButton, mStartButtonDisengagedDrawables);
+        mGameInfoDisplayer.showStopButtonDisengaged(stopButton, mStopButtonDisengagedDrawables);
+        //startButton.setBackgroundDrawable(mStartButtonDisengagedDrawables);
+        //startButton.setBackgroundDrawable(mStartTriangleDisengaged);
+        //startButton.setPadding(20, 20, 20, 20);
+
 
 
         Log.d(DEBUG_TAG, "\n--------------------**********NEW GAME*********--------------------");
@@ -246,7 +252,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     // runs when mCounter thread is  is cancelled
     public void onCounterStopped(long accelCount) {
 
-        mGameInfoDisplayer.showStopButtonEngaged(stopButton, frameStopButton);
+        mGameInfoDisplayer.showStopButtonEngaged(stopButton, mStopButtonEngagedDrawables);
         mGameInfoDisplayer.showStartButtonDisengaged(startButton, mStartButtonDisengagedDrawables);
         isStopCLickable = false;
 
@@ -371,7 +377,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mGameInfoDisplayer.resetCounterToZero(tvCounter);
         isStartClickable = true;
         //        "disengage" the stop button
-        mGameInfoDisplayer.showStopButtonNotEngaged(stopButton, frameStopButton);
+        mGameInfoDisplayer.showStopButtonDisengaged(stopButton, mStopButtonDisengagedDrawables);
         mGameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
     }
@@ -482,7 +488,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 launchFadeCounterActivity();
             } else {
                 resetTimeValuesBetweenTurns();
-                mGameInfoDisplayer.showStopButtonNotEngaged(stopButton, frameStopButton);
+                mGameInfoDisplayer.showStopButtonDisengaged(stopButton, mStopButtonDisengagedDrawables);
                 isStartClickable = true;
             }
         } else {
@@ -496,7 +502,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     public void onOkClicked() {
         mDialogFragment.dismiss();
         setInitialTimeValuesLevelOne();
-        mGameInfoDisplayer.showStopButtonNotEngaged(stopButton, frameStopButton);
+        mGameInfoDisplayer.showStopButtonDisengaged(stopButton, mStopButtonDisengagedDrawables);
         mGameInfoDisplayer.resetCounterToZero(tvCounter);
     }
 
@@ -552,7 +558,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             isStartClickable = false;
             isStopCLickable = true;
         } else if (v == stopButton && isStopCLickable) {
-            mGameInfoDisplayer.showStopButtonEngaged(stopButton, frameStopButton);
+            mGameInfoDisplayer.showStopButtonEngaged(stopButton, mStopButtonEngagedDrawables);
             mGameInfoDisplayer.showStartButtonDisengaged(startButton, mStartButtonDisengagedDrawables);
             isStopCLickable = false;
             onCounterStopped(elapsedAcceleratedCount);
