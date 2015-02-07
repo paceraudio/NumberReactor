@@ -75,7 +75,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     ApplicationState mState;
     DBHelper mDbHelper;
-    GameInfoDisplayer mGameInfoDisplayer;
     private static  GameInfoDisplayer gameInfoDisplayer;
 
     long mStartTime;
@@ -138,7 +137,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         setContentView(R.layout.activity_counter);
         mState = (ApplicationState) getApplicationContext();
         mDbHelper = new DBHelper(this);
-        mGameInfoDisplayer = new GameInfoDisplayer(this, this);
         gameInfoDisplayer = new GameInfoDisplayer(getApplicationContext(), this);
 
         //        Define all the UI elements
@@ -160,15 +158,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         stopButtonArmedDrawables = buttonDrawableView.mStopArmed;
         stopButtonDisengagedDrawables = buttonDrawableView.mStopDisengagedDrawables;
         stopButtonEngagedDrawables = buttonDrawableView.mStopEngagedDrawables;
-        mGameInfoDisplayer.showButtonState(startButton, startButtonArmedDrawables);
-        mGameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
-        /*mGameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
-        mGameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);*/
-        //startButton.setBackgroundDrawable(startButtonDisengagedDrawables);
-        //startButton.setBackgroundDrawable(mStartTriangleDisengaged);
-        //startButton.setPadding(20, 20, 20, 20);
-
-
+        gameInfoDisplayer.showButtonState(startButton, startButtonArmedDrawables);
+        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
 
         Log.d(DEBUG_TAG, "\n--------------------**********NEW GAME*********--------------------");
 
@@ -206,9 +197,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
         isStartClickable = true;
         isStopClickable = false;
-
-        //flashStartButton();
-
         Log.d(DEBUG_TAG, "onResume() end");
     }
 
@@ -265,8 +253,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     // runs when mCounter thread is  is cancelled
     public void onCounterStopped(long accelCount) {
 
-        mGameInfoDisplayer.showStopButtonEngaged(stopButton, stopButtonEngagedDrawables);
-        mGameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
+        gameInfoDisplayer.showStopButtonEngaged(stopButton, stopButtonEngagedDrawables);
+        gameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
         isStopClickable = false;
 
         //      Round the elapsed accelerated count to 2 decimal places, give double param value 0,
@@ -317,7 +305,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 (onCounterCancelledElapsedTime));
 
         //        TODO make this info display when the turn resets
-        mGameInfoDisplayer.displayImmediateGameInfoAfterTurn(tvAccuracy);
+        gameInfoDisplayer.displayImmediateGameInfoAfterTurn(tvAccuracy);
         // async task updating the db score.  onDbScoreUpdatedEndOfTurn() runs in onPostExecute.
         // There we check to see if we have lives left, if we do, we start the  ResetNextTurnAsync,
         // if not, we launch the OutOfLives Dialog
@@ -358,7 +346,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mState.resetScoreForNewGame();
         mState.resetLivesForNewGame();
         isStartClickable = true;
-        mGameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
+        gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
         //        TODO put this in async task
         mDbHelper.insertNewGameRowInDb();
@@ -374,7 +362,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mTarget = mState.getTarget();
         mState.setmTurn(mCurrentTurn + 1);
         mCurrentTurn = mState.getmTurn();
-        mGameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
+        gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
         flashStartButton();
     }
@@ -394,12 +382,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
         // reset Counter text color to red, it is still at 0 alpha from the ResetNextTurnAsync
         // because we didn't fade the counter back in before launching FadeCounter
-        mGameInfoDisplayer.resetCounterToZero(tvCounter);
+        gameInfoDisplayer.resetCounterToZero(tvCounter);
         isStartClickable = true;
         //        "disengage" the stop button
-        //mGameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
-        mGameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
-        mGameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
+        //gameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
+        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+        gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
         flashStartButton();
 
@@ -505,9 +493,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 launchFadeCounterActivity();
             } else {
                 resetTimeValuesBetweenTurns();
-                //mGameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
-                mGameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
-                //mGameInfoDisplayer.showButtonState(startButton, startButtonArmedDrawables);
+                //gameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
+                gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+                //gameInfoDisplayer.showButtonState(startButton, startButtonArmedDrawables);
                 //flashStartButton();
                 isStartClickable = true;
             }
@@ -522,9 +510,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     public void onOkClicked() {
         mDialogFragment.dismiss();
         setInitialTimeValuesLevelOne();
-        //mGameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
-        mGameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
-        mGameInfoDisplayer.resetCounterToZero(tvCounter);
+        //gameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
+        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+        gameInfoDisplayer.resetCounterToZero(tvCounter);
     }
 
     @Override
@@ -577,20 +565,20 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (v == startButton && isStartClickable) {
-            //mGameInfoDisplayer.showStartButtonEngaged(startButton, startButtonEngagedDrawables);
+            //gameInfoDisplayer.showStartButtonEngaged(startButton, startButtonEngagedDrawables);
             //startButton.setBackgroundDrawable(mStartTriangleEngaged);
-            mGameInfoDisplayer.showButtonState(startButton, startButtonEngagedDrawables);
-            //mGameInfoDisplayer.showButtonState(stopButton, stopButtonArmedDrawables);
+            gameInfoDisplayer.showButtonState(startButton, startButtonEngagedDrawables);
+            //gameInfoDisplayer.showButtonState(stopButton, stopButtonArmedDrawables);
             CounterRunnable counterRunnable = new CounterRunnable(this);
             Thread counterThread = new Thread(counterRunnable);
             counterThread.start();
             isStartClickable = false;
             isStopClickable = true;
         } else if (v == stopButton && isStopClickable) {
-            //mGameInfoDisplayer.showStopButtonEngaged(stopButton, stopButtonEngagedDrawables);
-            //mGameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
-            mGameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
-            mGameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
+            //gameInfoDisplayer.showStopButtonEngaged(stopButton, stopButtonEngagedDrawables);
+            //gameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
+            gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
+            gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
             isStopClickable = false;
             onCounterStopped(elapsedAcceleratedCount);
         }

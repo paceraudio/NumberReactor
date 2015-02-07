@@ -194,15 +194,6 @@ public class ApplicationState extends Application{
 
    public int numOfLivesGainedOrLost() {
        int livesGained = 0;
-       /*if (mTurnAccuracy == 100) {
-           livesGained = 2;
-       }
-       else if (mTurnAccuracy > 98) {
-           livesGained = 1;
-       }
-       else if (mTurnAccuracy <= LIFE_LOSS_THRESHOLD) {
-           livesGained = -1;
-       }*/
        if (mWeightedAccuracy == 100) {
            livesGained = 2;
        }

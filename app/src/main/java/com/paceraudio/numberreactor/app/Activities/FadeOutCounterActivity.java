@@ -39,23 +39,25 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     private TextView mTvFadeLevel;
 
     private static Button fadeStartButton;
-    //static ShapeDrawable startTriangle;
-    private LayerDrawable mStartButtonDisengagedDrawables;
-    private LayerDrawable mStartButtonEngagedDrawables;
-    private LayerDrawable mStopButtonDisengagedDrawables;
-    private LayerDrawable mStopButtonEngagedDrawables;
     private static Button fadeStopButton;
     private static FrameLayout fadeStartFrame;
     private static FrameLayout fadeStopFrame;
 
+    //TODO see if this works
+    private static LayerDrawable startButtonDisengagedDrawables;
+    private static LayerDrawable startButtonEngagedDrawables;
+    private static LayerDrawable startButtonArmedDrawables;
+    private static LayerDrawable stopButtonDisengagedDrawables;
+    private static LayerDrawable stopButtonEngagedDrawables;
+    private static LayerDrawable stopButtonArmedDrawables;
+
     private static boolean isStartClickable;
+    private static boolean isStartFlashing;
+    private static boolean isStopFlashing;
     private static boolean isStopClickable;
 
 
-    private long mStartTime;
     private static long elapsedTimeMillis;
-    private double mElapsedSeconds;
-    private long mDuration;
     private double mTarget;
     private double mFadeIncrement;
     private double mRunningFadeTime;
@@ -66,20 +68,14 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     private static int greenValue;
     private static int blueValue;
 
-    private boolean mIsGettingExtraLife = false;
 
-    private static final String EXTRA_LIFE_FROM_FADE_COUNTER_ROUND =
-            "extraLifeFromFadeCounterRound";
     private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
-
-    //    private static final String LEVEL_COMPLETED = "levelCompleted";
 
     private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
 
     private static final int DOUBLE_LIVES_GAINED = 2;
     private static final int LIFE_GAINED = 1;
     private static final int LIFE_NEUTRAL = 0;
-    private static final int LIFE_LOST = -1;
 
     private static final double DEFAULT_FADE_COUNTER_TARGET = 10.00;
     private static final int BUFFER_OVER_TARGET = 10;
@@ -88,18 +84,18 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     private static long counterCeilingMillis;
     private static final double DEFAULT_FADE_RATIO = .60;
     private static final int ALPHA_VALUE_STEPS = 255;
-    private static final int NORMAL_TURN_RESET = 0;
 
-    private static final long MAX_COUNTER_VALUE_MILLIS = 99999;
+    //private static final long MAX_COUNTER_VALUE_MILLIS = 99999;
     private static final long COUNTER_INCREMENT_MILLIS = 10;
 
+    // Constants for armed button flashing
+    private static final long ARMED_START_BUTTON_FLASH_DURATION = 400;
+    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 125;
 
-    //    DialogFragment mDialogFragment;
-    Handler mHandler;
-    Thread mFadeCounterThread;
+
     DBHelper mDbHelper;
     ApplicationState mState;
-    GameInfoDisplayer mGameInfoDisplayer;
+    static GameInfoDisplayer gameInfoDisplayer;
 
 
     @Override
@@ -118,16 +114,21 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         fadeStopButton = (Button) findViewById(R.id.b_fade_stop);
         fadeStartFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_start);
         fadeStopFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_stop);
-        mGameInfoDisplayer = new GameInfoDisplayer(this, this);
-        //startTriangle = new ButtonDrawableView(this).mStartTriangleDisengaged;
+
+        gameInfoDisplayer = new GameInfoDisplayer(this, this);
+        gameInfoDisplayer = new GameInfoDisplayer(this, this);
+
         ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
-        mStartButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
-        mStartButtonEngagedDrawables = buttonDrawableView.mStartEngagedDrawables;
-        mStopButtonDisengagedDrawables = buttonDrawableView.mStopDisengagedDrawables;
-        mStopButtonEngagedDrawables = buttonDrawableView.mStopEngagedDrawables;
-        //fadeStartButton.setBackgroundDrawable(mStartButtonDisengagedDrawables);
-        mGameInfoDisplayer.showStartButtonDisengaged(fadeStartButton, mStartButtonDisengagedDrawables);
-        mGameInfoDisplayer.showStopButtonDisengaged(fadeStopButton, mStopButtonDisengagedDrawables);
+        startButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
+        startButtonEngagedDrawables = buttonDrawableView.mStartEngagedDrawables;
+        startButtonArmedDrawables = buttonDrawableView.mStartArmed;
+
+        stopButtonDisengagedDrawables = buttonDrawableView.mStopDisengagedDrawables;
+        stopButtonEngagedDrawables = buttonDrawableView.mStopEngagedDrawables;
+        stopButtonArmedDrawables = buttonDrawableView.mStopArmed;
+
+        flashStartButton();
+        gameInfoDisplayer.showStopButtonDisengaged(fadeStopButton, stopButtonDisengagedDrawables);
 
         setStateTargetBasedOnLevel();
     }
@@ -152,10 +153,11 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        mGameInfoDisplayer.displayAllGameInfo(mTvFadeTarget, mTvFadeAccuracy, mTvFadeLives,
+        gameInfoDisplayer.displayAllGameInfo(mTvFadeTarget, mTvFadeAccuracy, mTvFadeLives,
                 mTvFadeScore, mTvFadeLevel, FROM_FADE_COUNTER_ACTIVITY);
         isStartClickable = true;
         isStopClickable = false;
+        flashStartButton();
  
     }
 
@@ -186,9 +188,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
     public void onFadeCountStopped(long millis) {
 
-        mGameInfoDisplayer.showStopButtonEngaged(fadeStopButton, mStopButtonEngagedDrawables);
-        mGameInfoDisplayer.showStartButtonDisengaged(fadeStartButton,
-                mStartButtonDisengagedDrawables);
+        gameInfoDisplayer.showStopButtonEngaged(fadeStopButton, stopButtonEngagedDrawables);
+        gameInfoDisplayer.showStartButtonDisengaged(fadeStartButton,
+                startButtonDisengagedDrawables);
 
         double counterCeilingSeconds = (millis / 1000d);
 
@@ -196,9 +198,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         double roundedCount = mState.roundElapsedCountLong(millis, FROM_FADE_COUNTER_ACTIVITY, counterCeilingSeconds);
         Log.d("jwc", "onFadeCountStopped millis: " + millis);
         Log.d("jwc", "onFadeCountStopped roundedCount: " + roundedCount);
-
-        //        //TODO TESTING ONLY!!!!!!!!!!!!!!
-        //        roundedCount = mTarget;
 
         //      Convert rounded value to a String to display
         String roundedCountStr = String.format("%.2f", roundedCount);
@@ -214,7 +213,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
             tvFadeCounter.setTextColor(mFadeCounterColor);
         }
         tvFadeCounter.setText(roundedCountStr);
-        mGameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(mTvFadeAccuracy);
+        gameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(mTvFadeAccuracy);
 
         ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
                 tvFadeCounter, mTvFadeLives, mTvFadeScore);
@@ -254,18 +253,24 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         finish();
     }
 
+    private void flashStartButton() {
+        StartButtonArmedRunnable runnable = new StartButtonArmedRunnable();
+        Thread startButtonArmedThread = new Thread(runnable);
+        startButtonArmedThread.start();
+    }
+
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (v == fadeStartButton && isStartClickable) {
-            mGameInfoDisplayer.showStartButtonEngaged(fadeStartButton, mStartButtonEngagedDrawables);
+            gameInfoDisplayer.showStartButtonEngaged(fadeStartButton, startButtonEngagedDrawables);
             FadeCounterRunnable fadeCounterRunnable = new FadeCounterRunnable(this);
             Thread fadeCounterThread = new Thread(fadeCounterRunnable);
             fadeCounterThread.start();
             isStartClickable = false;
             isStopClickable = true;
         } else if (v == fadeStopButton && isStopClickable) {
-            mGameInfoDisplayer.showStopButtonEngaged(fadeStopButton, mStopButtonEngagedDrawables);
+            gameInfoDisplayer.showStopButtonEngaged(fadeStopButton, stopButtonEngagedDrawables);
             isStopClickable = false;
             onFadeCountStopped(elapsedTimeMillis);
         }
@@ -282,6 +287,75 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     }
 
 
+    static void flashStartButtonArmed() {
+        if (isStartClickable) {
+            if (isStartFlashing) {
+                gameInfoDisplayer.showButtonState(fadeStartButton, startButtonDisengagedDrawables );
+                isStartFlashing = false;
+            } else {
+                gameInfoDisplayer.showButtonState(fadeStartButton, startButtonArmedDrawables);
+                isStartFlashing = true;
+            }
+        }
+    }
+
+    static void flashStopButtonArmed() {
+        if (isStopClickable) {
+            if (isStopFlashing) {
+                gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengagedDrawables);
+                isStopFlashing = false;
+            } else {
+                gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonArmedDrawables);
+                isStopFlashing = true;
+            }
+        }
+    }
+
+
+    class StartButtonArmedRunnable implements Runnable {
+
+        public StartButtonArmedRunnable() {
+            /*this.activity = activity;*/
+        }
+
+        @Override
+        public void run() {
+            showStartButtonArmed();
+        }
+
+        private void showStartButtonArmed() {
+            long startTime = SystemClock.elapsedRealtime();
+            long elapsedTime;
+            //long flashDuration = ARMED_START_BUTTON_FLASH_DURATION;
+            long runningFlashDuration = ARMED_START_BUTTON_FLASH_DURATION;
+            while(isStartClickable) {
+                elapsedTime = SystemClock.elapsedRealtime() - startTime;
+                if (elapsedTime >= runningFlashDuration) {
+                    FlashStartButtonRunnable runnable = new FlashStartButtonRunnable();
+                    runOnUiThread(runnable);
+                    runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
+                }
+            }
+            gameInfoDisplayer.showButtonState(fadeStartButton, startButtonEngagedDrawables);
+        }
+    }
+
+
+    class FlashStartButtonRunnable implements Runnable {
+        @Override
+        public void run() {
+            flashStartButtonArmed();
+        }
+    }
+
+
+    class FlashStopButtonRunnable implements  Runnable {
+        @Override
+        public void run() {
+            flashStopButtonArmed();
+        }
+    }
+
 
     class UpdateCounterAfterTimeoutRunnable implements Runnable {
         long maxElapsedMillis;
@@ -295,8 +369,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements
             onFadeCountStopped(maxElapsedMillis);
         }
     }
-
-
 
 
     class UpdateFadeCounterRunnable implements Runnable {
@@ -339,6 +411,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements
             int fadeDuration = fadeDurationIncrement;
             int alphaValue = ALPHA_VALUE_STEPS;
 
+            // For the flashing of the armed stop button
+            long runningFlashDuration = ARMED_STOP_BUTTON_FLASH_DURATION;
+
             long startTime = SystemClock.elapsedRealtime();
 
             while (elapsedMillis <= counterCeilingMillis && isStopClickable) {
@@ -353,6 +428,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                             UpdateFadeCounterRunnable(elapsedMillis, alphaValue);
                     runOnUiThread(updateFadeCounterRunnable);
                     duration += durationIncrement;
+
+                    // Flashes stop button to show its armed
+                    runningFlashDuration += showStopButtonArmed(elapsedMillis, runningFlashDuration);
                 }
             }
             if (elapsedMillis >= counterCeilingMillis && isStopClickable) {
@@ -360,6 +438,15 @@ public class FadeOutCounterActivity extends FragmentActivity implements
                 runOnUiThread(runnable);
                 Log.d("jwc", "elapsed Millis from runnable: " + elapsedMillis);
             }
+        }
+
+        private long showStopButtonArmed(long elapsed, long runningDur) {
+            if (elapsed >= runningDur) {
+                FlashStopButtonRunnable runnable = new FlashStopButtonRunnable();
+                runOnUiThread(runnable);
+                return ARMED_STOP_BUTTON_FLASH_DURATION;
+            }
+            return 0;
         }
     }
 }
