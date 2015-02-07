@@ -7,7 +7,6 @@ import android.os.SystemClock;
 import android.widget.TextView;
 
 import com.paceraudio.numberreactor.app.R;
-import com.paceraudio.numberreactor.app.activities.CounterActivity;
 
 
 /**
@@ -215,7 +214,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
     }
 
     private void blinkTurnInfo(boolean plusLives, boolean plusLife, boolean minusLife, int time, int points) {
-        int green = mContext.getResources().getColor(R.color.darkGreen);
+        int green = mContext.getResources().getColor(R.color.green);
         boolean timeIsEven = (time % 2 == 0);
         boolean positivePoints = (points > 0);
         if (plusLives || plusLife || minusLife) {

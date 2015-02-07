@@ -162,6 +162,8 @@ public class ApplicationState extends Application{
         return accuracyInt;
     }
 
+   
+
    public int numOfLivesGainedOrLost() {
        int livesGained = 0;
        if (mTurnAccuracy == 100) {

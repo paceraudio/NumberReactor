@@ -1,5 +1,6 @@
 package com.paceraudio.numberreactor.app.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -28,7 +29,7 @@ public class GameInfoDisplayer {
     private static final String DEBUG_TAG = "jwc";
 
 
-    public GameInfoDisplayer(Context context) {
+    public GameInfoDisplayer(Context context, Activity activity) {
         this.mContext = context;
         mState = (ApplicationState) mContext.getApplicationContext();
     }
@@ -68,6 +69,10 @@ public class GameInfoDisplayer {
         start.setBackgroundDrawable(drawable);
     }
 
+    public void showStartButtonArmed(Button start, LayerDrawable drawable) {
+        start.setBackgroundDrawable(drawable);
+    }
+
     public void showStartButtonDisengaged(Button start, LayerDrawable drawable) {
         start.setBackgroundDrawable(drawable);
     }
@@ -76,10 +81,17 @@ public class GameInfoDisplayer {
         stop.setBackgroundDrawable(drawable);
     }
 
+    public void showStopButtonArmed(Button start, LayerDrawable drawable) {
+        start.setBackgroundDrawable(drawable);
+    }
+
     public void showStopButtonDisengaged(Button stop, LayerDrawable drawable) {
         stop.setBackgroundDrawable(drawable);
     }
 
+    public void showButtonState(Button button, LayerDrawable layerDrawable) {
+        button.setBackgroundDrawable(layerDrawable);
+    }
 
 
     private void displayTarget(TextView tv) {

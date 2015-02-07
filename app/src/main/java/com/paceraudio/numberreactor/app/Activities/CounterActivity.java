@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -43,7 +42,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     //    private long startTime;
     private static boolean isStartClickable;
-    private static boolean isStopCLickable;
+    private static boolean isStartFlashing;
+    private static boolean isStopClickable;
+    private static boolean isStopFlashing;
 
     public double mTarget;
 
@@ -62,13 +63,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     static FrameLayout frameStopButton;
 
     //TODO see if this works
-    private ButtonDrawableView mButtonDrawableView;
-    private LayerDrawable mStartButtonDisengagedDrawables;
-    private LayerDrawable mStartButtonEngagedDrawables;
-    private LayerDrawable mStopButtonDisengagedDrawables;
-    private LayerDrawable mStopButtonEngagedDrawables;
-    private ShapeDrawable mStartTriangleDisengaged;
-    private ShapeDrawable mStartTriangleEngaged;
+    private static LayerDrawable startButtonDisengagedDrawables;
+    private static LayerDrawable startButtonEngagedDrawables;
+    private static LayerDrawable startButtonArmedDrawables;
+    private static LayerDrawable stopButtonDisengagedDrawables;
+    private static LayerDrawable stopButtonEngagedDrawables;
+    private static LayerDrawable stopButtonArmedDrawables;
 
     private final static String OUT_OF_LIVES_DIALOG = "outOfLivesDialog";
     private DialogFragment mDialogFragment;
@@ -76,6 +76,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     ApplicationState mState;
     DBHelper mDbHelper;
     GameInfoDisplayer mGameInfoDisplayer;
+    private static  GameInfoDisplayer gameInfoDisplayer;
 
     long mStartTime;
     static long elapsedAcceleratedCount;
@@ -110,10 +111,15 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static final double DURATION_DECREASE_UPDATE = 3;
     private static final double DURATION_DECREASE_FACTOR = 0.999;
 
-    private static final double MAX_DISPLAYED_ACCEL_COUNT = 99.99;
+    // Constants for armed button flashing
+    private static final long ARMED_START_BUTTON_FLASH_DURATION = 400;
+    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 125;
+
+
+    //private static final double MAX_DISPLAYED_ACCEL_COUNT = 99.99;
 
     private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
-    private static final String LOG_UPDATE_COUNTER = "update counter: ";
+    //private static final String LOG_UPDATE_COUNTER = "update counter: ";
     private static final String DOUBLE_FORMAT = "%.2f";
 
     //    RequestCode for starting FadeCounter for a result
@@ -121,9 +127,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     private boolean mIsListeningForSharedPrefChanges = false;
 
-    private static boolean isMaxCountReached = false;
+    //private static boolean isMaxCountReached = false;
 
-    static CounterActivity counterActivity = new CounterActivity();
+    //static CounterActivity counterActivity = new CounterActivity();
 
 
     @Override
@@ -132,7 +138,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         setContentView(R.layout.activity_counter);
         mState = (ApplicationState) getApplicationContext();
         mDbHelper = new DBHelper(this);
-        mGameInfoDisplayer = new GameInfoDisplayer(this);
+        mGameInfoDisplayer = new GameInfoDisplayer(this, this);
+        gameInfoDisplayer = new GameInfoDisplayer(getApplicationContext(), this);
 
         //        Define all the UI elements
         tvCounter = (TextView) findViewById(R.id.t_v_counter);
@@ -146,14 +153,18 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         stopButton = (Button) findViewById(R.id.b_stop);
         frameStopButton = (FrameLayout) findViewById(R.id.f_l_for_b_stop);
 
-        mButtonDrawableView = new ButtonDrawableView(this);
-        mStartButtonDisengagedDrawables = mButtonDrawableView.mStartDisengagedDrawables;
-        mStartButtonEngagedDrawables = mButtonDrawableView.mStartEngagedDrawables;
-        mStopButtonDisengagedDrawables = mButtonDrawableView.mStopDisengagedDrawables;
-        mStopButtonEngagedDrawables = mButtonDrawableView.mStopEngagedDrawables;
-        mGameInfoDisplayer.showStartButtonDisengaged(startButton, mStartButtonDisengagedDrawables);
-        mGameInfoDisplayer.showStopButtonDisengaged(stopButton, mStopButtonDisengagedDrawables);
-        //startButton.setBackgroundDrawable(mStartButtonDisengagedDrawables);
+        ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
+        startButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
+        startButtonEngagedDrawables = buttonDrawableView.mStartEngagedDrawables;
+        startButtonArmedDrawables = buttonDrawableView.mStartArmed;
+        stopButtonArmedDrawables = buttonDrawableView.mStopArmed;
+        stopButtonDisengagedDrawables = buttonDrawableView.mStopDisengagedDrawables;
+        stopButtonEngagedDrawables = buttonDrawableView.mStopEngagedDrawables;
+        mGameInfoDisplayer.showButtonState(startButton, startButtonArmedDrawables);
+        mGameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+        /*mGameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
+        mGameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);*/
+        //startButton.setBackgroundDrawable(startButtonDisengagedDrawables);
         //startButton.setBackgroundDrawable(mStartTriangleDisengaged);
         //startButton.setPadding(20, 20, 20, 20);
 
@@ -194,7 +205,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         super.onResume();
 
         isStartClickable = true;
-        isStopCLickable = false;
+        isStopClickable = false;
+
+        //flashStartButton();
 
         Log.d(DEBUG_TAG, "onResume() end");
     }
@@ -252,9 +265,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     // runs when mCounter thread is  is cancelled
     public void onCounterStopped(long accelCount) {
 
-        mGameInfoDisplayer.showStopButtonEngaged(stopButton, mStopButtonEngagedDrawables);
-        mGameInfoDisplayer.showStartButtonDisengaged(startButton, mStartButtonDisengagedDrawables);
-        isStopCLickable = false;
+        mGameInfoDisplayer.showStopButtonEngaged(stopButton, stopButtonEngagedDrawables);
+        mGameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
+        isStopClickable = false;
 
         //      Round the elapsed accelerated count to 2 decimal places, give double param value 0,
         //        we aren't going to use it from this Activity
@@ -281,7 +294,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         }
 
         if (roundedCount == mTarget) {
-            tvCounter.setTextColor(getResources().getColor(R.color.green));
+            tvCounter.setTextColor(getResources().getColor(R.color.glowGreen));
             score *= 2;
         }
 
@@ -346,6 +359,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mDbHelper.insertNewGameRowInDb();
         Log.d(DEBUG_TAG, "newest game number in db: " + Integer.toString(mDbHelper
                 .queryNewestDbEntry()));
+        flashStartButton();
     }
 
     private void resetTimeValuesBetweenTurns() {
@@ -357,6 +371,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mCurrentTurn = mState.getmTurn();
         mGameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
+        flashStartButton();
     }
 
     private void setGameValuesForNextLevel() {
@@ -377,9 +392,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         mGameInfoDisplayer.resetCounterToZero(tvCounter);
         isStartClickable = true;
         //        "disengage" the stop button
-        mGameInfoDisplayer.showStopButtonDisengaged(stopButton, mStopButtonDisengagedDrawables);
+        //mGameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
+        mGameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
         mGameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
+        flashStartButton();
+
     }
 
     private void resetTurnsToFirstTurn() {
@@ -403,10 +421,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     private boolean checkIfLivesLeft() {
-        if (mState.getLives() <= 0) {
-            return false;
-        }
-        return true;
+        return mState.getLives() >= 0;
     }
 
     private void launchOutOfLivesDialog() {
@@ -417,10 +432,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     private boolean isOutOfTurnsState() {
-        if (mState.getmTurn() == TURNS_PER_LEVEL) {
-            return true;
-        }
-        return false;
+        return mState.getmTurn() == TURNS_PER_LEVEL;
     }
 
     private void launchFadeCounterActivity() {
@@ -488,7 +500,10 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 launchFadeCounterActivity();
             } else {
                 resetTimeValuesBetweenTurns();
-                mGameInfoDisplayer.showStopButtonDisengaged(stopButton, mStopButtonDisengagedDrawables);
+                //mGameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
+                mGameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+                //mGameInfoDisplayer.showButtonState(startButton, startButtonArmedDrawables);
+                //flashStartButton();
                 isStartClickable = true;
             }
         } else {
@@ -502,7 +517,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     public void onOkClicked() {
         mDialogFragment.dismiss();
         setInitialTimeValuesLevelOne();
-        mGameInfoDisplayer.showStopButtonDisengaged(stopButton, mStopButtonDisengagedDrawables);
+        //mGameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
+        mGameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
         mGameInfoDisplayer.resetCounterToZero(tvCounter);
     }
 
@@ -547,27 +563,37 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         }
     }
 
+    private void flashStartButton() {
+        StartButtonArmedRunnable runnable = new StartButtonArmedRunnable();
+        Thread startButtonArmedThread = new Thread(runnable);
+        startButtonArmedThread.start();
+    }
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (v == startButton && isStartClickable) {
-            mGameInfoDisplayer.showStartButtonEngaged(startButton, mStartButtonEngagedDrawables);
+            //mGameInfoDisplayer.showStartButtonEngaged(startButton, startButtonEngagedDrawables);
             //startButton.setBackgroundDrawable(mStartTriangleEngaged);
+            mGameInfoDisplayer.showButtonState(startButton, startButtonEngagedDrawables);
+            //mGameInfoDisplayer.showButtonState(stopButton, stopButtonArmedDrawables);
             CounterRunnable counterRunnable = new CounterRunnable(this);
             Thread counterThread = new Thread(counterRunnable);
             counterThread.start();
             isStartClickable = false;
-            isStopCLickable = true;
-        } else if (v == stopButton && isStopCLickable) {
-            mGameInfoDisplayer.showStopButtonEngaged(stopButton, mStopButtonEngagedDrawables);
-            mGameInfoDisplayer.showStartButtonDisengaged(startButton, mStartButtonDisengagedDrawables);
-            isStopCLickable = false;
+            isStopClickable = true;
+        } else if (v == stopButton && isStopClickable) {
+            //mGameInfoDisplayer.showStopButtonEngaged(stopButton, stopButtonEngagedDrawables);
+            //mGameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
+            mGameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
+            mGameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
+            isStopClickable = false;
             onCounterStopped(elapsedAcceleratedCount);
         }
         return false;
     }
 
      static void updateCounter(long accelCount) {
-        if (isStopCLickable) {
+        if (isStopClickable) {
             double elapsedAccelCountDouble = accelCount / MILLIS_IN_SECONDS;
             tvCounter.setText(String.format(DOUBLE_FORMAT, elapsedAccelCountDouble));
             /*Log.d(DEBUG_TAG, LOG_UPDATE_COUNTER + String.format(DOUBLE_FORMAT,
@@ -576,8 +602,74 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         }
     }
 
+    static void flashStartButtonArmed() {
+        if (isStartClickable) {
+            if (isStartFlashing) {
+                gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables );
+                isStartFlashing = false;
+            } else {
+                gameInfoDisplayer.showButtonState(startButton, startButtonArmedDrawables);
+                isStartFlashing = true;
+            }
+        }
+    }
+
+    static void flashStopButtonArmed() {
+        if (isStopClickable) {
+            if (isStopFlashing) {
+                gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+                isStopFlashing = false;
+            } else {
+                gameInfoDisplayer.showButtonState(stopButton, stopButtonArmedDrawables);
+                isStopFlashing = true;
+            }
+        }
+    }
 
 
+    class StartButtonArmedRunnable implements Runnable {
+
+        public StartButtonArmedRunnable() {
+            /*this.activity = activity;*/
+        }
+
+        @Override
+        public void run() {
+            showStartButtonArmed();
+        }
+
+        private void showStartButtonArmed() {
+            long startTime = SystemClock.elapsedRealtime();
+            long elapsedTime;
+            //long flashDuration = ARMED_START_BUTTON_FLASH_DURATION;
+            long runningFlashDuration = ARMED_START_BUTTON_FLASH_DURATION;
+            while(isStartClickable) {
+                elapsedTime = SystemClock.elapsedRealtime() - startTime;
+                if (elapsedTime >= runningFlashDuration) {
+                    FlashStartButtonRunnable runnable = new FlashStartButtonRunnable();
+                    runOnUiThread(runnable);
+                    runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
+                }
+            }
+            gameInfoDisplayer.showButtonState(startButton, startButtonEngagedDrawables);
+        }
+    }
+
+
+    class FlashStartButtonRunnable implements Runnable {
+        @Override
+        public void run() {
+            flashStartButtonArmed();
+        }
+    }
+
+
+    class FlashStopButtonRunnable implements  Runnable {
+        @Override
+        public void run() {
+            flashStopButtonArmed();
+        }
+    }
 
 
     class UpdateCounterAfterTimeoutRunnable implements Runnable {
@@ -598,10 +690,9 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
 
     class UpdateCounterRunnable implements Runnable {
-        Activity activity;
         long accelCount;
 
-        public UpdateCounterRunnable(Activity activity,long accelCount) {
+        public UpdateCounterRunnable(long accelCount) {
             this.accelCount = accelCount;
         }
 
@@ -639,9 +730,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             double duration = levelDuration;
             double durationIncrement = duration;
 
-            final long startTime = SystemClock.elapsedRealtime();
+            // For the flashing of the armed stop button
+            long runningFlashDuration = ARMED_STOP_BUTTON_FLASH_DURATION;
 
-            while (elapsedAcceleratedCount <= MAX_COUNTER_VALUE_MILLIS && isStopCLickable) {
+            long startTime = SystemClock.elapsedRealtime();
+
+            while (elapsedAcceleratedCount <= MAX_COUNTER_VALUE_MILLIS && isStopClickable) {
                 elapsedTimeMillis = SystemClock.elapsedRealtime() - startTime;
                 if (elapsedTimeMillis >= duration) {
                     elapsedAcceleratedCount += COUNTER_INCREMENT_MILLIS;
@@ -654,19 +748,29 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
                     if (durationIncrement >= DURATION_DECREASE_UPDATE ||
                             (durationIncrement < DURATION_DECREASE_UPDATE && postCount % 3 == 0)) {
-
-
                         UpdateCounterRunnable updateCounterRunnable = new UpdateCounterRunnable
-                                (activity, elapsedAcceleratedCount);
+                                (elapsedAcceleratedCount);
                         runOnUiThread(updateCounterRunnable);
+
+                        // Flashes stop button to show its armed
+                        runningFlashDuration += showStopButtonArmed(elapsedTimeMillis, runningFlashDuration);
                     }
                 }
             }
-            if (elapsedAcceleratedCount >= MAX_COUNTER_VALUE_MILLIS && isStopCLickable) {
-                UpdateCounterAfterTimeoutRunnable runnable = new UpdateCounterAfterTimeoutRunnable(elapsedAcceleratedCount);
-
+            if (elapsedAcceleratedCount >= MAX_COUNTER_VALUE_MILLIS && isStopClickable) {
+                UpdateCounterAfterTimeoutRunnable runnable;
+                runnable = new UpdateCounterAfterTimeoutRunnable(elapsedAcceleratedCount);
                 runOnUiThread(runnable);
             }
+        }
+
+        private long showStopButtonArmed(long elapsed, long runningDur) {
+            if (elapsed >= runningDur) {
+                FlashStopButtonRunnable runnable = new FlashStopButtonRunnable();
+                runOnUiThread(runnable);
+                return ARMED_STOP_BUTTON_FLASH_DURATION;
+            }
+            return 0;
         }
     }
 }

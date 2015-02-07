@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -119,7 +118,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         fadeStopButton = (Button) findViewById(R.id.b_fade_stop);
         fadeStartFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_start);
         fadeStopFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_stop);
-        mGameInfoDisplayer = new GameInfoDisplayer(this);
+        mGameInfoDisplayer = new GameInfoDisplayer(this, this);
         //startTriangle = new ButtonDrawableView(this).mStartTriangleDisengaged;
         ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
         mStartButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
@@ -210,7 +209,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         mState.setmTurnAccuracy(accuracy);
 
         if (roundedCount == mTarget) {
-            tvFadeCounter.setTextColor(getResources().getColor(R.color.green));
+            tvFadeCounter.setTextColor(getResources().getColor(R.color.glowGreen));
         } else {
             tvFadeCounter.setTextColor(mFadeCounterColor);
         }

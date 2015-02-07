@@ -19,8 +19,10 @@ public class ButtonDrawableView extends View {
 
     public LayerDrawable mStartEngagedDrawables;
     public LayerDrawable mStartDisengagedDrawables;
+    public LayerDrawable mStartArmed;
     public LayerDrawable mStopEngagedDrawables;
     public LayerDrawable mStopDisengagedDrawables;
+    public LayerDrawable mStopArmed;
 
     private static final float ZERO = 0;
     private static final float FRAME_SIDE_LENGTH = 800;
@@ -35,7 +37,7 @@ public class ButtonDrawableView extends View {
     private static final float TRIANGLE_Y_INSET = (FRAME_SIDE_LENGTH - TRIANGLE_SIDE_LENGTH) / 2;
     private static final float SQUARE_X_INSET = (FRAME_SIDE_LENGTH - SQUARE_SIDE_LENGTH) / 2;
     private static final float SQUARE_Y_INSET = SQUARE_X_INSET;
-    private static final float ICON_STROKE_WIDTH = 15;
+    private static final float ICON_STROKE_WIDTH = 22;
     private static final float FRAME_STROKE_WIDTH = 10;
 
 
@@ -44,18 +46,26 @@ public class ButtonDrawableView extends View {
 
 //        Log.d("jwc", "triangle side squared")
 
+        int lightBrown = context.getResources().getColor(R.color.lightBrown);
         int brown = context.getResources().getColor(R.color.brown);
+        int darkBrown = context.getResources().getColor(R.color.darkBrown);
         int grey = context.getResources().getColor(R.color.grey);
+        int glowGreen = context.getResources().getColor(R.color.glowGreen);
         int green = context.getResources().getColor(R.color.green);
         int red = context.getResources().getColor(R.color.red);
+        int darkRed = context.getResources().getColor(R.color.darkRed);
+        int lightBlackRed = context.getResources().getColor(R.color.lightBlackRed);
+        int darkBlackRed = context.getResources().getColor(R.color.darkBlackRed);
 
         PathShape frame = makeButtonFrame();
         PathShape startTriangle = makeButtonTriangleIcon();
         PathShape stopSquare = makeButtonSquareIcon();
 
-        mStartDisengagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), brown, grey);
-        mStartEngagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), green, green);
-        mStopDisengagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), brown, grey);
+        mStartDisengagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), brown, brown);
+        mStartArmed = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), lightBrown, lightBrown);
+        mStartEngagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), glowGreen, glowGreen);
+        mStopDisengagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), brown, brown);
+        mStopArmed = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), lightBrown, lightBrown);
         mStopEngagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), red, red);
     }
 
