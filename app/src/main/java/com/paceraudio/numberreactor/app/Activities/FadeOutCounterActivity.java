@@ -223,7 +223,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         int param3;
 
         // See if there was a life gained or lost
-        int livesGained = mState.numOfLivesGainedOrLost();
+        int livesGained = mState.numOfBonusLivesFadeCount();
         if (livesGained == DOUBLE_LIVES_GAINED) {
             param2 = DOUBLE_LIVES_GAINED;
         } else if (livesGained == LIFE_GAINED) {

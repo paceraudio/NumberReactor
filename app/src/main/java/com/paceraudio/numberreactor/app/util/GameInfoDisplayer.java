@@ -103,6 +103,10 @@ public class GameInfoDisplayer {
         tv.setText(mContext.getString(R.string.accuracy) + " " + mState.getmTurnAccuracy() + "%");
     }
 
+    private void displayWeightedAccuracy(TextView tv) {
+        tv.setText(mContext.getString(R.string.accuracy) + " " + mState.getmWeightedAccuracy() + "%");
+    }
+
     private void displayOverallAccuracy(TextView tv) {
         tv.setText(mContext.getString(R.string.accuracy) +  " 0%");
     }
@@ -125,9 +129,10 @@ public class GameInfoDisplayer {
     }
 
     public void displayImmediateGameInfoAfterTurn(TextView accuracy) {
-        displayTurnAccuracy(accuracy);
-//        displayLives(lives);
-//        displayTurnPoints(score);
+        displayWeightedAccuracy(accuracy);
+        //displayTurnAccuracy(accuracy);
+        //displayLives(lives);
+        //displayTurnPoints(score);
     }
 
     public void displayImmediateGameInfoAfterFadeCountTurn(TextView accuracy) {

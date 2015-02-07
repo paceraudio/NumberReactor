@@ -281,15 +281,20 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         String roundedCountStr = String.format("%.2f", roundedCount);
 
         //        calc the accuracy
-        int accuracy = mState.calcAccuracy(mTarget, roundedCount);
-        mState.setmTurnAccuracy(accuracy);
+        /*int accuracy = mState.calcAccuracy(mTarget, roundedCount);
+        mState.setmTurnAccuracy(accuracy);*/
+
+        // TODO see if this weighted accuracy is a good way to go.
+        mState.calcAccuracy(mTarget, roundedCount);
+        int weightedAccuracy = mState.calcWeightedAccuracy(mTarget, roundedCount);
+        mState.setmWeightedAccuracy(weightedAccuracy);
 
         //        calc the score
-        int score = mState.calcScore(accuracy);
+        int score = mState.calcScore(weightedAccuracy);
 
         //  TODO write a method for setting the color based on accuracy
         // set the text color of the counter based on the score
-        if (accuracy > 98) {
+        if (weightedAccuracy > 98) {
             score *= 2;
         }
 
@@ -303,7 +308,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 "\n  elapsed accelerated count: " + roundedCount +
                 "\n elapsed accelerated string: " + roundedCountStr +
                 "\n                     target: " + mTarget +
-                "\n                   accuracy: " + accuracy + "%");
+                "\n                   accuracy: " + weightedAccuracy + "%");
 
         mState.setmTurnPoints(score);
         mState.updateRunningScoreTotal(score);
@@ -421,7 +426,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     }
 
     private boolean checkIfLivesLeft() {
-        return mState.getLives() >= 0;
+        return mState.getLives() > 0;
     }
 
     private void launchOutOfLivesDialog() {
