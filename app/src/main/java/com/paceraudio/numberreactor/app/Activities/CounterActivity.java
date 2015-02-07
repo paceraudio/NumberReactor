@@ -111,8 +111,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static final double DURATION_DECREASE_FACTOR = 0.999;
 
     // Constants for armed button flashing
-    private static final long ARMED_START_BUTTON_FLASH_DURATION = 400;
-    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 125;
+    private static final long ARMED_START_BUTTON_FLASH_DURATION = 500;
+    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 250;
 
 
     //private static final double MAX_DISPLAYED_ACCEL_COUNT = 99.99;
@@ -609,12 +609,12 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     static void flashStopButtonArmed() {
         if (isStopClickable) {
-            if (isStopFlashing) {
-                gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
-                isStopFlashing = false;
-            } else {
+            if (!isStopFlashing) {
                 gameInfoDisplayer.showButtonState(stopButton, stopButtonArmedDrawables);
                 isStopFlashing = true;
+            } else {
+                gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+                isStopFlashing = false;
             }
         }
     }

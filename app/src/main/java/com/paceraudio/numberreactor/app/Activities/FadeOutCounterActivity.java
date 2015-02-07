@@ -89,8 +89,8 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     private static final long COUNTER_INCREMENT_MILLIS = 10;
 
     // Constants for armed button flashing
-    private static final long ARMED_START_BUTTON_FLASH_DURATION = 400;
-    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 125;
+    private static final long ARMED_START_BUTTON_FLASH_DURATION = 500;
+    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 250;
 
 
     DBHelper mDbHelper;
@@ -116,7 +116,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         fadeStopFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_stop);
 
         gameInfoDisplayer = new GameInfoDisplayer(this, this);
-        gameInfoDisplayer = new GameInfoDisplayer(this, this);
 
         ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
         startButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
@@ -127,7 +126,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         stopButtonEngagedDrawables = buttonDrawableView.mStopEngagedDrawables;
         stopButtonArmedDrawables = buttonDrawableView.mStopArmed;
 
-        flashStartButton();
         gameInfoDisplayer.showStopButtonDisengaged(fadeStopButton, stopButtonDisengagedDrawables);
 
         setStateTargetBasedOnLevel();
@@ -301,12 +299,12 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
     static void flashStopButtonArmed() {
         if (isStopClickable) {
-            if (isStopFlashing) {
-                gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengagedDrawables);
-                isStopFlashing = false;
-            } else {
+            if (!isStopFlashing) {
                 gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonArmedDrawables);
                 isStopFlashing = true;
+            } else {
+                gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengagedDrawables);
+                isStopFlashing = false;
             }
         }
     }
