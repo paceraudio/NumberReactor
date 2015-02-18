@@ -48,7 +48,7 @@ public class ButtonDrawableView extends View {
 
         int lightBrown = context.getResources().getColor(R.color.lightBrown);
         int brown = context.getResources().getColor(R.color.brown);
-        int darkBrown = context.getResources().getColor(R.color.darkBrown);
+        int darkGrey = context.getResources().getColor(R.color.darkGrey);
         int grey = context.getResources().getColor(R.color.grey);
         int glowGreen = context.getResources().getColor(R.color.glowGreen);
         int green = context.getResources().getColor(R.color.green);
@@ -61,11 +61,11 @@ public class ButtonDrawableView extends View {
         PathShape startTriangle = makeButtonTriangleIcon();
         PathShape stopSquare = makeButtonSquareIcon();
 
-        mStartDisengagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), brown, brown);
-        mStartArmed = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), lightBrown, lightBrown);
+        mStartDisengagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), brown, darkGrey);
+        mStartArmed = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), lightBrown, grey);
         mStartEngagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(startTriangle), glowGreen, glowGreen);
-        mStopDisengagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), brown, brown);
-        mStopArmed = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), lightBrown, lightBrown);
+        mStopDisengagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), brown, darkGrey);
+        mStopArmed = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), lightBrown, grey);
         mStopEngagedDrawables = layerButtonDrawables(new ShapeDrawable(frame), new ShapeDrawable(stopSquare), red, red);
     }
 

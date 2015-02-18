@@ -61,7 +61,7 @@
 
         <Button
             android:id="@+id/b_fade_stop"
-            style="@style/NR_ButtonStyle.XLarge.Stop"/>
+            style="@style/NR_ButtonStyle"/>
 
     </FrameLayout>
 
@@ -73,7 +73,7 @@
 
         <Button
             android:id="@+id/b_fade_start"
-            style="@style/NR_ButtonStyle.XLarge.Start"/>
+            style="@style/NR_ButtonStyle"/>
 
 
         ></FrameLayout>

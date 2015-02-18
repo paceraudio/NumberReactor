@@ -90,7 +90,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
     // Constants for armed button flashing
     private static final long ARMED_START_BUTTON_FLASH_DURATION = 500;
-    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 250;
+    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 90;
 
 
     DBHelper mDbHelper;

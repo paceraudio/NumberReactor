@@ -81,6 +81,7 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_width">180dp</item>
         <item name="android:layout_height">180dp</item>
+        <item name="android:background">@color/darkBlackRed</item>
     </style>
 
     <style name="NR_FrameLayout.XLargeButtons.Start">
@@ -112,8 +113,10 @@
 
     <!--NORMAL-->
     <style name="NR_FrameLayout.NormalButtons">
+        <item name="android:gravity">center</item>
         <item name="android:layout_width">90dp</item>
         <item name="android:layout_height">90dp</item>
+        <item name="android:background">@color/darkBlackRed</item>
     </style>
 
     <style name="NR_FrameLayout.NormalButtons.Start">
@@ -129,52 +132,12 @@
 
     <style name="NR_ButtonStyle">
         <item name="android:background">@color/darkBlackRed</item>
-        <item name="android:textColor">@color/grey</item>
-        <item name="android:typeface">normal</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center</item>
     </style>
 
-    <!--X-LARGE-->
-    <style name="NR_ButtonStyle.XLarge">
-        <item name="android:textSize">110sp</item>
-    </style>
 
-    <style name="NR_ButtonStyle.XLarge.Start">
-        <item name="android:text">@string/start</item>
-    </style>
-
-    <style name="NR_ButtonStyle.XLarge.Stop">
-        <item name="android:text">@string/stop</item>
-    </style>
-
-    <!--LARGE-->
-    <style name="NR_ButtonStyle.Large">
-        <item name="android:textSize">90sp</item>
-    </style>
-
-    <style name="NR_ButtonStyle.Large.Start">
-
-    </style>
-
-    <style name="NR_ButtonStyle.Large.Stop">
-    </style>
-
-    <!--NORMAL-->
-    <style name="NR_ButtonStyle.Normal">
-        <item name="android:textSize">50sp</item>
-    </style>
-
-    <style name="NR_ButtonStyle.Normal.Start">
-        <item name="android:text">@string/start</item>
-    </style>
-
-    <style name="NR_ButtonStyle.Normal.Stop">
-        <item name="android:text">@string/stop</item>
-    </style>
-
-    
 
     <!--********************LINEAR LAYOUT FOR GAME INFO TEXTVIEWS********************-->
 
