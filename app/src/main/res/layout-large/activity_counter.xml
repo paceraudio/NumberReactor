@@ -67,7 +67,7 @@
 
         <Button
             android:id="@+id/b_stop"
-            style="@style/NR_ButtonStyle.Large.Stop"
+            style="@style/NR_ButtonStyle"
             />
 
     </FrameLayout>
@@ -80,7 +80,7 @@
 
         <Button
             android:id="@+id/b_start"
-            style="@style/NR_ButtonStyle.Large.Start"
+            style="@style/NR_ButtonStyle"
             />
 
 

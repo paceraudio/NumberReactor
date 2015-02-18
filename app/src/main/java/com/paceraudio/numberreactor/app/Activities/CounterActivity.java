@@ -112,7 +112,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     // Constants for armed button flashing
     private static final long ARMED_START_BUTTON_FLASH_DURATION = 500;
-    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 250;
+    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 90;
 
 
     //private static final double MAX_DISPLAYED_ACCEL_COUNT = 99.99;
@@ -493,10 +493,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
                 launchFadeCounterActivity();
             } else {
                 resetTimeValuesBetweenTurns();
-                //gameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
                 gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
-                //gameInfoDisplayer.showButtonState(startButton, startButtonArmedDrawables);
-                //flashStartButton();
                 isStartClickable = true;
             }
         } else {
@@ -510,7 +507,6 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     public void onOkClicked() {
         mDialogFragment.dismiss();
         setInitialTimeValuesLevelOne();
-        //gameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
         gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
         gameInfoDisplayer.resetCounterToZero(tvCounter);
     }

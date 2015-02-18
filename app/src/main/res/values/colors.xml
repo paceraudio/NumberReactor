@@ -15,9 +15,9 @@
     <color name="darkBlackRed">#ff0a0000</color>
     <color name="slateBlue">#ff222f45</color>
     <color name="grey">#ff474645</color>
-    <color name="darkGrey">#ff191817</color>
-    <color name="lightBrown">#ff590b06</color>
-    <color name="brown">#ff290b06</color>
+    <color name="darkGrey">#ff262524</color>
+    <color name="lightBrown">#ff5d0b06</color>
+    <color name="brown">#ff370a06</color>
     <color name="darkBrown">#ff1b0b06</color>
     <color name="oldbrown">#ff2a0b06</color>
 </resources>
