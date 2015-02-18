@@ -98,6 +98,7 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_width">150dp</item>
         <item name="android:layout_height">150dp</item>
+        <item name="android:background">@color/darkBlackRed</item>
     </style>
 
     <style name="NR_FrameLayout.LargeButtons.Start">
@@ -154,11 +155,10 @@
     </style>
 
     <style name="NR_ButtonStyle.Large.Start">
-        <item name="android:text">@string/start</item>
+
     </style>
 
     <style name="NR_ButtonStyle.Large.Stop">
-        <item name="android:text">@string/stop</item>
     </style>
 
     <!--NORMAL-->

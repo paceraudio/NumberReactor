@@ -17,6 +17,9 @@ public class ApplicationState extends Application{
     private int mTurn;
     private double mTarget;
     private int mTurnAccuracy;
+
+
+    private int mWeightedAccuracy;
     private int mLives;
     private int mTurnPoints;
     private int mRunningScoreTotal;
@@ -27,7 +30,7 @@ public class ApplicationState extends Application{
     private List<Integer> accuracyList;
 
     private static final int BEGINNING_NUMBER_OF_LIVES = 4;
-    private static final int LIFE_LOSS_THRESHOLD = 90;
+    private static final int LIFE_LOSS_THRESHOLD = 80;
 
     private static final int MAX_ACCEL_COUNT_VALUE = 99999;
     private static final double MAX_ACCEL_COUNT_DISPLAYED = 99.99;
@@ -102,6 +105,15 @@ public class ApplicationState extends Application{
         this.mTurnAccuracy = mTurnAccuracy;
     }
 
+    public int getmWeightedAccuracy() {
+        return mWeightedAccuracy;
+    }
+
+    public void setmWeightedAccuracy(int mWeightedAccuracy) {
+        this.mWeightedAccuracy = mWeightedAccuracy;
+    }
+
+
     public int getmRunningScoreTotal() {
         return mRunningScoreTotal;
     }
@@ -162,20 +174,50 @@ public class ApplicationState extends Application{
         return accuracyInt;
     }
 
+    public int calcWeightedAccuracy(double target, double elapsedCount) {
+        if (target > 2) {
+            double notCalculated = target - 2;
+            target -= notCalculated;
+            elapsedCount -= notCalculated;
+        }
+        double error = Math.abs(target - elapsedCount);
+        double accuracy = ((target - error) / target) * DEC_TO_WHOLE_PERCENTAGE;
+        int accuracyInt = (int) accuracy;
+        if (accuracyInt < 0) {
+            accuracyInt = 0;
+        }
+        Log.d(DEBUG_TAG, "calcWeightedAccuracy()return accuracy: " + accuracy);
+        return accuracyInt;
+    }
+
+
+
    public int numOfLivesGainedOrLost() {
        int livesGained = 0;
-       if (mTurnAccuracy == 100) {
+       if (mWeightedAccuracy == 100) {
            livesGained = 2;
        }
-       else if (mTurnAccuracy > 98) {
+       else if (mWeightedAccuracy > 98) {
            livesGained = 1;
        }
-       else if (mTurnAccuracy <= LIFE_LOSS_THRESHOLD) {
+       else if (mWeightedAccuracy <= LIFE_LOSS_THRESHOLD) {
            livesGained = -1;
        }
        mLives += livesGained;
        return livesGained;
    }
+
+    public int numOfBonusLivesFadeCount() {
+        int livesGained = 0;
+        if (mTurnAccuracy == 100) {
+           livesGained = 2;
+        }
+        else if (mTurnAccuracy > 98) {
+            livesGained = 1;
+        }
+        mLives += livesGained;
+        return livesGained;
+    }
 
     public int calcScore(int accuracy) {
         int score = 0;

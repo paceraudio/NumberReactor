@@ -1,6 +1,12 @@
 package com.paceraudio.numberreactor.app.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -23,30 +29,70 @@ public class GameInfoDisplayer {
     private static final String DEBUG_TAG = "jwc";
 
 
-    public GameInfoDisplayer(Context context) {
+    public GameInfoDisplayer(Context context, Activity activity) {
         this.mContext = context;
         mState = (ApplicationState) mContext.getApplicationContext();
     }
 
-    public  void showStartButtonEngaged(Button start, FrameLayout frameStart) {
+    /*public void showStartButtonEngaged(Button start, FrameLayout frameStart) {
         frameStart.setBackgroundColor(mContext.getResources().getColor(R.color.green));
+        start.setBackgroundDrawable(new ButtonDrawableView(mContext).mStartTriangleDisengaged);
         start.setTextColor(mContext.getResources().getColor(R.color.green));
-    }
+    }*/
 
-    public void showStopButtonEngaged(Button stop, FrameLayout frameStop) {
+    /*public void showStartButtonEngaged(Button start, ShapeDrawable triangle) {
+        start.setBackgroundDrawable(triangle);
+    }*/
+
+
+
+    /*public void showStopButtonEngaged(Button stop, FrameLayout frameStop) {
         frameStop.setBackgroundColor(mContext.getResources().getColor(R.color.red));
         stop.setTextColor(mContext.getResources().getColor(R.color.red));
-    }
+    }*/
 
-    public void showStartButtonNotEngaged(Button start, FrameLayout frameStart) {
+    /*public void showStartButtonDisengaged(Button start, FrameLayout frameStart) {
         frameStart.setBackgroundColor(mContext.getResources().getColor(R.color.brown));
         start.setTextColor(mContext.getResources().getColor(R.color.grey));
-    }
+    }*/
 
-    public void showStopButtonNotEngaged(Button stop, FrameLayout frameStop) {
+    /*public void showStartButtonDisengaged(Button start, ShapeDrawable triangle) {
+        start.setBackgroundDrawable(triangle);
+    }*/
+
+    /*public void showStopButtonDisengaged(Button stop, FrameLayout frameStop) {
         frameStop.setBackgroundColor(mContext.getResources().getColor(R.color.brown));
         stop.setTextColor(mContext.getResources().getColor(R.color.grey));
+    }*/
+
+    public void showStartButtonEngaged(Button start, LayerDrawable drawable) {
+        start.setBackgroundDrawable(drawable);
     }
+
+    public void showStartButtonArmed(Button start, LayerDrawable drawable) {
+        start.setBackgroundDrawable(drawable);
+    }
+
+    public void showStartButtonDisengaged(Button start, LayerDrawable drawable) {
+        start.setBackgroundDrawable(drawable);
+    }
+
+    public void showStopButtonEngaged(Button stop, LayerDrawable drawable) {
+        stop.setBackgroundDrawable(drawable);
+    }
+
+    public void showStopButtonArmed(Button start, LayerDrawable drawable) {
+        start.setBackgroundDrawable(drawable);
+    }
+
+    public void showStopButtonDisengaged(Button stop, LayerDrawable drawable) {
+        stop.setBackgroundDrawable(drawable);
+    }
+
+    public void showButtonState(Button button, LayerDrawable layerDrawable) {
+        button.setBackgroundDrawable(layerDrawable);
+    }
+
 
     private void displayTarget(TextView tv) {
         tv.setText(mContext.getString(R.string.target) + " " + String.format("%.2f",
@@ -55,6 +101,10 @@ public class GameInfoDisplayer {
 
     private void displayTurnAccuracy(TextView tv) {
         tv.setText(mContext.getString(R.string.accuracy) + " " + mState.getmTurnAccuracy() + "%");
+    }
+
+    private void displayWeightedAccuracy(TextView tv) {
+        tv.setText(mContext.getString(R.string.accuracy) + " " + mState.getmWeightedAccuracy() + "%");
     }
 
     private void displayOverallAccuracy(TextView tv) {
@@ -79,9 +129,10 @@ public class GameInfoDisplayer {
     }
 
     public void displayImmediateGameInfoAfterTurn(TextView accuracy) {
-        displayTurnAccuracy(accuracy);
-//        displayLives(lives);
-//        displayTurnPoints(score);
+        displayWeightedAccuracy(accuracy);
+        //displayTurnAccuracy(accuracy);
+        //displayLives(lives);
+        //displayTurnPoints(score);
     }
 
     public void displayImmediateGameInfoAfterFadeCountTurn(TextView accuracy) {

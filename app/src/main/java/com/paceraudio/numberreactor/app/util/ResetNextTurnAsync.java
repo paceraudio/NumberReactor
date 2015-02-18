@@ -7,7 +7,6 @@ import android.os.SystemClock;
 import android.widget.TextView;
 
 import com.paceraudio.numberreactor.app.R;
-import com.paceraudio.numberreactor.app.activities.CounterActivity;
 
 
 /**
@@ -28,6 +27,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
     boolean mIsLifeGained = false;
     boolean mIsLiveNeutral = false;
     boolean mIsLifeLost = false;
+    boolean mIsFadeOutDone = false;
     int mBlinks = 8;
     int mTurnPoints;
 
@@ -72,6 +72,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
         }
         if (integers[0] == NORMAL_TURN_RESET) {
             fadeTextOut(getTextColor(mCounterTV), 2000);
+            mIsFadeOutDone = true;
             fadeTextIn(mContext.getResources().getColor(R.color.red), 1000);
         }
         return null;
@@ -123,8 +124,9 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
             mCounterTV.setTextColor(Color.argb(integers[0], integers[1], integers[2],
                     integers[3]));
             // Set the counter to 0.00 when the alpha value is at 0 before the fade in
-            if (integers[0] == 0) {
+            if (mIsFadeOutDone) {
                 mCounterTV.setText(mContext.getString(R.string.zero_point_zero));
+                mIsFadeOutDone = false;
             }
         }
     }
@@ -212,7 +214,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
     }
 
     private void blinkTurnInfo(boolean plusLives, boolean plusLife, boolean minusLife, int time, int points) {
-        int green = mContext.getResources().getColor(R.color.darkGreen);
+        int green = mContext.getResources().getColor(R.color.green);
         boolean timeIsEven = (time % 2 == 0);
         boolean positivePoints = (points > 0);
         if (plusLives || plusLife || minusLife) {
