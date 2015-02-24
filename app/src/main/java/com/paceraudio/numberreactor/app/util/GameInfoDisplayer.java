@@ -63,10 +63,11 @@ public class GameInfoDisplayer {
 
 
     private void displayTarget(TextView tv) {
-        //tv.setText(mContext.getString(R.string.target) + " " + String.format("%.2f",
-                //mState.getBaseTarget()));
-        tv.setText(mContext.getString(R.string.target) + SPACE + String.format("%.2f",
-                mState.getTurnTarget()));
+        // TODO toggle below for random targets
+        tv.setText(mContext.getString(R.string.target) + " " + String.format("%.2f",
+                mState.getBaseTarget()));
+        /*tv.setText(mContext.getString(R.string.target) + SPACE + String.format("%.2f",
+                mState.getTurnTarget()));*/
     }
 
     private void displayTurnAccuracy(TextView tv) {

@@ -125,7 +125,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         stopButtonEngagedDrawables = buttonDrawableView.mStopEngagedDrawables;
         stopButtonArmedDrawables = buttonDrawableView.mStopArmed;
 
-        //gameInfoDisplayer.showStopButtonDisengaged(fadeStopButton, stopButtonDisengagedDrawables);
         gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengagedDrawables);
 
         setStateTargetBasedOnLevel();
@@ -186,10 +185,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
     public void onFadeCountStopped(long millis) {
 
-        //gameInfoDisplayer.showStopButtonEngaged(fadeStopButton, stopButtonEngagedDrawables);
         gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngagedDrawables);
-        //gameInfoDisplayer.showStartButtonDisengaged(fadeStartButton,
-                //startButtonDisengagedDrawables);
         gameInfoDisplayer.showButtonState(fadeStartButton, startButtonDisengagedDrawables);
 
         double counterCeilingSeconds = (millis / 1000d);
@@ -240,7 +236,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
     private void setStateTargetBasedOnLevel() {
         mTarget = DEFAULT_FADE_COUNTER_TARGET + (mState.getLevel() - 1);
-        mState.setBaseTarget(mTarget);
+        mState.setTurnTarget(mTarget);
         counterCeilingMillis = (long) ((mTarget + BUFFER_OVER_TARGET) * MILLIS_IN_SECONDS);
     }
 
@@ -263,7 +259,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (v == fadeStartButton && isStartClickable) {
-            //gameInfoDisplayer.showStartButtonEngaged(fadeStartButton, startButtonEngagedDrawables);
             gameInfoDisplayer.showButtonState(fadeStartButton, startButtonEngagedDrawables);
             FadeCounterRunnable fadeCounterRunnable = new FadeCounterRunnable(this);
             Thread fadeCounterThread = new Thread(fadeCounterRunnable);
@@ -271,7 +266,6 @@ public class FadeOutCounterActivity extends FragmentActivity implements
             isStartClickable = false;
             isStopClickable = true;
         } else if (v == fadeStopButton && isStopClickable) {
-            //gameInfoDisplayer.showStopButtonEngaged(fadeStopButton, stopButtonEngagedDrawables);
             gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngagedDrawables);
             isStopClickable = false;
             onFadeCountStopped(elapsedTimeMillis);

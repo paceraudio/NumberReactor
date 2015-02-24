@@ -275,10 +275,11 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         /*int accuracy = mState.calcAccuracy(mBaseTarget, roundedCount);
         mState.setmTurnAccuracy(accuracy);*/
 
-        // TODO see if this weighted accuracy is a good way to go.
         //mState.calcAccuracy(mBaseTarget, roundedCount);
-        //int weightedAccuracy = mState.calcWeightedAccuracy(mBaseTarget, roundedCount);
-        int weightedAccuracy = mState.calcWeightedAccuracy(mState.getTurnTarget(), roundedCount);
+
+        // TODO toggle the lines below for random targets
+        int weightedAccuracy = mState.calcWeightedAccuracy(mBaseTarget, roundedCount);
+        //int weightedAccuracy = mState.calcWeightedAccuracy(mState.getTurnTarget(), roundedCount);
         mState.setmWeightedAccuracy(weightedAccuracy);
 
         //        calc the score
@@ -338,13 +339,14 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
         mState.setBaseTarget(BEGINNING_TARGET_LEVEL_ONE);
         mBaseTarget = mState.getBaseTarget();
-        mState.setTurnTarget(mState.randomizeTarget(mBaseTarget));
+        // TODO uncomment below for random targets
+        //mState.setTurnTarget(mState.randomizeTarget(mBaseTarget));
         //mTurnTarget = mState.randomizeTarget(mBaseTarget);
         resetDurationToStateDuration();
         resetBasicTimeValues();
-        mState.setmTurn(1);
+        //mState.setmTurn(1);
         mCurrentTurn = mState.getmTurn();
-        mState.setLevel(1);
+        //mState.setLevel(1);
         mState.resetScoreForNewGame();
         mState.resetLivesForNewGame();
         isStartClickable = true;
@@ -362,8 +364,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         resetBasicTimeValues();
         mState.setBaseTarget(mBaseTarget + 1);
         mBaseTarget = mState.getBaseTarget();
+        // TODO toggle below for random targets
         mState.setTurnTarget(mState.randomizeTarget(mBaseTarget));
-        //mTurnTarget = mState.randomizeTarget(mBaseTarget);
         mState.setmTurn(mCurrentTurn + 1);
         mCurrentTurn = mState.getmTurn();
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
@@ -415,6 +417,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         }
         mState.setBaseTarget(target);
         mBaseTarget = mState.getBaseTarget();
+        // TODO toggle below for random targets
+        mState.setTurnTarget(mState.randomizeTarget(mBaseTarget));
     }
 
     private boolean checkIfLivesLeft() {
@@ -565,18 +569,13 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (v == startButton && isStartClickable) {
-            //gameInfoDisplayer.showStartButtonEngaged(startButton, startButtonEngagedDrawables);
-            //startButton.setBackgroundDrawable(mStartTriangleEngaged);
             gameInfoDisplayer.showButtonState(startButton, startButtonEngagedDrawables);
-            //gameInfoDisplayer.showButtonState(stopButton, stopButtonArmedDrawables);
             CounterRunnable counterRunnable = new CounterRunnable(this);
             Thread counterThread = new Thread(counterRunnable);
             counterThread.start();
             isStartClickable = false;
             isStopClickable = true;
         } else if (v == stopButton && isStopClickable) {
-            //gameInfoDisplayer.showStopButtonEngaged(stopButton, stopButtonEngagedDrawables);
-            //gameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
             gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
             gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
             isStopClickable = false;
