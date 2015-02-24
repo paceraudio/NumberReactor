@@ -39,6 +39,12 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
     private static final int LIFE_NEUTRAL = 0;
     private static final int LIFE_LOST = -1;
 
+    private static final long SHOW_STATS_DURATION = 1500;
+    private static final long NUM_OF_BLINKS = 8;
+    private static final long FADE_OUT_DURATION = 1200;
+    private static final long FADE_IN_DURATION = 600;
+
+
 
     public ResetNextTurnAsync(ResetNextTurnListener listener, Context context,
                               TextView tvCounter, TextView tvLives, TextView tvScore) {
@@ -63,17 +69,17 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
         }
 
         mTurnPoints = integers[2];
-        showStatsBeforeFade(2000);
+        showStatsBeforeFade(SHOW_STATS_DURATION);
 
         // Check to see if this is the last turn of Counter Activity.  If so, do not
         // fade the new counter at "0.00" in.  We only have a fade out.
         if (integers[0] == LAST_TURN_RESET_BEFORE_NEW_ACTIVITY) {
-            fadeTextOut(getTextColor(mCounterTV), 2000);
+            fadeTextOut(getTextColor(mCounterTV), FADE_OUT_DURATION);
         }
         if (integers[0] == NORMAL_TURN_RESET) {
-            fadeTextOut(getTextColor(mCounterTV), 2000);
+            fadeTextOut(getTextColor(mCounterTV), FADE_OUT_DURATION);
             mIsFadeOutDone = true;
-            fadeTextIn(mContext.getResources().getColor(R.color.red), 1000);
+            fadeTextIn(mContext.getResources().getColor(R.color.red), FADE_IN_DURATION);
         }
         return null;
     }
@@ -88,35 +94,6 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
 
             blinkTurnInfo(mIsDoubleLifeGained, mIsLifeGained, mIsLifeLost, integers[0], mTurnPoints);
 
-            /*if (mIsDoubleLifeGained) {
-                if (integers[0] % 2 == 0) {
-                    mLivesTV.setText(mContext.getString(R.string.lives_remaining) + " +2");
-                    mLivesTV.setTextColor(mContext.getResources().getColor(R.color.darkGreen));
-                } else {
-                    mLivesTV.setText("");
-                }
-            } else if (mIsLifeGained) {
-                if (integers[0] % 2 == 0) {
-                    mLivesTV.setText(mContext.getString(R.string.lives_remaining) + " +1");
-                    mLivesTV.setTextColor(mContext.getResources().getColor(R.color.darkGreen));
-                } else {
-                    mLivesTV.setText("");
-                }
-            } else if (mIsLifeLost) {
-                if (integers[0] % 2 == 0) {
-                    mLivesTV.setText(mContext.getString(R.string.lives_remaining) + " -1");
-                } else {
-                    mLivesTV.setText("");
-                }
-            }
-            if (mTurnPoints > 0) {
-                if (integers[0] % 2 == 0) {
-                    mScoreTV.setTextColor(mContext.getResources().getColor(R.color.darkGreen));
-                    mScoreTV.setText(mContext.getString(R.string.points) + " +" + mTurnPoints);
-                } else {
-                    mScoreTV.setText("");
-                }
-            }*/
             // If we are not displaying the stats and, instead, producing the fade out/in,
             // integers[0] is used to set the alpha value of the Counter text.  The other three
             // values in integers[] are the r g b values for the color.
@@ -143,7 +120,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
         long startTime = SystemClock.elapsedRealtime();
 
         while ((elapsedTime = SystemClock.elapsedRealtime() - startTime) <= millis) {
-            futureValue = (int) (((double) elapsedTime * mBlinks) / millis);
+            futureValue = (int) (((double) elapsedTime * NUM_OF_BLINKS) / millis);
             if (futureValue > currentValue) {
                 currentValue = futureValue;
                 publishProgress(currentValue, 0, 0, 0);

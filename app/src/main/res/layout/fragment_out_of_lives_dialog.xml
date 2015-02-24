@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:text="YOU ARE OUT OF LIVES"
+        android:text="@string/out_of_lives_game_over_dialog"
         android:background="@color/darkBlackRed"
         android:typeface="monospace"
         android:textColor="@color/grey"
@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:text="PLAY AGAIN"
+        android:text="@string/play_again_game_over_dialog"
         android:background="@color/darkBlackRed"
         android:typeface="monospace"
         android:textColor="@color/grey"

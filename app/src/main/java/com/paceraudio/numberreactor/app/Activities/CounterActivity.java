@@ -46,7 +46,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private static boolean isStopClickable;
     private static boolean isStopFlashing;
 
-    public double mTarget;
+    public double mBaseTarget;
+    public double mTurnTarget;
 
     private static TextView tvCounter;
     private static TextView tvLivesRemaining;
@@ -253,8 +254,10 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     // runs when mCounter thread is  is cancelled
     public void onCounterStopped(long accelCount) {
 
-        gameInfoDisplayer.showStopButtonEngaged(stopButton, stopButtonEngagedDrawables);
-        gameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
+        //gameInfoDisplayer.showStopButtonEngaged(stopButton, stopButtonEngagedDrawables);
+        gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
+        //gameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
+        gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
         isStopClickable = false;
 
         //      Round the elapsed accelerated count to 2 decimal places, give double param value 0,
@@ -263,18 +266,19 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         Log.d("jwc", "counter onCounterStopped roundedCount: " + roundedCount);
 
         //        // TODO TESTING ONLY!!!!!!!!!!!!
-        //        roundedCount = mTarget;
+        //        roundedCount = mBaseTarget;
 
         //      Convert rounded value to a String to display
         String roundedCountStr = String.format("%.2f", roundedCount);
 
         //        calc the accuracy
-        /*int accuracy = mState.calcAccuracy(mTarget, roundedCount);
+        /*int accuracy = mState.calcAccuracy(mBaseTarget, roundedCount);
         mState.setmTurnAccuracy(accuracy);*/
 
         // TODO see if this weighted accuracy is a good way to go.
-        mState.calcAccuracy(mTarget, roundedCount);
-        int weightedAccuracy = mState.calcWeightedAccuracy(mTarget, roundedCount);
+        //mState.calcAccuracy(mBaseTarget, roundedCount);
+        //int weightedAccuracy = mState.calcWeightedAccuracy(mBaseTarget, roundedCount);
+        int weightedAccuracy = mState.calcWeightedAccuracy(mState.getTurnTarget(), roundedCount);
         mState.setmWeightedAccuracy(weightedAccuracy);
 
         //        calc the score
@@ -286,7 +290,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             score *= 2;
         }
 
-        if (roundedCount == mTarget) {
+        if (roundedCount == mBaseTarget) {
             tvCounter.setTextColor(getResources().getColor(R.color.glowGreen));
             score *= 2;
         }
@@ -295,7 +299,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         Log.d(DEBUG_TAG, "**********onCounterStopped()**********" +
                 "\n  elapsed accelerated count: " + roundedCount +
                 "\n elapsed accelerated string: " + roundedCountStr +
-                "\n                     target: " + mTarget +
+                "\n                     target: " + mBaseTarget +
                 "\n                   accuracy: " + weightedAccuracy + "%");
 
         mState.setmTurnPoints(score);
@@ -315,11 +319,7 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
 
     private void resetBasicTimeValues() {
         elapsedAcceleratedCount = 0;
-        //        mElapsedTimeMillis = 0;
         mDurationIncrement = levelDuration;
-        //        mNextWholeCount = 1000;
-        //        mNextCount = 10;
-        //        mCount = 0;
     }
 
     private void setInitialTimeValuesLevelOne() {
@@ -336,8 +336,10 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
             mState.setDuration(BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD);
         }
 
-        mState.setTarget(BEGINNING_TARGET_LEVEL_ONE);
-        mTarget = mState.getTarget();
+        mState.setBaseTarget(BEGINNING_TARGET_LEVEL_ONE);
+        mBaseTarget = mState.getBaseTarget();
+        mState.setTurnTarget(mState.randomizeTarget(mBaseTarget));
+        //mTurnTarget = mState.randomizeTarget(mBaseTarget);
         resetDurationToStateDuration();
         resetBasicTimeValues();
         mState.setmTurn(1);
@@ -358,8 +360,10 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
     private void resetTimeValuesBetweenTurns() {
         resetDurationToStateDuration();
         resetBasicTimeValues();
-        mState.setTarget(mTarget + 1);
-        mTarget = mState.getTarget();
+        mState.setBaseTarget(mBaseTarget + 1);
+        mBaseTarget = mState.getBaseTarget();
+        mState.setTurnTarget(mState.randomizeTarget(mBaseTarget));
+        //mTurnTarget = mState.randomizeTarget(mBaseTarget);
         mState.setmTurn(mCurrentTurn + 1);
         mCurrentTurn = mState.getmTurn();
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLivesRemaining,
@@ -409,8 +413,8 @@ public class CounterActivity extends FragmentActivity implements UpdateDbListene
         for (int i = 1; i < level; i++) {
             target++;
         }
-        mState.setTarget(target);
-        mTarget = mState.getTarget();
+        mState.setBaseTarget(target);
+        mBaseTarget = mState.getBaseTarget();
     }
 
     private boolean checkIfLivesLeft() {

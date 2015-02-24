@@ -20,7 +20,8 @@
     <string name="points">POINTS: </string>
     <string name="level">LEVEL: </string>
     <string name="fade_counter_dialog">Count along with the fading counter, try to stop on the target!</string>
-    <string name="out_of_lives_dialog">You are out of lives. Would you like to try again?</string>
+    <string name="out_of_lives_game_over_dialog">OUT OF LIVES!</string>
+    <string name="play_again_game_over_dialog">PLAY AGAIN?</string>
     <string name="exit">NO</string>
     <string name="OK">YES</string>
     <string name="prefs_title_select_difficulty">SELECT YOUR DIFFICULTY</string>

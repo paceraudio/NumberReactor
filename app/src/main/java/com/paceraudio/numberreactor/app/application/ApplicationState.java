@@ -11,11 +11,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 public class ApplicationState extends Application{
 
     private int mTurn;
-    private double mTarget;
+    private double mBaseTarget;
+    private double mTurnTarget;
+
+
     private int mTurnAccuracy;
 
 
@@ -30,7 +34,18 @@ public class ApplicationState extends Application{
     private List<Integer> accuracyList;
 
     private static final int BEGINNING_NUMBER_OF_LIVES = 4;
+    private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     private static final int LIFE_LOSS_THRESHOLD = 80;
+
+    private static final int ZERO = 0;
+    private static final int ONE = 1;
+    private static final int ONE_HUNDRED = 100;
+    private static final int PLUS_TWO_LIVES = 2;
+    private static final int PLUS_ONE_LIFE = 1;
+    private static final int MINUS_ONE_LIFE = -1;
+    private static final int PLUS_TWO_LIVES_THRESHOLD = 98;
+
+    private static final int RANDOM_TARGET_THRESHOLD = 3;
 
     private static final int MAX_ACCEL_COUNT_VALUE = 99999;
     private static final double MAX_ACCEL_COUNT_DISPLAYED = 99.99;
@@ -44,17 +59,17 @@ public class ApplicationState extends Application{
 
     @Override
     public void onCreate() {
-        mLevel = 1;
-        mRunningScoreTotal = 0;
+        mLevel = ONE;
+        mRunningScoreTotal = ZERO;
         scoreList = new ArrayList<Integer>();
         accuracyList = new ArrayList<Integer>();
         mLives = BEGINNING_NUMBER_OF_LIVES;
 //        To be set by the Activities when they begin.  We need ApplicationState to keep track of it
 //        in order to consolidate the code for updating the displayed game values in each Activity
-        mTarget = 0;
-        mTurnAccuracy = 0;
-        mTurnPoints = 0;
-        mTurn = 1;
+        mBaseTarget = ZERO;
+        mTurnAccuracy = ZERO;
+        mTurnPoints = ZERO;
+        mTurn = ONE;
     }
 
     public int getLevel() {
@@ -73,13 +88,22 @@ public class ApplicationState extends Application{
         this.mLives = lives;
     }
 
-    public double getTarget() {
-        return mTarget;
+    public double getBaseTarget() {
+        return mBaseTarget;
     }
 
-    public void setTarget(double target) {
-        this.mTarget = target;
+    public void setBaseTarget(double target) {
+        this.mBaseTarget = target;
     }
+
+    public double getTurnTarget() {
+        return mTurnTarget;
+    }
+
+    public void setTurnTarget(double mTurnTarget) {
+        this.mTurnTarget = mTurnTarget;
+    }
+
 
     public int getmTurn() {
         return mTurn;
@@ -126,6 +150,11 @@ public class ApplicationState extends Application{
         this.mTurnPoints = mTurnPoints;
     }
 
+    public double randomizeTarget(double baseTarget) {
+        Random random = new Random();
+        return random.nextInt(RANDOM_TARGET_THRESHOLD) + baseTarget;
+    }
+
     public void updateRunningScoreTotal(int newScore) {
         scoreList.add(newScore);
         mRunningScoreTotal += newScore;
@@ -133,7 +162,7 @@ public class ApplicationState extends Application{
 
     public void resetScoreForNewGame() {
         scoreList.clear();
-        mRunningScoreTotal = 0;
+        mRunningScoreTotal = ZERO;
     }
 
     public void resetLivesForNewGame() {
@@ -167,24 +196,24 @@ public class ApplicationState extends Application{
         double error = Math.abs(target - elapsedCount);
         double accuracy = ((target - error) / target) * DEC_TO_WHOLE_PERCENTAGE;
         int accuracyInt = (int) accuracy;
-        if (accuracyInt < 0) {
-            accuracyInt = 0;
+        if (accuracyInt < ZERO) {
+            accuracyInt = ZERO;
         }
         Log.d(DEBUG_TAG, "calcAccuracy()return accuracy: " + accuracy);
         return accuracyInt;
     }
 
     public int calcWeightedAccuracy(double target, double elapsedCount) {
-        if (target > 2) {
-            double notCalculated = target - 2;
+        if (target > BEGINNING_TARGET_LEVEL_ONE) {
+            double notCalculated = target - BEGINNING_TARGET_LEVEL_ONE;
             target -= notCalculated;
             elapsedCount -= notCalculated;
         }
         double error = Math.abs(target - elapsedCount);
         double accuracy = ((target - error) / target) * DEC_TO_WHOLE_PERCENTAGE;
         int accuracyInt = (int) accuracy;
-        if (accuracyInt < 0) {
-            accuracyInt = 0;
+        if (accuracyInt < ZERO) {
+            accuracyInt = ZERO;
         }
         Log.d(DEBUG_TAG, "calcWeightedAccuracy()return accuracy: " + accuracy);
         return accuracyInt;
@@ -193,36 +222,36 @@ public class ApplicationState extends Application{
 
 
    public int numOfLivesGainedOrLost() {
-       int livesGained = 0;
-       if (mWeightedAccuracy == 100) {
-           livesGained = 2;
+       int livesGained = ZERO;
+       if (mWeightedAccuracy == ONE_HUNDRED) {
+           livesGained = PLUS_TWO_LIVES;
        }
-       else if (mWeightedAccuracy > 98) {
-           livesGained = 1;
+       else if (mWeightedAccuracy > PLUS_TWO_LIVES_THRESHOLD) {
+           livesGained = PLUS_ONE_LIFE;
        }
        else if (mWeightedAccuracy <= LIFE_LOSS_THRESHOLD) {
-           livesGained = -1;
+           livesGained = MINUS_ONE_LIFE;
        }
        mLives += livesGained;
        return livesGained;
    }
 
     public int numOfBonusLivesFadeCount() {
-        int livesGained = 0;
-        if (mTurnAccuracy == 100) {
-           livesGained = 2;
+        int livesGained = ZERO;
+        if (mTurnAccuracy == ONE_HUNDRED) {
+           livesGained = PLUS_TWO_LIVES;
         }
-        else if (mTurnAccuracy > 98) {
-            livesGained = 1;
+        else if (mTurnAccuracy > PLUS_TWO_LIVES_THRESHOLD) {
+            livesGained = PLUS_ONE_LIFE;
         }
         mLives += livesGained;
         return livesGained;
     }
 
     public int calcScore(int accuracy) {
-        int score = 0;
+        int score = ZERO;
         int scoreToCalc = accuracy - LIFE_LOSS_THRESHOLD;
-        if (scoreToCalc > 0) {
+        if (scoreToCalc > ZERO) {
             score = scoreToCalc;
         }
         return score;
