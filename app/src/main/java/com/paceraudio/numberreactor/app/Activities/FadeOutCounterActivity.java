@@ -236,7 +236,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
     private void setStateTargetBasedOnLevel() {
         mTarget = DEFAULT_FADE_COUNTER_TARGET + (mState.getLevel() - 1);
-        mState.setTurnTarget(mTarget);
+        mState.setBaseTarget(mTarget);
+        // TODO toggle below for random targets
+        //mState.setTurnTarget(mTarget);
         counterCeilingMillis = (long) ((mTarget + BUFFER_OVER_TARGET) * MILLIS_IN_SECONDS);
     }
 
