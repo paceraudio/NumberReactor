@@ -5,6 +5,7 @@ package com.paceraudio.numberreactor.app.application;
  */
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Random;
 
 public class ApplicationState extends Application{
+
+    private static Context context;
 
     private int mTurn;
     private double mBaseTarget;
@@ -59,13 +62,30 @@ public class ApplicationState extends Application{
 
     @Override
     public void onCreate() {
+        super.onCreate();
+        context = getApplicationContext();
+        //initGameStats();
         mLevel = ONE;
         mRunningScoreTotal = ZERO;
         scoreList = new ArrayList<Integer>();
         accuracyList = new ArrayList<Integer>();
         mLives = BEGINNING_NUMBER_OF_LIVES;
-//        To be set by the Activities when they begin.  We need ApplicationState to keep track of it
-//        in order to consolidate the code for updating the displayed game values in each Activity
+        mBaseTarget = ZERO;
+        mTurnAccuracy = ZERO;
+        mTurnPoints = ZERO;
+        mTurn = ONE;
+    }
+
+    public static Context getAppContext() {
+        return ApplicationState.context;
+    }
+
+    private void initGameStats() {
+        mLevel = ONE;
+        mRunningScoreTotal = ZERO;
+        scoreList = new ArrayList<Integer>();
+        accuracyList = new ArrayList<Integer>();
+        mLives = BEGINNING_NUMBER_OF_LIVES;
         mBaseTarget = ZERO;
         mTurnAccuracy = ZERO;
         mTurnPoints = ZERO;

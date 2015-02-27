@@ -3,58 +3,36 @@ package com.paceraudio.numberreactor.app.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.paceraudio.numberreactor.app.application.ApplicationState;
 import com.paceraudio.numberreactor.app.db.DBHelper;
-import com.paceraudio.numberreactor.app.util.ButtonDrawableView;
 import com.paceraudio.numberreactor.app.util.GameInfoDisplayer;
 import com.paceraudio.numberreactor.app.R;
 import com.paceraudio.numberreactor.app.util.ResetNextTurnAsync;
 import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
 
 
-public class FadeOutCounterActivity extends FragmentActivity implements
+public class FadeOutCounterActivity extends TimeCounter implements
         ResetNextTurnListener, View.OnTouchListener {
 
-    static final String DEBUG_TAG = "jwc";
-
     private static TextView tvFadeCounter;
-    private TextView mTvFadeTarget;
-    private TextView mTvFadeAccuracy;
-    private TextView mTvFadeLives;
-    private TextView mTvFadeScore;
-    private TextView mTvFadeLevel;
+    private static TextView tvFadeTarget;
+    private static TextView tvFadeAccuracy;
+    private static TextView tvFadeLives;
+    private static TextView tvFadeScore;
+    private static TextView tvFadeLevel;
 
     private static Button fadeStartButton;
     private static Button fadeStopButton;
-    private static FrameLayout fadeStartFrame;
-    private static FrameLayout fadeStopFrame;
-
-    //TODO see if this works
-    private static LayerDrawable startButtonDisengagedDrawables;
-    private static LayerDrawable startButtonEngagedDrawables;
-    private static LayerDrawable startButtonArmedDrawables;
-    private static LayerDrawable stopButtonDisengagedDrawables;
-    private static LayerDrawable stopButtonEngagedDrawables;
-    private static LayerDrawable stopButtonArmedDrawables;
-
-    private static boolean isStartClickable;
-    private static boolean isStartFlashing;
-    private static boolean isStopFlashing;
-    private static boolean isStopClickable;
-
 
     private static long elapsedTimeMillis;
     private double mTarget;
@@ -70,70 +48,46 @@ public class FadeOutCounterActivity extends FragmentActivity implements
 
     private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
 
-    private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
-
-    private static final int DOUBLE_LIVES_GAINED = 2;
-    private static final int LIFE_GAINED = 1;
-    private static final int LIFE_NEUTRAL = 0;
 
     private static final double DEFAULT_FADE_COUNTER_TARGET = 10.00;
     private static final int BUFFER_OVER_TARGET = 10;
-    private static final double MILLIS_IN_SECONDS = 1000;
-    private static final String DOUBLE_FORMAT = "%.2f";
     private static long counterCeilingMillis;
     private static final double DEFAULT_FADE_RATIO = .60;
     private static final int ALPHA_VALUE_STEPS = 255;
-
-    //private static final long MAX_COUNTER_VALUE_MILLIS = 99999;
-    private static final long COUNTER_INCREMENT_MILLIS = 10;
-
-    // Constants for armed button flashing
-    private static final long ARMED_START_BUTTON_FLASH_DURATION = 500;
-    private static final long ARMED_STOP_BUTTON_FLASH_DURATION = 90;
-
-
-    DBHelper mDbHelper;
-    ApplicationState mState;
-    static GameInfoDisplayer gameInfoDisplayer;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fade_out_counter);
-        mState = (ApplicationState) getApplicationContext();
-        mDbHelper = new DBHelper(this);
+        //state = (ApplicationState) getApplicationContext();
         tvFadeCounter = (TextView) findViewById(R.id.t_v_fade_counter);
-        mTvFadeTarget = (TextView) findViewById(R.id.t_v_fade_target);
-        mTvFadeAccuracy = (TextView) findViewById(R.id.t_v_fade_accuracy_rating);
-        mTvFadeLives = (TextView) findViewById(R.id.t_v_fade_lives_remaining);
-        mTvFadeScore = (TextView) findViewById(R.id.t_v_fade_score);
-        mTvFadeLevel = (TextView) findViewById(R.id.t_v_fade_level);
+        tvFadeTarget = (TextView) findViewById(R.id.t_v_fade_target);
+        tvFadeAccuracy = (TextView) findViewById(R.id.t_v_fade_accuracy_rating);
+        tvFadeLives = (TextView) findViewById(R.id.t_v_fade_lives_remaining);
+        tvFadeScore = (TextView) findViewById(R.id.t_v_fade_score);
+        tvFadeLevel = (TextView) findViewById(R.id.t_v_fade_level);
         fadeStartButton = (Button) findViewById(R.id.b_fade_start);
         fadeStopButton = (Button) findViewById(R.id.b_fade_stop);
-        fadeStartFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_start);
-        fadeStopFrame = (FrameLayout) findViewById(R.id.f_l_for_fade_b_stop);
-
-        gameInfoDisplayer = new GameInfoDisplayer(this, this);
-
-        ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
-        startButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
-        startButtonEngagedDrawables = buttonDrawableView.mStartEngagedDrawables;
-        startButtonArmedDrawables = buttonDrawableView.mStartArmed;
-
-        stopButtonDisengagedDrawables = buttonDrawableView.mStopDisengagedDrawables;
-        stopButtonEngagedDrawables = buttonDrawableView.mStopEngagedDrawables;
-        stopButtonArmedDrawables = buttonDrawableView.mStopArmed;
 
         gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengagedDrawables);
+
+        initFadeVariables();
+        fadeStartButton.setOnTouchListener(this);
+        fadeStopButton.setOnTouchListener(this);
 
         setStateTargetBasedOnLevel();
     }
 
+
     @Override
-    protected void onStart() {
-        super.onStart();
-        //        This is when the counter should have completely faded out.
+    protected void onResume() {
+        super.onResume();
+        gameInfoDisplayer.displayAllGameInfo(tvFadeTarget, tvFadeAccuracy, tvFadeLives,
+                tvFadeScore, tvFadeLevel, FROM_FADE_COUNTER_ACTIVITY);
+        flashStartButton();
+    }
+
+    private void initFadeVariables() {
         double fadeRange = DEFAULT_FADE_COUNTER_TARGET * DEFAULT_FADE_RATIO;
         //        This assumes the alpha value of the color is at its max
         mFadeIncrement = fadeRange / 255;
@@ -143,45 +97,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         redValue = Color.red(mFadeCounterColor);
         greenValue = Color.green(mFadeCounterColor);
         blueValue = Color.blue(mFadeCounterColor);
-        fadeStartButton.setOnTouchListener(this);
-        fadeStopButton.setOnTouchListener(this);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        gameInfoDisplayer.displayAllGameInfo(mTvFadeTarget, mTvFadeAccuracy, mTvFadeLives,
-                mTvFadeScore, mTvFadeLevel, FROM_FADE_COUNTER_ACTIVITY);
-        isStartClickable = true;
-        isStopClickable = false;
-        flashStartButton();
- 
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.fade_out_counter, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        if (id == R.id.action_view_game_stats) {
-            Intent intent = new Intent(this, ViewStatsActivity.class);
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     public void onFadeCountStopped(long millis) {
 
@@ -191,7 +109,7 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         double counterCeilingSeconds = (millis / 1000d);
 
         //      Round the elapsed accelerated count to 2 decimal places
-        double roundedCount = mState.roundElapsedCountLong(millis, FROM_FADE_COUNTER_ACTIVITY, counterCeilingSeconds);
+        double roundedCount = state.roundElapsedCountLong(millis, FROM_FADE_COUNTER_ACTIVITY, counterCeilingSeconds);
         Log.d("jwc", "onFadeCountStopped millis: " + millis);
         Log.d("jwc", "onFadeCountStopped roundedCount: " + roundedCount);
 
@@ -199,9 +117,9 @@ public class FadeOutCounterActivity extends FragmentActivity implements
         String roundedCountStr = String.format("%.2f", roundedCount);
 
         //        calc the accuracy
-        int accuracy = mState.calcAccuracy(mTarget, roundedCount);
+        int accuracy = state.calcAccuracy(mTarget, roundedCount);
 
-        mState.setmTurnAccuracy(accuracy);
+        state.setmTurnAccuracy(accuracy);
 
         if (roundedCount == mTarget) {
             tvFadeCounter.setTextColor(getResources().getColor(R.color.glowGreen));
@@ -209,16 +127,16 @@ public class FadeOutCounterActivity extends FragmentActivity implements
             tvFadeCounter.setTextColor(mFadeCounterColor);
         }
         tvFadeCounter.setText(roundedCountStr);
-        gameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(mTvFadeAccuracy);
+        gameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(tvFadeAccuracy);
 
         ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
-                tvFadeCounter, mTvFadeLives, mTvFadeScore);
+                tvFadeCounter, tvFadeLives, tvFadeScore);
 
         int param2;
         int param3;
 
         // See if there was a life gained or lost
-        int livesGained = mState.numOfBonusLivesFadeCount();
+        int livesGained = state.numOfBonusLivesFadeCount();
         if (livesGained == DOUBLE_LIVES_GAINED) {
             param2 = DOUBLE_LIVES_GAINED;
         } else if (livesGained == LIFE_GAINED) {
@@ -235,10 +153,10 @@ public class FadeOutCounterActivity extends FragmentActivity implements
     }
 
     private void setStateTargetBasedOnLevel() {
-        mTarget = DEFAULT_FADE_COUNTER_TARGET + (mState.getLevel() - 1);
-        mState.setBaseTarget(mTarget);
+        mTarget = DEFAULT_FADE_COUNTER_TARGET + (state.getLevel() - 1);
+        state.setBaseTarget(mTarget);
         // TODO toggle below for random targets
-        //mState.setTurnTarget(mTarget);
+        //state.setTurnTarget(mTarget);
         counterCeilingMillis = (long) ((mTarget + BUFFER_OVER_TARGET) * MILLIS_IN_SECONDS);
     }
 

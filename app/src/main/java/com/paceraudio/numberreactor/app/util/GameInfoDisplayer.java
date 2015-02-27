@@ -28,7 +28,7 @@ public class GameInfoDisplayer {
     private static final String DEBUG_TAG = "jwc";
 
 
-    public GameInfoDisplayer(Context context, Activity activity) {
+    public GameInfoDisplayer(Context context) {
         this.mContext = context;
         mState = (ApplicationState) mContext.getApplicationContext();
     }

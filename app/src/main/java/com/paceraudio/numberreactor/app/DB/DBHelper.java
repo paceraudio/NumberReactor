@@ -12,7 +12,7 @@ import com.paceraudio.numberreactor.app.util.GameStats;
 
 import java.util.ArrayList;
 
-import static com.paceraudio.numberreactor.app.activities.CounterActivity.DEBUG_TAG;
+import static com.paceraudio.numberreactor.app.activities.TimeCounter.DEBUG_TAG;
 
 /**
  * Created by jeffwconaway on 10/9/14.
