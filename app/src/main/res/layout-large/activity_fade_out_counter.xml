@@ -75,6 +75,11 @@
             style="@style/NR_ButtonStyle"
             />
 
+        <!--<Button
+            android:id="@id/b_start"
+            style="@style/NR_ButtonStyle"
+            />-->
+
 
         ></FrameLayout>
 
@@ -88,6 +93,11 @@
             android:id="@+id/b_fade_stop"
             style="@style/NR_ButtonStyle"
             />
+
+        <!--<Button
+            android:id="@id/b_stop"
+            style="@style/NR_ButtonStyle"
+            />-->
 
     </FrameLayout>
 

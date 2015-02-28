@@ -69,7 +69,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
         }
 
         mTurnPoints = integers[2];
-        showStatsBeforeFade(SHOW_STATS_DURATION);
+        showStatsBeforeCounterReset(SHOW_STATS_DURATION);
 
         // Check to see if this is the last turn of Counter Activity.  If so, do not
         // fade the new counter at "0.00" in.  We only have a fade out.
@@ -113,7 +113,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
         mListener.onNextTurnReset();
     }
 
-    private void showStatsBeforeFade(long millis) {
+    private void showStatsBeforeCounterReset(long millis) {
         long elapsedTime;
         int futureValue;
         int currentValue = 0;

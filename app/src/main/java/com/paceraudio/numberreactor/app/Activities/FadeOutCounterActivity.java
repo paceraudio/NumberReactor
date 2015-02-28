@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.paceraudio.numberreactor.app.R;
-import com.paceraudio.numberreactor.app.util.ResetNextTurnAsync;
 import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
 
 
@@ -26,8 +25,8 @@ public class FadeOutCounterActivity extends TimeCounter implements
     private static TextView tvFadeScore;
     private static TextView tvFadeLevel;
 
-    private static Button startButton;
-    private static Button stopButton;
+    private static Button fadeStartButton;
+    private static Button fadeStopButton;
 
     private static long elapsedTimeMillis;
     private double mTarget;
@@ -40,7 +39,10 @@ public class FadeOutCounterActivity extends TimeCounter implements
     private static int greenValue;
     private static int blueValue;
 
+    private static int straightAccuracy;
 
+    private static final int SCORE_NOT_POSSIBLE = 0;
+    private static boolean IS_LIFE_LOSS_POSSIBLE = false;
     private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
 
 
@@ -62,18 +64,21 @@ public class FadeOutCounterActivity extends TimeCounter implements
         tvFadeLives = (TextView) findViewById(R.id.t_v_fade_lives_remaining);
         tvFadeScore = (TextView) findViewById(R.id.t_v_fade_score);
         tvFadeLevel = (TextView) findViewById(R.id.t_v_fade_level);
-        startButton = (Button) findViewById(R.id.b_fade_start);
-        stopButton = (Button) findViewById(R.id.b_fade_stop);
-        //startButton = (Button) findViewById(R.id.b_start);
-        //stopButton = (Button) findViewById(R.id.b_stop);
+        //initButtons();
+        fadeStartButton = (Button) findViewById(R.id.b_fade_start);
+        fadeStopButton = (Button) findViewById(R.id.b_fade_stop);
+        //fadeStartButton = (Button) findViewById(R.id.b_start);
+        //fadeStopButton = (Button) findViewById(R.id.b_stop);
 
-        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+        gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengagedDrawables);
 
         initFadeVariables();
-        startButton.setOnTouchListener(this);
-        stopButton.setOnTouchListener(this);
+        fadeStartButton.setOnTouchListener(this);
+        fadeStopButton.setOnTouchListener(this);
 
         setStateTargetBasedOnLevel();
+        Log.d(DEBUG_TAG, "onCreate() end " + getLocalClassName());
+
     }
 
 
@@ -97,104 +102,31 @@ public class FadeOutCounterActivity extends TimeCounter implements
         blueValue = Color.blue(mFadeCounterColor);
     }
 
-
-
-    /*public void onFadeCountStopped(long millis) {
-
-        gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
-        gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
-
-        //double counterCeilingSeconds = (millis / 1000d);
-
-        //      Round the elapsed accelerated count to 2 decimal places
-        //double roundedCount = state.roundElapsedCountLong(millis, FROM_FADE_COUNTER_ACTIVITY, counterCeilingSeconds);
-        //double roundedCount = state.roundElapsedCount(millis, counterCeilingSeconds);
-        double roundedCount = calculateRoundedCount(millis, counterCeilingSeconds);
-
-        Log.d("jwc", "onFadeCountStopped millis: " + millis);
-        Log.d("jwc", "onFadeCountStopped roundedCount: " + roundedCount);
-
-        //      Convert rounded value to a String to display
-        //String roundedCountStr = String.format("%.2f", roundedCount);
-        String roundedCountStr = generateRoundedCountStr(roundedCount);
-
-        //        calc the accuracy
-        //int accuracy = state.calcAccuracy(mTarget, roundedCount);
-
-        //state.setmTurnAccuracy(accuracy);
-        calculateAccuracy(mTarget, roundedCount);
-
-        *//*if (roundedCount == mTarget) {
-            tvFadeCounter.setTextColor(getResources().getColor(R.color.glowGreen));
-        } else {
-            tvFadeCounter.setTextColor(mFadeCounterColor);
-        }*//*
-
-        resetColorAfterFadeOut();
-        changeCounterColorIfDeadOn(roundedCount, mTarget, tvFadeCounter);
-        tvFadeCounter.setText(roundedCountStr);
-        gameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(tvFadeAccuracy);
-
-        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
-                tvFadeCounter, tvFadeLives, tvFadeScore);
-
-        int param2;
-        int param3;
-
-        // See if there was a life gained or lost
-        int livesGained = state.numOfBonusLivesFadeCount();
-        if (livesGained == DOUBLE_LIVES_GAINED) {
-            param2 = DOUBLE_LIVES_GAINED;
-        } else if (livesGained == LIFE_GAINED) {
-            param2 = LIFE_GAINED;
-
-        } else {
-            param2 = LIFE_NEUTRAL;
-        }
-
-        // No score is awarded in this activity, so set the score to dummy value -1, so that the
-        // score textview does not blink in the reset turn async
-        param3 = -1;
-        resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY, param2, param3);
-    }
-*/
     @Override
     protected void onCounterStopped(long elapsedCount) {
-        gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
-        gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
+
+        gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngagedDrawables);
+        gameInfoDisplayer.showButtonState(fadeStartButton, startButtonDisengagedDrawables);
+        isStopClickable = false;
+
         double roundedCount = calculateRoundedCount(elapsedCount, counterCeilingSeconds);
+        //roundedCount = mTarget;
         String roundedCountStr = generateRoundedCountStr(roundedCount);
-        calculateAccuracy(mTarget, roundedCount);
-        resetColorAfterFadeOut();
+
+        straightAccuracy = calculateAccuracy(mTarget, roundedCount);
+
+        resetCounterColorAfterFadeOut();
         changeCounterColorIfDeadOn(roundedCount, mTarget, tvFadeCounter);
+
         tvFadeCounter.setText(roundedCountStr);
         gameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(tvFadeAccuracy);
 
-        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
-                tvFadeCounter, tvFadeLives, tvFadeScore);
+        updateStateScore(SCORE_NOT_POSSIBLE);
 
-        int param2;
-        int param3;
-
-        // See if there was a life gained or lost
-        int livesGained = state.numOfBonusLivesFadeCount();
-        if (livesGained == DOUBLE_LIVES_GAINED) {
-            param2 = DOUBLE_LIVES_GAINED;
-        } else if (livesGained == LIFE_GAINED) {
-            param2 = LIFE_GAINED;
-
-        } else {
-            param2 = LIFE_NEUTRAL;
-        }
-
-        // No score is awarded in this activity, so set the score to dummy value -1, so that the
-        // score textview does not blink in the reset turn async
-        param3 = -1;
-        resetNextTurnAsync.execute(LAST_TURN_RESET_BEFORE_NEW_ACTIVITY, param2, param3);
-
+        launchResetNextTurnAsync(this, this, tvFadeCounter, tvFadeLives, tvFadeScore, straightAccuracy, IS_LIFE_LOSS_POSSIBLE);
     }
 
-    private void resetColorAfterFadeOut() {
+    private void resetCounterColorAfterFadeOut() {
         tvFadeCounter.setTextColor(mFadeCounterColor);
     }
 
@@ -204,8 +136,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
         state.setmTurnAccuracy(accuracy);
         return accuracy;
     }
-
-
 
     private void setStateTargetBasedOnLevel() {
         mTarget = DEFAULT_FADE_COUNTER_TARGET + (state.getLevel() - 1);
@@ -232,18 +162,17 @@ public class FadeOutCounterActivity extends TimeCounter implements
         startButtonArmedThread.start();
     }
 
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (v == startButton && isStartClickable) {
-            gameInfoDisplayer.showButtonState(startButton, startButtonEngagedDrawables);
+        if (v == fadeStartButton && isStartClickable) {
+            gameInfoDisplayer.showButtonState(fadeStartButton, startButtonEngagedDrawables);
             FadeCounterRunnable fadeCounterRunnable = new FadeCounterRunnable(this);
             Thread fadeCounterThread = new Thread(fadeCounterRunnable);
             fadeCounterThread.start();
             isStartClickable = false;
             isStopClickable = true;
-        } else if (v == stopButton && isStopClickable) {
-            gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
+        } else if (v == fadeStopButton && isStopClickable) {
+            gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngagedDrawables);
             isStopClickable = false;
             onCounterStopped(elapsedTimeMillis);
         }
@@ -263,10 +192,10 @@ public class FadeOutCounterActivity extends TimeCounter implements
     static void flashStartButtonArmed() {
         if (isStartClickable) {
             if (isStartFlashing) {
-                gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables );
+                gameInfoDisplayer.showButtonState(fadeStartButton, startButtonDisengagedDrawables);
                 isStartFlashing = false;
             } else {
-                gameInfoDisplayer.showButtonState(startButton, startButtonArmedDrawables);
+                gameInfoDisplayer.showButtonState(fadeStartButton, startButtonArmedDrawables);
                 isStartFlashing = true;
             }
         }
@@ -275,10 +204,10 @@ public class FadeOutCounterActivity extends TimeCounter implements
     static void flashStopButtonArmed() {
         if (isStopClickable) {
             if (!isStopFlashing) {
-                gameInfoDisplayer.showButtonState(stopButton, stopButtonArmedDrawables);
+                gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonArmedDrawables);
                 isStopFlashing = true;
             } else {
-                gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+                gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengagedDrawables);
                 isStopFlashing = false;
             }
         }
@@ -309,7 +238,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
                     runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
                 }
             }
-            gameInfoDisplayer.showButtonState(startButton, startButtonEngagedDrawables);
+            gameInfoDisplayer.showButtonState(fadeStartButton, startButtonEngagedDrawables);
         }
     }
 

@@ -64,8 +64,8 @@ public class ApplicationState extends Application{
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        //initGameStats();
-        mLevel = ONE;
+        initGameStats();
+        /*mLevel = ONE;
         mRunningScoreTotal = ZERO;
         scoreList = new ArrayList<Integer>();
         accuracyList = new ArrayList<Integer>();
@@ -73,7 +73,7 @@ public class ApplicationState extends Application{
         mBaseTarget = ZERO;
         mTurnAccuracy = ZERO;
         mTurnPoints = ZERO;
-        mTurn = ONE;
+        mTurn = ONE;*/
     }
 
     public static Context getAppContext() {
@@ -249,7 +249,7 @@ public class ApplicationState extends Application{
 
 
 
-   public int numOfLivesGainedOrLost() {
+   /*public int numOfLivesGainedOrLost() {
        int livesGained = ZERO;
        if (mWeightedAccuracy == ONE_HUNDRED) {
            livesGained = PLUS_TWO_LIVES;
@@ -262,9 +262,25 @@ public class ApplicationState extends Application{
        }
        mLives += livesGained;
        return livesGained;
-   }
+   }*/
 
-    public int numOfBonusLivesFadeCount() {
+    public int numOfLivesGainedOrLost(int accuracy, boolean lifeLossPossible) {
+        int livesGained = ZERO;
+        if (accuracy == ONE_HUNDRED) {
+            livesGained = PLUS_TWO_LIVES;
+        }
+        else if (accuracy > PLUS_ONE_LIVE_THRESHOLD) {
+            livesGained = PLUS_ONE_LIFE;
+        }
+        else if (accuracy <= LIFE_LOSS_THRESHOLD && lifeLossPossible) {
+            livesGained = MINUS_ONE_LIFE;
+        }
+        // TODO use setLives for activity instead of this
+        mLives += livesGained;
+        return livesGained;
+    }
+
+    /*public int numOfBonusLivesFadeCount() {
         int livesGained = ZERO;
         if (mTurnAccuracy == ONE_HUNDRED) {
            livesGained = PLUS_TWO_LIVES;
@@ -274,7 +290,7 @@ public class ApplicationState extends Application{
         }
         mLives += livesGained;
         return livesGained;
-    }
+    }*/
 
     public int calcScore(int accuracy) {
         int score = ZERO;

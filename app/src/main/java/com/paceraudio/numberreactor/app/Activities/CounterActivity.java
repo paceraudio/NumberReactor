@@ -20,7 +20,6 @@ import com.paceraudio.numberreactor.app.db.UpdateLevelDbAsync;
 import com.paceraudio.numberreactor.app.db.UpdateScoreDbAsync;
 import com.paceraudio.numberreactor.app.dialogs.OutOfLivesDialogFragment;
 import com.paceraudio.numberreactor.app.R;
-import com.paceraudio.numberreactor.app.util.ResetNextTurnAsync;
 import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
 
 
@@ -50,8 +49,11 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
     double mDurationIncrement = 9.99;
     int mCurrentTurn;
 
-    private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
-    private static final int TURNS_PER_LEVEL = 2;
+    private static int weightedAccuracy;
+    private static final boolean LIFE_LOSS_POSSIBLE = true;
+
+    //private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
+    //private static final int TURNS_PER_LEVEL = 2;
 
 
     private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 30;
@@ -90,8 +92,10 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         tvLives = (TextView) findViewById(R.id.t_v_lives_remaining);
         tvScore = (TextView) findViewById(R.id.t_v_score);
         tvLevel = (TextView) findViewById(R.id.t_v_level);
+        //initButtons();
         startButton = (Button) findViewById(R.id.b_start);
         stopButton = (Button) findViewById(R.id.b_stop);
+
 
         gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
 
@@ -109,8 +113,8 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         setInitialTimeValuesLevelOne();
         startButton.setOnTouchListener(this);
         stopButton.setOnTouchListener(this);
+        Log.d(DEBUG_TAG, "onCreate() end " + getLocalClassName());
 
-        Log.d(DEBUG_TAG, "OnCreate() end");
     }
 
 
@@ -162,11 +166,12 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         isStopClickable = false;
 
         double roundedCount = calculateRoundedCount(elapsedCount, MAX_DISPLAYED_COUNTER_VALUE);
+        //roundedCount = mBaseTarget;
 
         String roundedCountStr = generateRoundedCountStr(roundedCount);
         tvCounter.setText(roundedCountStr);
 
-        int weightedAccuracy = calculateAccuracy(mBaseTarget, roundedCount);
+        weightedAccuracy = calculateAccuracy(mBaseTarget, roundedCount);
         int score = calculateScore(weightedAccuracy);
         updateStateScore(score);
         changeCounterColorIfDeadOn(roundedCount, mBaseTarget, tvCounter);
@@ -199,11 +204,6 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         return score;
     }
 
-    private void updateStateScore(int score) {
-        state.setmTurnPoints(score);
-        state.updateRunningScoreTotal(score);
-    }
-
     private void resetBasicTimeValues() {
         elapsedAcceleratedCount = 0;
         mDurationIncrement = levelDuration;
@@ -230,9 +230,7 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         //mTurnTarget = state.randomizeTarget(mBaseTarget);
         resetDurationToStateDuration();
         resetBasicTimeValues();
-        //state.setmTurn(1);
         mCurrentTurn = state.getmTurn();
-        //state.setLevel(1);
         state.resetScoreForNewGame();
         state.resetLivesForNewGame();
         isStartClickable = true;
@@ -276,8 +274,6 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         // because we didn't fade the counter back in before launching FadeCounter
         gameInfoDisplayer.resetCounterToZero(tvCounter);
         isStartClickable = true;
-        //        "disengage" the stop button
-        //gameInfoDisplayer.showStopButtonDisengaged(stopButton, stopButtonDisengagedDrawables);
         gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLives,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
@@ -291,7 +287,6 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
     }
 
     private void resetDurationToStateDuration() {
-        //        mDuration = state.getDuration();
         levelDuration = state.getDuration();
     }
 
@@ -316,10 +311,6 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         FragmentTransaction ft = fm.beginTransaction();
         mDialogFragment = OutOfLivesDialogFragment.newInstance();
         mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
-    }
-
-    private boolean isOutOfTurnsState() {
-        return state.getmTurn() == TURNS_PER_LEVEL;
     }
 
     private void launchFadeCounterActivity() {
@@ -347,43 +338,14 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         Log.d(DEBUG_TAG, "updated score from update db async: " + Integer.toString(mDbHelper
                 .queryScoreFromDb()));
 
-        int param1;
-        int param2;
-        int param3;
-
-        // See if this was our last turn
-        if (isOutOfTurnsState()) {
-            param1 = LAST_TURN_RESET_BEFORE_NEW_ACTIVITY;
-        } else {
-            param1 = NORMAL_TURN_RESET;
-        }
-
-        // See if there was a life gained or lost
-        int livesGained = state.numOfLivesGainedOrLost();
-        if (livesGained == DOUBLE_LIVES_GAINED) {
-            param2 = DOUBLE_LIVES_GAINED;
-        } else if (livesGained == LIFE_GAINED) {
-            param2 = LIFE_GAINED;
-        } else if (livesGained == LIFE_LOST) {
-            param2 = LIFE_LOST;
-        } else {
-            param2 = LIFE_NEUTRAL;
-        }
-
-        // Send the turn points as third param
-        param3 = state.getmTurnPoints();
-
-        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(this, this,
-                tvCounter, tvLives, tvScore);
-        resetNextTurnAsync.execute(param1, param2, param3);
-
+        launchResetNextTurnAsync(this, this, tvCounter, tvLives, tvScore, weightedAccuracy, LIFE_LOSS_POSSIBLE);
     }
 
     // Runs in onPostExecute of ResetNextTurnAsync
     @Override
     public void onNextTurnReset() {
         if (checkIfLivesLeft()) {
-            if (isOutOfTurnsState()) {
+            if (checkIfLastTurn() == LAST_TURN_RESET_BEFORE_NEW_ACTIVITY) {
                 launchFadeCounterActivity();
             } else {
                 resetTimeValuesBetweenTurns();

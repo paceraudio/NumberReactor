@@ -2,15 +2,12 @@ package com.paceraudio.numberreactor.app.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.paceraudio.numberreactor.app.R;
@@ -18,6 +15,8 @@ import com.paceraudio.numberreactor.app.application.ApplicationState;
 import com.paceraudio.numberreactor.app.db.DBHelper;
 import com.paceraudio.numberreactor.app.util.ButtonDrawableView;
 import com.paceraudio.numberreactor.app.util.GameInfoDisplayer;
+import com.paceraudio.numberreactor.app.util.ResetNextTurnAsync;
+import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
 
 /**
  * Created by jeffwconaway on 2/27/15.
@@ -38,8 +37,8 @@ public abstract class TimeCounter extends FragmentActivity {
     protected static TextView tvScore;
     protected static TextView tvLevel;*/
 
-    //protected static Button startButton;
-    //protected static Button stopButton;
+    /*protected static Button startButton;
+    protected static Button stopButton;*/
 
     protected static LayerDrawable startButtonDisengagedDrawables;
     protected static LayerDrawable startButtonEngagedDrawables;
@@ -51,6 +50,9 @@ public abstract class TimeCounter extends FragmentActivity {
     protected ApplicationState state;
     protected static GameInfoDisplayer gameInfoDisplayer;
     protected DBHelper mDbHelper;
+
+    protected static final int BEGINNING_TARGET_LEVEL_ONE = 2;
+    protected static final int TURNS_PER_LEVEL = 2;
 
     protected static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
     protected static final int NORMAL_TURN_RESET = 0;
@@ -74,8 +76,6 @@ public abstract class TimeCounter extends FragmentActivity {
     protected static final int FOUR = 4;
 
 
-
-
     protected void initButtonDrawables() {
         ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
         startButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
@@ -94,46 +94,45 @@ public abstract class TimeCounter extends FragmentActivity {
         gameInfoDisplayer = new GameInfoDisplayer(ApplicationState.getAppContext());
         mDbHelper = new DBHelper(this);
         initButtonDrawables();
-        //startButton = (Button) findViewById(R.id.b_start);
-        //stopButton = (Button) findViewById(R.id.b_stop);
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d(DEBUG_TAG, "onRestart() end");
+        Log.d(DEBUG_TAG, "onRestart() end " + getLocalClassName());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(DEBUG_TAG, "onStart() end");
+        Log.d(DEBUG_TAG, "onStart() end " + getLocalClassName());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        //initButtons();
         isStartClickable = true;
         isStopClickable = false;
-        Log.d(DEBUG_TAG, "onResume() end");
+        Log.d(DEBUG_TAG, "onResume() end " + getLocalClassName());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(DEBUG_TAG, "onPause() end");
+        Log.d(DEBUG_TAG, "onPause() end " + getLocalClassName());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(DEBUG_TAG, "onStop() end");
+        Log.d(DEBUG_TAG, "onStop() end " + getLocalClassName());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(DEBUG_TAG, "onDestroy() end");
+        Log.d(DEBUG_TAG, "onDestroy() end " + getLocalClassName());
     }
 
     @Override
@@ -161,6 +160,11 @@ public abstract class TimeCounter extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /*protected void initButtons() {
+        startButton = (Button) findViewById(R.id.b_start);
+        stopButton = (Button) findViewById(R.id.b_stop);
+    }*/
+
     protected abstract void onCounterStopped(long elapsedCount);
 
     protected double calculateRoundedCount(long elapsedCount, double counterCeiling) {
@@ -174,9 +178,38 @@ public abstract class TimeCounter extends FragmentActivity {
 
     protected abstract int calculateAccuracy(double target, double elapsedCount);
 
-    protected void changeCounterColorIfDeadOn(double roundedCount, double target, TextView tvCounter) {
+    protected void updateStateScore(int score) {
+        state.setmTurnPoints(score);
+        state.updateRunningScoreTotal(score);
+    }
+
+    protected void changeCounterColorIfDeadOn(double roundedCount, double target,
+                                              TextView tvCounter) {
         if (roundedCount == target) {
             tvCounter.setTextColor(getResources().getColor(R.color.glowGreen));
+        }
+    }
+
+    protected void launchResetNextTurnAsync(ResetNextTurnListener listener, Context context,
+                                            TextView tvCounter, TextView tvLives,
+                                            TextView tvScore, int accuracy,
+                                            boolean lifeLossPossible) {
+
+        ResetNextTurnAsync resetNextTurnAsync = new ResetNextTurnAsync(listener, context,
+                tvCounter, tvLives, tvScore);
+
+        int param0 = checkIfLastTurn();
+        int param1 = state.numOfLivesGainedOrLost(accuracy, lifeLossPossible);
+        int param2 = state.getmTurnPoints();
+
+        resetNextTurnAsync.execute(param0, param1, param2);
+    }
+
+    protected int checkIfLastTurn() {
+        if (state.getmTurn() == TURNS_PER_LEVEL) {
+            return LAST_TURN_RESET_BEFORE_NEW_ACTIVITY;
+        } else {
+            return NORMAL_TURN_RESET;
         }
     }
 }
