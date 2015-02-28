@@ -63,6 +63,7 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
 
     // Constants for the accelerated count
     private static final long MAX_COUNTER_VALUE_MILLIS = 100010;
+    private static final double MAX_DISPLAYED_COUNTER_VALUE = 99.99;
     private static final double DURATION_DECREASE_CUTOFF = 1;
     private static final double DURATION_DECREASE_UPDATE = 3;
     private static final double DURATION_DECREASE_FACTOR = 0.999;
@@ -127,53 +128,21 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
 
 
     // runs when mCounter thread is  is cancelled
-    public void onAccelCounterStopped(long accelCount) {
+   /* public void onAccelCounterStopped(long elapsedCount) {
 
-        //gameInfoDisplayer.showStopButtonEngaged(stopButton, stopButtonEngagedDrawables);
         gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
-        //gameInfoDisplayer.showStartButtonDisengaged(startButton, startButtonDisengagedDrawables);
         gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
         isStopClickable = false;
 
-        //      Round the elapsed accelerated count to 2 decimal places, give double param value 0,
-        //        we aren't going to use it from this Activity
-        double roundedCount = state.roundElapsedCountLong(accelCount, FROM_COUNTER_ACTIVITY, 0);
-        Log.d("jwc", "counter onAccelCounterStopped roundedCount: " + roundedCount);
+        double roundedCount = calculateRoundedCount(elapsedCount, MAX_DISPLAYED_COUNTER_VALUE);
 
-        //        // TODO TESTING ONLY!!!!!!!!!!!!
-        //        roundedCount = mBaseTarget;
-
-        //      Convert rounded value to a String to display
         String roundedCountStr = generateRoundedCountStr(roundedCount);
-        //tvCounter.setText(roundedCountStr);
         tvCounter.setText(roundedCountStr);
 
-
-
-        //        calc the accuracy
-        /*int accuracy = state.calcAccuracy(mBaseTarget, roundedCount);
-        state.setmTurnAccuracy(accuracy);*/
-
-        //state.calcAccuracy(mBaseTarget, roundedCount);
-
-        // TODO toggle the lines below for random targets
-        int weightedAccuracy = state.calcWeightedAccuracy(mBaseTarget, roundedCount);
-        //int weightedAccuracy = state.calcWeightedAccuracy(state.getTurnTarget(), roundedCount);
-        state.setmWeightedAccuracy(weightedAccuracy);
-
-        //        calc the score
-        int score = state.calcScore(weightedAccuracy);
-
-        //  TODO write a method for setting the color based on accuracy
-        // set the text color of the counter based on the score
-        if (weightedAccuracy > 98) {
-            score *= 2;
-        }
-
-        if (roundedCount == mBaseTarget) {
-            tvCounter.setTextColor(getResources().getColor(R.color.glowGreen));
-            score *= 2;
-        }
+        int weightedAccuracy = calculateAccuracy(mBaseTarget, roundedCount);
+        int score = calculateScore(weightedAccuracy);
+        updateStateScore(score);
+        changeCounterColorIfDeadOn(roundedCount, mBaseTarget, tvCounter);
 
         Log.d(DEBUG_TAG, "**********onAccelCounterStopped()**********" +
                 "\n  elapsed accelerated count: " + roundedCount +
@@ -181,19 +150,58 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
                 "\n                     target: " + mBaseTarget +
                 "\n                   accuracy: " + weightedAccuracy + "%");
 
-        state.setmTurnPoints(score);
-        state.updateRunningScoreTotal(score);
-        long onCounterCancelledElapsedTime = SystemClock.elapsedRealtime() - mStartTime;
-        Log.d(DEBUG_TAG, "onAccelCounterStopped() elapsed millis: " + Long.toString
-                (onCounterCancelledElapsedTime));
-
-        //        TODO make this info display when the turn resets
         gameInfoDisplayer.displayImmediateGameInfoAfterTurn(tvAccuracy);
-        // async task updating the db score.  onDbScoreUpdatedEndOfTurn() runs in onPostExecute.
-        // There we check to see if we have lives left, if we do, we start the  ResetNextTurnAsync,
-        // if not, we launch the OutOfLives Dialog
         UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
         updateScoreDbAsync.execute(state.getmRunningScoreTotal());
+    }*/
+
+    @Override
+    protected void onCounterStopped(long elapsedCount) {
+        gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
+        gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
+        isStopClickable = false;
+
+        double roundedCount = calculateRoundedCount(elapsedCount, MAX_DISPLAYED_COUNTER_VALUE);
+
+        String roundedCountStr = generateRoundedCountStr(roundedCount);
+        tvCounter.setText(roundedCountStr);
+
+        int weightedAccuracy = calculateAccuracy(mBaseTarget, roundedCount);
+        int score = calculateScore(weightedAccuracy);
+        updateStateScore(score);
+        changeCounterColorIfDeadOn(roundedCount, mBaseTarget, tvCounter);
+
+        Log.d(DEBUG_TAG, "**********onAccelCounterStopped()**********" +
+                "\n  elapsed accelerated count: " + roundedCount +
+                "\n elapsed accelerated string: " + roundedCountStr +
+                "\n                     target: " + mBaseTarget +
+                "\n                   accuracy: " + weightedAccuracy + "%");
+
+        gameInfoDisplayer.displayImmediateGameInfoAfterTurn(tvAccuracy);
+        UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
+        updateScoreDbAsync.execute(state.getmRunningScoreTotal());
+    }
+
+    @Override
+    protected int calculateAccuracy(double target, double elapsedCount) {
+        int weightedAccuracy = state.calcWeightedAccuracy(target, elapsedCount);
+        state.setmWeightedAccuracy(weightedAccuracy);
+        return weightedAccuracy;
+    }
+
+    private int calculateScore(int accuracy) {
+        int score = state.calcScore(accuracy);
+        if (accuracy > SCORE_QUADRUPLE_THRESHOLD) {
+            score *= FOUR;
+        } else if (accuracy > SCORE_DOUBLE_THRESHOLD) {
+            score *= TWO;
+        }
+        return score;
+    }
+
+    private void updateStateScore(int score) {
+        state.setmTurnPoints(score);
+        state.updateRunningScoreTotal(score);
     }
 
     private void resetBasicTimeValues() {
@@ -457,7 +465,7 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
             gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
             gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
             isStopClickable = false;
-            onAccelCounterStopped(elapsedAcceleratedCount);
+            onCounterStopped(elapsedAcceleratedCount);
         }
         return false;
     }
@@ -551,7 +559,7 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
 
         @Override
         public void run() {
-            onAccelCounterStopped(maxAccelCount);
+            onCounterStopped(maxAccelCount);
         }
     }
 

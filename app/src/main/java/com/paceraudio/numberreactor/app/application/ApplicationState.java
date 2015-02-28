@@ -46,7 +46,7 @@ public class ApplicationState extends Application{
     private static final int PLUS_TWO_LIVES = 2;
     private static final int PLUS_ONE_LIFE = 1;
     private static final int MINUS_ONE_LIFE = -1;
-    private static final int PLUS_TWO_LIVES_THRESHOLD = 98;
+    private static final int PLUS_ONE_LIVE_THRESHOLD = 98;
 
     private static final int RANDOM_TARGET_THRESHOLD = 3;
 
@@ -197,19 +197,27 @@ public class ApplicationState extends Application{
 
 //    Methods for calculating the game values stored in this class
 
-    public double roundElapsedCountLong(long accelCount, String fromActivity, double fadeCountCeiling) {
+    /*public double roundElapsedCountLong(long elapsedCount, String fromActivity, double counterCeiling) {
 
-        Log.d("jwc", "mState roundElapsedCountLong incoming param: " + accelCount);
-        Log.d("jwc", "mState roundElapsedCountLon rounded count: " + accelCount / 1000d);
+        Log.d("jwc", "mState roundElapsedCountLong incoming param: " + elapsedCount);
+        Log.d("jwc", "mState roundElapsedCountLon rounded count: " + elapsedCount / 1000d);
 
-        if (accelCount >= MAX_ACCEL_COUNT_VALUE && fromActivity.equals(FROM_COUNTER_ACTIVITY)) {
+        if (elapsedCount >= MAX_ACCEL_COUNT_VALUE && fromActivity.equals(FROM_COUNTER_ACTIVITY)) {
             return MAX_ACCEL_COUNT_DISPLAYED;
         }
-        if (accelCount >= fadeCountCeiling && fromActivity.equals(FROM_FADE_COUNTER_ACTIVITY)) {
-            return fadeCountCeiling;
+        if (elapsedCount >= counterCeiling && fromActivity.equals(FROM_FADE_COUNTER_ACTIVITY)) {
+            return counterCeiling;
         }
 
-        return accelCount / MILLIS_IN_SECONDS;
+        return elapsedCount / MILLIS_IN_SECONDS;
+    }*/
+
+    public double roundElapsedCount(long elapsedCount, double counterCeiling) {
+        if (elapsedCount / MILLIS_IN_SECONDS >= counterCeiling) {
+            return counterCeiling;
+        } else {
+            return elapsedCount / MILLIS_IN_SECONDS;
+        }
     }
 
     public int calcAccuracy(double target, double elapsedCount) {
@@ -246,7 +254,7 @@ public class ApplicationState extends Application{
        if (mWeightedAccuracy == ONE_HUNDRED) {
            livesGained = PLUS_TWO_LIVES;
        }
-       else if (mWeightedAccuracy > PLUS_TWO_LIVES_THRESHOLD) {
+       else if (mWeightedAccuracy > PLUS_ONE_LIVE_THRESHOLD) {
            livesGained = PLUS_ONE_LIFE;
        }
        else if (mWeightedAccuracy <= LIFE_LOSS_THRESHOLD) {
@@ -261,7 +269,7 @@ public class ApplicationState extends Application{
         if (mTurnAccuracy == ONE_HUNDRED) {
            livesGained = PLUS_TWO_LIVES;
         }
-        else if (mTurnAccuracy > PLUS_TWO_LIVES_THRESHOLD) {
+        else if (mTurnAccuracy > PLUS_ONE_LIVE_THRESHOLD) {
             livesGained = PLUS_ONE_LIFE;
         }
         mLives += livesGained;

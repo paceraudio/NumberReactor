@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.paceraudio.numberreactor.app.R;
@@ -36,6 +37,9 @@ public abstract class TimeCounter extends FragmentActivity {
     protected static TextView tvLives;
     protected static TextView tvScore;
     protected static TextView tvLevel;*/
+
+    //protected static Button startButton;
+    //protected static Button stopButton;
 
     protected static LayerDrawable startButtonDisengagedDrawables;
     protected static LayerDrawable startButtonEngagedDrawables;
@@ -64,6 +68,11 @@ public abstract class TimeCounter extends FragmentActivity {
     protected static final long ARMED_START_BUTTON_FLASH_DURATION = 500;
     protected static final long ARMED_STOP_BUTTON_FLASH_DURATION = 90;
 
+    protected static final int SCORE_DOUBLE_THRESHOLD = 98;
+    protected static final int SCORE_QUADRUPLE_THRESHOLD = 99;
+    protected static final int TWO = 2;
+    protected static final int FOUR = 4;
+
 
 
 
@@ -85,6 +94,8 @@ public abstract class TimeCounter extends FragmentActivity {
         gameInfoDisplayer = new GameInfoDisplayer(ApplicationState.getAppContext());
         mDbHelper = new DBHelper(this);
         initButtonDrawables();
+        //startButton = (Button) findViewById(R.id.b_start);
+        //stopButton = (Button) findViewById(R.id.b_stop);
     }
 
     @Override
@@ -152,7 +163,20 @@ public abstract class TimeCounter extends FragmentActivity {
 
     protected abstract void onCounterStopped(long elapsedCount);
 
+    protected double calculateRoundedCount(long elapsedCount, double counterCeiling) {
+        //return state.roundElapsedCountLong(elapsedCount, fromActivity,counterCeiling);
+        return state.roundElapsedCount(elapsedCount, counterCeiling);
+    }
+
     protected String generateRoundedCountStr(double roundedCount) {
         return String.format(DOUBLE_FORMAT, roundedCount);
+    }
+
+    protected abstract int calculateAccuracy(double target, double elapsedCount);
+
+    protected void changeCounterColorIfDeadOn(double roundedCount, double target, TextView tvCounter) {
+        if (roundedCount == target) {
+            tvCounter.setTextColor(getResources().getColor(R.color.glowGreen));
+        }
     }
 }
