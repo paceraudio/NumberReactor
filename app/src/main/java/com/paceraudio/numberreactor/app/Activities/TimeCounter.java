@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.paceraudio.numberreactor.app.R;
@@ -40,14 +41,14 @@ public abstract class TimeCounter extends FragmentActivity {
     /*protected static Button startButton;
     protected static Button stopButton;*/
 
-    protected static LayerDrawable startButtonDisengagedDrawables;
-    protected static LayerDrawable startButtonEngagedDrawables;
-    protected static LayerDrawable startButtonArmedDrawables;
-    protected static LayerDrawable stopButtonDisengagedDrawables;
-    protected static LayerDrawable stopButtonEngagedDrawables;
-    protected static LayerDrawable stopButtonArmedDrawables;
+    protected static LayerDrawable startButtonDisengaged;
+    protected static LayerDrawable startButtonEngaged;
+    protected static LayerDrawable startButtonArmed;
+    protected static LayerDrawable stopButtonDisengaged;
+    protected static LayerDrawable stopButtonEngaged;
+    protected static LayerDrawable stopButtonArmed;
 
-    protected ApplicationState state;
+    protected static ApplicationState state;
     protected static GameInfoDisplayer gameInfoDisplayer;
     protected DBHelper mDbHelper;
 
@@ -78,12 +79,12 @@ public abstract class TimeCounter extends FragmentActivity {
 
     protected void initButtonDrawables() {
         ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
-        startButtonDisengagedDrawables = buttonDrawableView.mStartDisengagedDrawables;
-        startButtonEngagedDrawables = buttonDrawableView.mStartEngagedDrawables;
-        startButtonArmedDrawables = buttonDrawableView.mStartArmed;
-        stopButtonArmedDrawables = buttonDrawableView.mStopArmed;
-        stopButtonDisengagedDrawables = buttonDrawableView.mStopDisengagedDrawables;
-        stopButtonEngagedDrawables = buttonDrawableView.mStopEngagedDrawables;
+        startButtonDisengaged = buttonDrawableView.mStartDisengagedDrawables;
+        startButtonEngaged = buttonDrawableView.mStartEngagedDrawables;
+        startButtonArmed = buttonDrawableView.mStartArmed;
+        stopButtonArmed = buttonDrawableView.mStopArmed;
+        stopButtonDisengaged = buttonDrawableView.mStopDisengagedDrawables;
+        stopButtonEngaged = buttonDrawableView.mStopEngagedDrawables;
     }
 
 
@@ -165,28 +166,28 @@ public abstract class TimeCounter extends FragmentActivity {
         stopButton = (Button) findViewById(R.id.b_stop);
     }*/
 
-    protected abstract void onCounterStopped(long elapsedCount);
+    //protected abstract void onCounterStopped(long elapsedCount);
 
-    protected double calculateRoundedCount(long elapsedCount, double counterCeiling) {
+    protected static double calculateRoundedCount(long elapsedCount, double counterCeiling) {
         //return state.roundElapsedCountLong(elapsedCount, fromActivity,counterCeiling);
         return state.roundElapsedCount(elapsedCount, counterCeiling);
     }
 
-    protected String generateRoundedCountStr(double roundedCount) {
+    protected static String generateRoundedCountStr(double roundedCount) {
         return String.format(DOUBLE_FORMAT, roundedCount);
     }
 
-    protected abstract int calculateAccuracy(double target, double elapsedCount);
+    /*protected abstract int calculateAccuracy(double target, double elapsedCount);*/
 
-    protected void updateStateScore(int score) {
+    protected static void updateStateScore(int score) {
         state.setmTurnPoints(score);
         state.updateRunningScoreTotal(score);
     }
 
-    protected void changeCounterColorIfDeadOn(double roundedCount, double target,
+    protected static void changeCounterColorIfDeadOn(double roundedCount, double target,
                                               TextView tvCounter) {
         if (roundedCount == target) {
-            tvCounter.setTextColor(getResources().getColor(R.color.glowGreen));
+            tvCounter.setTextColor(ApplicationState.getAppContext().getResources().getColor(R.color.glowGreen));
         }
     }
 
@@ -212,4 +213,33 @@ public abstract class TimeCounter extends FragmentActivity {
             return NORMAL_TURN_RESET;
         }
     }
+
+    protected static void flashStartButtonArmed(Button button) {
+        if (isStartClickable) {
+            if (isStartFlashing) {
+                gameInfoDisplayer.showButtonState(button, startButtonDisengaged);
+                isStartFlashing = false;
+            } else {
+                gameInfoDisplayer.showButtonState(button, startButtonArmed);
+                isStartFlashing = true;
+            }
+        }
+    }
+
+    protected static void flashStopButtonArmed(Button button) {
+        if (isStopClickable) {
+            if (isStopFlashing) {
+                gameInfoDisplayer.showButtonState(button, stopButtonDisengaged);
+                isStopFlashing = false;
+            } else {
+                gameInfoDisplayer.showButtonState(button, stopButtonArmed);
+                isStopFlashing = true;
+
+            }
+        }
+    }
+
+/*
+    protected abstract void updateCounter(long elapsedCount, int alpha);
+*/
 }

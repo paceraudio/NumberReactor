@@ -3,6 +3,7 @@ package com.paceraudio.numberreactor.app.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -15,19 +16,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.paceraudio.numberreactor.app.application.ApplicationState;
 import com.paceraudio.numberreactor.app.db.UpdateDbListener;
 import com.paceraudio.numberreactor.app.db.UpdateLevelDbAsync;
 import com.paceraudio.numberreactor.app.db.UpdateScoreDbAsync;
 import com.paceraudio.numberreactor.app.dialogs.OutOfLivesDialogFragment;
 import com.paceraudio.numberreactor.app.R;
+import com.paceraudio.numberreactor.app.util.ResetNextTurnAsync;
 import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
 
 
-public class CounterActivity extends TimeCounter implements UpdateDbListener,
-        ResetNextTurnListener, OutOfLivesDialogFragment.OnFragmentInteractionListener,
+public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*/
+        /*ResetNextTurnListener,*/ OutOfLivesDialogFragment.OnFragmentInteractionListener,
         SharedPreferences.OnSharedPreferenceChangeListener, View.OnTouchListener {
 
-    public double mBaseTarget;
+    public static double mBaseTarget;
     public double mTurnTarget;
 
     private static TextView tvCounter;
@@ -79,6 +82,8 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
 
     private boolean mIsListeningForSharedPrefChanges = false;
 
+    private static UpdateDbListener updateDbListener;
+    private static ResetNextTurnListener resetNextTurnListener;
 
 
     @Override
@@ -96,8 +101,10 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         startButton = (Button) findViewById(R.id.b_start);
         stopButton = (Button) findViewById(R.id.b_stop);
 
+        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengaged);
 
-        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+        initResetNextTurnListener();
+        initUpdateDbListener();
 
         Log.d(DEBUG_TAG, "\n--------------------**********NEW GAME*********--------------------");
 
@@ -129,40 +136,10 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         }
     }
 
-
-
-    // runs when mCounter thread is  is cancelled
-   /* public void onAccelCounterStopped(long elapsedCount) {
-
-        gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
-        gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
-        isStopClickable = false;
-
-        double roundedCount = calculateRoundedCount(elapsedCount, MAX_DISPLAYED_COUNTER_VALUE);
-
-        String roundedCountStr = generateRoundedCountStr(roundedCount);
-        tvCounter.setText(roundedCountStr);
-
-        int weightedAccuracy = calculateAccuracy(mBaseTarget, roundedCount);
-        int score = calculateScore(weightedAccuracy);
-        updateStateScore(score);
-        changeCounterColorIfDeadOn(roundedCount, mBaseTarget, tvCounter);
-
-        Log.d(DEBUG_TAG, "**********onAccelCounterStopped()**********" +
-                "\n  elapsed accelerated count: " + roundedCount +
-                "\n elapsed accelerated string: " + roundedCountStr +
-                "\n                     target: " + mBaseTarget +
-                "\n                   accuracy: " + weightedAccuracy + "%");
-
-        gameInfoDisplayer.displayImmediateGameInfoAfterTurn(tvAccuracy);
-        UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
-        updateScoreDbAsync.execute(state.getmRunningScoreTotal());
-    }*/
-
-    @Override
-    protected void onCounterStopped(long elapsedCount) {
-        gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
-        gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
+    //@Override
+    protected static void onCounterStopped(long elapsedCount) {
+        gameInfoDisplayer.showButtonState(stopButton, stopButtonEngaged);
+        gameInfoDisplayer.showButtonState(startButton, startButtonDisengaged);
         isStopClickable = false;
 
         double roundedCount = calculateRoundedCount(elapsedCount, MAX_DISPLAYED_COUNTER_VALUE);
@@ -183,18 +160,19 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
                 "\n                   accuracy: " + weightedAccuracy + "%");
 
         gameInfoDisplayer.displayImmediateGameInfoAfterTurn(tvAccuracy);
-        UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(this, this);
+        UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(ApplicationState
+                .getAppContext(), updateDbListener);
         updateScoreDbAsync.execute(state.getmRunningScoreTotal());
     }
 
-    @Override
-    protected int calculateAccuracy(double target, double elapsedCount) {
+    //@Override
+    protected static int calculateAccuracy(double target, double elapsedCount) {
         int weightedAccuracy = state.calcWeightedAccuracy(target, elapsedCount);
         state.setmWeightedAccuracy(weightedAccuracy);
         return weightedAccuracy;
     }
 
-    private int calculateScore(int accuracy) {
+    private static int calculateScore(int accuracy) {
         int score = state.calcScore(accuracy);
         if (accuracy > SCORE_QUADRUPLE_THRESHOLD) {
             score *= FOUR;
@@ -274,7 +252,7 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         // because we didn't fade the counter back in before launching FadeCounter
         gameInfoDisplayer.resetCounterToZero(tvCounter);
         isStartClickable = true;
-        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengaged);
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLives,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
         flashStartButton();
@@ -328,42 +306,13 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         }
     }
 
-    //    Listener methods for AsyncTasks
-    //
-    // After the db is updated, we reset for a new turn if we have lives left. We check if
-    // the turn just played was the last, if so, we send a different param to the ResetNextTurnAsync
-    // to avoid fading in a "0.00" fresh counter before launching the new activity.
-    @Override
-    public void onDbScoreUpdatedEndOfTurn() {
-        Log.d(DEBUG_TAG, "updated score from update db async: " + Integer.toString(mDbHelper
-                .queryScoreFromDb()));
-
-        launchResetNextTurnAsync(this, this, tvCounter, tvLives, tvScore, weightedAccuracy, LIFE_LOSS_POSSIBLE);
-    }
-
-    // Runs in onPostExecute of ResetNextTurnAsync
-    @Override
-    public void onNextTurnReset() {
-        if (checkIfLivesLeft()) {
-            if (checkIfLastTurn() == LAST_TURN_RESET_BEFORE_NEW_ACTIVITY) {
-                launchFadeCounterActivity();
-            } else {
-                resetTimeValuesBetweenTurns();
-                gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
-                isStartClickable = true;
-            }
-        } else {
-            launchOutOfLivesDialog();
-        }
-    }
-
     //  Dialog fragment interaction methods
     //    TODO make sure a new row is created in db, because we are starting a new game
     @Override
     public void onOkClicked() {
         mDialogFragment.dismiss();
         setInitialTimeValuesLevelOne();
-        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
+        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengaged);
         gameInfoDisplayer.resetCounterToZero(tvCounter);
     }
 
@@ -417,22 +366,22 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (v == startButton && isStartClickable) {
-            gameInfoDisplayer.showButtonState(startButton, startButtonEngagedDrawables);
+            gameInfoDisplayer.showButtonState(startButton, startButtonEngaged);
             CounterRunnable counterRunnable = new CounterRunnable(this);
             Thread counterThread = new Thread(counterRunnable);
             counterThread.start();
             isStartClickable = false;
             isStopClickable = true;
         } else if (v == stopButton && isStopClickable) {
-            gameInfoDisplayer.showButtonState(stopButton, stopButtonEngagedDrawables);
-            gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables);
+            gameInfoDisplayer.showButtonState(stopButton, stopButtonEngaged);
+            gameInfoDisplayer.showButtonState(startButton, startButtonDisengaged);
             isStopClickable = false;
             onCounterStopped(elapsedAcceleratedCount);
         }
         return false;
     }
 
-     static void updateCounter(long accelCount) {
+    static void updateCounter(long accelCount) {
         if (isStopClickable) {
             double elapsedAccelCountDouble = accelCount / MILLIS_IN_SECONDS;
             tvCounter.setText(String.format(DOUBLE_FORMAT, elapsedAccelCountDouble));
@@ -442,35 +391,47 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         }
     }
 
-    static void flashStartButtonArmed() {
-        if (isStartClickable) {
-            if (isStartFlashing) {
-                gameInfoDisplayer.showButtonState(startButton, startButtonDisengagedDrawables );
-                isStartFlashing = false;
-            } else {
-                gameInfoDisplayer.showButtonState(startButton, startButtonArmedDrawables);
-                isStartFlashing = true;
+    /*@Override
+    protected void updateCounter(long elapsedCount, int alpha) {
+
+    }*/
+
+    private void initResetNextTurnListener() {
+        resetNextTurnListener = new ResetNextTurnListener() {
+            @Override
+            public void onNextTurnReset() {
+                if (checkIfLivesLeft()) {
+                    if (checkIfLastTurn() == LAST_TURN_RESET_BEFORE_NEW_ACTIVITY) {
+                        launchFadeCounterActivity();
+                    } else {
+                        resetTimeValuesBetweenTurns();
+                        gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengaged);
+                        isStartClickable = true;
+                    }
+                } else {
+                    launchOutOfLivesDialog();
+                }
             }
-        }
+        };
     }
 
-    static void flashStopButtonArmed() {
-        if (isStopClickable) {
-            if (!isStopFlashing) {
-                gameInfoDisplayer.showButtonState(stopButton, stopButtonArmedDrawables);
-                isStopFlashing = true;
-            } else {
-                gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengagedDrawables);
-                isStopFlashing = false;
+    private void initUpdateDbListener() {
+        updateDbListener = new UpdateDbListener() {
+            @Override
+            public void onDbScoreUpdatedEndOfTurn() {
+                launchResetNextTurnAsync(resetNextTurnListener, ApplicationState.getAppContext(),
+                        tvCounter, tvLives, tvScore, weightedAccuracy, LIFE_LOSS_POSSIBLE);
             }
-        }
+        };
     }
 
+    static class StartButtonArmedRunnable implements Runnable {
 
-    class StartButtonArmedRunnable implements Runnable {
+        Handler handler;
 
         public StartButtonArmedRunnable() {
             /*this.activity = activity;*/
+            handler = new Handler();
         }
 
         @Override
@@ -481,38 +442,37 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
         private void showStartButtonArmed() {
             long startTime = SystemClock.elapsedRealtime();
             long elapsedTime;
-            //long flashDuration = ARMED_START_BUTTON_FLASH_DURATION;
             long runningFlashDuration = ARMED_START_BUTTON_FLASH_DURATION;
-            while(isStartClickable) {
+            while (isStartClickable) {
                 elapsedTime = SystemClock.elapsedRealtime() - startTime;
                 if (elapsedTime >= runningFlashDuration) {
                     FlashStartButtonRunnable runnable = new FlashStartButtonRunnable();
-                    runOnUiThread(runnable);
+                    handler.post(runnable);
                     runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
                 }
             }
-            gameInfoDisplayer.showButtonState(startButton, startButtonEngagedDrawables);
+            gameInfoDisplayer.showButtonState(startButton, startButtonEngaged);
         }
     }
 
 
-    class FlashStartButtonRunnable implements Runnable {
+    static class FlashStartButtonRunnable implements Runnable {
         @Override
         public void run() {
-            flashStartButtonArmed();
+            flashStartButtonArmed(startButton);
         }
     }
 
 
-    class FlashStopButtonRunnable implements  Runnable {
+    static class FlashStopButtonRunnable implements Runnable {
         @Override
         public void run() {
-            flashStopButtonArmed();
+            flashStopButtonArmed(stopButton);
         }
     }
 
 
-    class UpdateCounterAfterTimeoutRunnable implements Runnable {
+    static class UpdateCounterAfterTimeoutRunnable implements Runnable {
         long maxAccelCount;
 
         public UpdateCounterAfterTimeoutRunnable(long maxAccelCount) {
@@ -526,10 +486,7 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
     }
 
 
-
-
-
-    class UpdateCounterRunnable implements Runnable {
+    static class UpdateCounterRunnable implements Runnable {
         long accelCount;
 
         public UpdateCounterRunnable(long accelCount) {
@@ -543,23 +500,20 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
     }
 
 
-
-
-    class CounterRunnable implements Runnable {
+    static class CounterRunnable implements Runnable {
 
         Activity activity;
-//        Handler handler;
+        Handler handler;
 
         public CounterRunnable(Activity activity) {
             this.activity = activity;
-//            this.handler = handler;
+            handler = new Handler();
         }
 
 
         @Override
         public void run() {
             runCounter();
-
         }
 
         private void runCounter() {
@@ -590,24 +544,25 @@ public class CounterActivity extends TimeCounter implements UpdateDbListener,
                             (durationIncrement < DURATION_DECREASE_UPDATE && postCount % 3 == 0)) {
                         UpdateCounterRunnable updateCounterRunnable = new UpdateCounterRunnable
                                 (elapsedAcceleratedCount);
-                        runOnUiThread(updateCounterRunnable);
+                        handler.post(updateCounterRunnable);
 
                         // Flashes stop button to show its armed
-                        runningFlashDuration += showStopButtonArmed(elapsedTimeMillis, runningFlashDuration);
+                        runningFlashDuration += showStopButtonArmed(elapsedTimeMillis,
+                                runningFlashDuration);
                     }
                 }
             }
             if (elapsedAcceleratedCount >= MAX_COUNTER_VALUE_MILLIS && isStopClickable) {
                 UpdateCounterAfterTimeoutRunnable runnable;
                 runnable = new UpdateCounterAfterTimeoutRunnable(elapsedAcceleratedCount);
-                runOnUiThread(runnable);
+                handler.post(runnable);
             }
         }
 
         private long showStopButtonArmed(long elapsed, long runningDur) {
             if (elapsed >= runningDur) {
                 FlashStopButtonRunnable runnable = new FlashStopButtonRunnable();
-                runOnUiThread(runnable);
+                handler.post(runnable);
                 return ARMED_STOP_BUTTON_FLASH_DURATION;
             }
             return 0;

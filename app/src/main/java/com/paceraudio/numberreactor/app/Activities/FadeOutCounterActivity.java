@@ -70,7 +70,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
         //fadeStartButton = (Button) findViewById(R.id.b_start);
         //fadeStopButton = (Button) findViewById(R.id.b_stop);
 
-        gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengagedDrawables);
+        gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengaged);
 
         initFadeVariables();
         fadeStartButton.setOnTouchListener(this);
@@ -102,11 +102,11 @@ public class FadeOutCounterActivity extends TimeCounter implements
         blueValue = Color.blue(mFadeCounterColor);
     }
 
-    @Override
+    //@Override
     protected void onCounterStopped(long elapsedCount) {
 
-        gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngagedDrawables);
-        gameInfoDisplayer.showButtonState(fadeStartButton, startButtonDisengagedDrawables);
+        gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngaged);
+        gameInfoDisplayer.showButtonState(fadeStartButton, startButtonDisengaged);
         isStopClickable = false;
 
         double roundedCount = calculateRoundedCount(elapsedCount, counterCeilingSeconds);
@@ -130,7 +130,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
         tvFadeCounter.setTextColor(mFadeCounterColor);
     }
 
-    @Override
+   // @Override
     protected int calculateAccuracy(double target, double elapsedCount) {
         int accuracy = state.calcAccuracy(target, elapsedCount);
         state.setmTurnAccuracy(accuracy);
@@ -165,14 +165,14 @@ public class FadeOutCounterActivity extends TimeCounter implements
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (v == fadeStartButton && isStartClickable) {
-            gameInfoDisplayer.showButtonState(fadeStartButton, startButtonEngagedDrawables);
+            gameInfoDisplayer.showButtonState(fadeStartButton, startButtonEngaged);
             FadeCounterRunnable fadeCounterRunnable = new FadeCounterRunnable(this);
             Thread fadeCounterThread = new Thread(fadeCounterRunnable);
             fadeCounterThread.start();
             isStartClickable = false;
             isStopClickable = true;
         } else if (v == fadeStopButton && isStopClickable) {
-            gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngagedDrawables);
+            gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngaged);
             isStopClickable = false;
             onCounterStopped(elapsedTimeMillis);
         }
@@ -188,31 +188,15 @@ public class FadeOutCounterActivity extends TimeCounter implements
         }
     }
 
-
-    static void flashStartButtonArmed() {
-        if (isStartClickable) {
-            if (isStartFlashing) {
-                gameInfoDisplayer.showButtonState(fadeStartButton, startButtonDisengagedDrawables);
-                isStartFlashing = false;
-            } else {
-                gameInfoDisplayer.showButtonState(fadeStartButton, startButtonArmedDrawables);
-                isStartFlashing = true;
-            }
-        }
-    }
-
-    static void flashStopButtonArmed() {
+    /*@Override
+    protected void updateCounter(long elapsedCount, int alpha) {
         if (isStopClickable) {
-            if (!isStopFlashing) {
-                gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonArmedDrawables);
-                isStopFlashing = true;
-            } else {
-                gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengagedDrawables);
-                isStopFlashing = false;
-            }
+            double elapsedSeconds = elapsedCount / MILLIS_IN_SECONDS;
+            tvFadeCounter.setText(String.format(DOUBLE_FORMAT, elapsedSeconds));
+            tvFadeCounter.setTextColor(Color.argb(alpha, redValue, greenValue, blueValue));
+            elapsedTimeMillis = elapsedCount;
         }
-    }
-
+    }*/
 
     class StartButtonArmedRunnable implements Runnable {
 
@@ -238,15 +222,17 @@ public class FadeOutCounterActivity extends TimeCounter implements
                     runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
                 }
             }
-            gameInfoDisplayer.showButtonState(fadeStartButton, startButtonEngagedDrawables);
+            gameInfoDisplayer.showButtonState(fadeStartButton, startButtonEngaged);
         }
     }
 
-
     class FlashStartButtonRunnable implements Runnable {
         @Override
-        public void run() {
+        /*public void run() {
             flashStartButtonArmed();
+        }*/
+        public void run() {
+            flashStartButtonArmed(fadeStartButton);
         }
     }
 
@@ -254,7 +240,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
     class FlashStopButtonRunnable implements  Runnable {
         @Override
         public void run() {
-            flashStopButtonArmed();
+            flashStopButtonArmed(fadeStopButton);
         }
     }
 
