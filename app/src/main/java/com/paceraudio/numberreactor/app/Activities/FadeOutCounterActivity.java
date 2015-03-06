@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.paceraudio.numberreactor.app.R;
+import com.paceraudio.numberreactor.app.application.ApplicationState;
 import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
 
 
@@ -29,17 +31,19 @@ public class FadeOutCounterActivity extends TimeCounter implements
     private static Button fadeStopButton;
 
     private static long elapsedTimeMillis;
-    private double mTarget;
+    private static double target;
     private double mFadeIncrement;
     private double mRunningFadeTime;
 
-    private int mFadeCounterColor;
+    private static int fadeCounterColor;
     private static int alphaValue;
     private static int redValue;
     private static int greenValue;
     private static int blueValue;
 
     private static int straightAccuracy;
+
+    private static ResetNextTurnListener resetNextTurnListener;
 
     private static final int SCORE_NOT_POSSIBLE = 0;
     private static boolean IS_LIFE_LOSS_POSSIBLE = false;
@@ -72,6 +76,8 @@ public class FadeOutCounterActivity extends TimeCounter implements
 
         gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengaged);
 
+        initResetNextTurnListener();
+
         initFadeVariables();
         fadeStartButton.setOnTouchListener(this);
         fadeStopButton.setOnTouchListener(this);
@@ -95,55 +101,55 @@ public class FadeOutCounterActivity extends TimeCounter implements
         //        This assumes the alpha value of the color is at its max
         mFadeIncrement = fadeRange / 255;
         mRunningFadeTime = mFadeIncrement;
-        mFadeCounterColor = tvFadeCounter.getCurrentTextColor();
-        alphaValue = Color.alpha(mFadeCounterColor);
-        redValue = Color.red(mFadeCounterColor);
-        greenValue = Color.green(mFadeCounterColor);
-        blueValue = Color.blue(mFadeCounterColor);
+        fadeCounterColor = tvFadeCounter.getCurrentTextColor();
+        alphaValue = Color.alpha(fadeCounterColor);
+        redValue = Color.red(fadeCounterColor);
+        greenValue = Color.green(fadeCounterColor);
+        blueValue = Color.blue(fadeCounterColor);
     }
 
     //@Override
-    protected void onCounterStopped(long elapsedCount) {
+    protected static void onCounterStopped(long elapsedCount) {
 
         gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngaged);
         gameInfoDisplayer.showButtonState(fadeStartButton, startButtonDisengaged);
         isStopClickable = false;
 
         double roundedCount = calculateRoundedCount(elapsedCount, counterCeilingSeconds);
-        //roundedCount = mTarget;
+        //roundedCount = target;
         String roundedCountStr = generateRoundedCountStr(roundedCount);
 
-        straightAccuracy = calculateAccuracy(mTarget, roundedCount);
+        straightAccuracy = calculateAccuracy(target, roundedCount);
 
         resetCounterColorAfterFadeOut();
-        changeCounterColorIfDeadOn(roundedCount, mTarget, tvFadeCounter);
+        changeCounterColorIfDeadOn(roundedCount, target, tvFadeCounter);
 
         tvFadeCounter.setText(roundedCountStr);
         gameInfoDisplayer.displayImmediateGameInfoAfterFadeCountTurn(tvFadeAccuracy);
 
         updateStateScore(SCORE_NOT_POSSIBLE);
 
-        launchResetNextTurnAsync(this, this, tvFadeCounter, tvFadeLives, tvFadeScore, straightAccuracy, IS_LIFE_LOSS_POSSIBLE);
+        launchResetNextTurnAsync(resetNextTurnListener, ApplicationState.getAppContext(), tvFadeCounter, tvFadeLives, tvFadeScore, straightAccuracy, IS_LIFE_LOSS_POSSIBLE);
     }
 
-    private void resetCounterColorAfterFadeOut() {
-        tvFadeCounter.setTextColor(mFadeCounterColor);
+    private static void resetCounterColorAfterFadeOut() {
+        tvFadeCounter.setTextColor(fadeCounterColor);
     }
 
    // @Override
-    protected int calculateAccuracy(double target, double elapsedCount) {
+    protected static int calculateAccuracy(double target, double elapsedCount) {
         int accuracy = state.calcAccuracy(target, elapsedCount);
         state.setmTurnAccuracy(accuracy);
         return accuracy;
     }
 
     private void setStateTargetBasedOnLevel() {
-        mTarget = DEFAULT_FADE_COUNTER_TARGET + (state.getLevel() - 1);
-        state.setBaseTarget(mTarget);
+        target = DEFAULT_FADE_COUNTER_TARGET + (state.getLevel() - 1);
+        state.setBaseTarget(target);
         // TODO toggle below for random targets
-        //state.setTurnTarget(mTarget);
-        //counterCeilingMillis = (long) ((mTarget + BUFFER_OVER_TARGET) * MILLIS_IN_SECONDS);
-        counterCeilingSeconds = mTarget + BUFFER_OVER_TARGET;
+        //state.setTurnTarget(target);
+        //counterCeilingMillis = (long) ((target + BUFFER_OVER_TARGET) * MILLIS_IN_SECONDS);
+        counterCeilingSeconds = target + BUFFER_OVER_TARGET;
         counterCeilingMillis = (long) (counterCeilingSeconds * MILLIS_IN_SECONDS);
     }
 
@@ -198,10 +204,27 @@ public class FadeOutCounterActivity extends TimeCounter implements
         }
     }*/
 
-    class StartButtonArmedRunnable implements Runnable {
+    private void initResetNextTurnListener() {
+        resetNextTurnListener = new ResetNextTurnListener() {
+            @Override
+            public void onNextTurnReset() {
+                Log.d(DEBUG_TAG, "ResetNextTurnAsync returning to FadeCounter!!!!");
+                launchCounterActivityWithResult();
+            }
+        };
+    }
 
+    private void launchCounterActivityWithResult() {
+        Intent intent = new Intent(this, CounterActivity.class);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    static class StartButtonArmedRunnable implements Runnable {
+
+        Handler mHandler;
         public StartButtonArmedRunnable() {
-            /*this.activity = activity;*/
+            mHandler = new Handler();
         }
 
         @Override
@@ -218,7 +241,8 @@ public class FadeOutCounterActivity extends TimeCounter implements
                 elapsedTime = SystemClock.elapsedRealtime() - startTime;
                 if (elapsedTime >= runningFlashDuration) {
                     FlashStartButtonRunnable runnable = new FlashStartButtonRunnable();
-                    runOnUiThread(runnable);
+                    //runOnUiThread(runnable);
+                    mHandler.post(runnable);
                     runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
                 }
             }
@@ -226,18 +250,16 @@ public class FadeOutCounterActivity extends TimeCounter implements
         }
     }
 
-    class FlashStartButtonRunnable implements Runnable {
+    static class FlashStartButtonRunnable implements Runnable {
         @Override
-        /*public void run() {
-            flashStartButtonArmed();
-        }*/
+
         public void run() {
             flashStartButtonArmed(fadeStartButton);
         }
     }
 
 
-    class FlashStopButtonRunnable implements  Runnable {
+    static class FlashStopButtonRunnable implements  Runnable {
         @Override
         public void run() {
             flashStopButtonArmed(fadeStopButton);
@@ -245,7 +267,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
     }
 
 
-    class UpdateCounterAfterTimeoutRunnable implements Runnable {
+    static  class UpdateCounterAfterTimeoutRunnable implements Runnable {
         long maxElapsedMillis;
 
         public UpdateCounterAfterTimeoutRunnable(long maxElapsedMillis) {
@@ -259,7 +281,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
     }
 
 
-    class UpdateFadeCounterRunnable implements Runnable {
+    static class UpdateFadeCounterRunnable implements Runnable {
 
         long elapsedMillis;
         int alphaValue;
@@ -275,12 +297,14 @@ public class FadeOutCounterActivity extends TimeCounter implements
         }
     }
 
-    class FadeCounterRunnable implements Runnable {
+    static class FadeCounterRunnable implements Runnable {
 
         Activity activity;
+        Handler mHandler;
 
         public FadeCounterRunnable(Activity activity) {
             this.activity = activity;
+            mHandler = new Handler();
         }
 
         @Override
@@ -314,7 +338,8 @@ public class FadeOutCounterActivity extends TimeCounter implements
                     }
                     UpdateFadeCounterRunnable updateFadeCounterRunnable = new
                             UpdateFadeCounterRunnable(elapsedMillis, alphaValue);
-                    runOnUiThread(updateFadeCounterRunnable);
+                    //runOnUiThread(updateFadeCounterRunnable);
+                    mHandler.post(updateFadeCounterRunnable);
                     duration += durationIncrement;
 
                     // Flashes stop button to show its armed
@@ -323,7 +348,8 @@ public class FadeOutCounterActivity extends TimeCounter implements
             }
             if (elapsedMillis >= counterCeilingMillis && isStopClickable) {
                 UpdateCounterAfterTimeoutRunnable runnable = new UpdateCounterAfterTimeoutRunnable(elapsedMillis);
-                runOnUiThread(runnable);
+                //runOnUiThread(runnable);
+                mHandler.post(runnable);
                 Log.d("jwc", "elapsed Millis from runnable: " + elapsedMillis);
             }
         }
@@ -331,7 +357,8 @@ public class FadeOutCounterActivity extends TimeCounter implements
         private long showStopButtonArmed(long elapsed, long runningDur) {
             if (elapsed >= runningDur) {
                 FlashStopButtonRunnable runnable = new FlashStopButtonRunnable();
-                runOnUiThread(runnable);
+                //runOnUiThread(runnable);
+                mHandler.post(runnable);
                 return ARMED_STOP_BUTTON_FLASH_DURATION;
             }
             return 0;

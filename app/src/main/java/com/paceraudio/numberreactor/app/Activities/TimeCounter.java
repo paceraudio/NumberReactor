@@ -191,7 +191,7 @@ public abstract class TimeCounter extends FragmentActivity {
         }
     }
 
-    protected void launchResetNextTurnAsync(ResetNextTurnListener listener, Context context,
+    protected static void launchResetNextTurnAsync(ResetNextTurnListener listener, Context context,
                                             TextView tvCounter, TextView tvLives,
                                             TextView tvScore, int accuracy,
                                             boolean lifeLossPossible) {
@@ -206,7 +206,7 @@ public abstract class TimeCounter extends FragmentActivity {
         resetNextTurnAsync.execute(param0, param1, param2);
     }
 
-    protected int checkIfLastTurn() {
+    protected static int checkIfLastTurn() {
         if (state.getmTurn() == TURNS_PER_LEVEL) {
             return LAST_TURN_RESET_BEFORE_NEW_ACTIVITY;
         } else {

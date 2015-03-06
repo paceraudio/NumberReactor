@@ -32,11 +32,12 @@ public class ApplicationState extends Application{
     private int mRunningScoreTotal;
     private int mLevel;
     private double mDuration;
+    private int mDifficulty;
 
-    private List<Integer> scoreList;
+    private List<Integer> mScoreList;
     private List<Integer> accuracyList;
 
-    private static final int BEGINNING_NUMBER_OF_LIVES = 4;
+    private static final int BEGINNING_NUMBER_OF_LIVES = 2;
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     private static final int LIFE_LOSS_THRESHOLD = 80;
 
@@ -67,7 +68,7 @@ public class ApplicationState extends Application{
         initGameStats();
         /*mLevel = ONE;
         mRunningScoreTotal = ZERO;
-        scoreList = new ArrayList<Integer>();
+        mScoreList = new ArrayList<Integer>();
         accuracyList = new ArrayList<Integer>();
         mLives = BEGINNING_NUMBER_OF_LIVES;
         mBaseTarget = ZERO;
@@ -83,11 +84,22 @@ public class ApplicationState extends Application{
     private void initGameStats() {
         mLevel = ONE;
         mRunningScoreTotal = ZERO;
-        scoreList = new ArrayList<Integer>();
+        mScoreList = new ArrayList<Integer>();
         accuracyList = new ArrayList<Integer>();
         mLives = BEGINNING_NUMBER_OF_LIVES;
-        mBaseTarget = ZERO;
+        mBaseTarget = BEGINNING_TARGET_LEVEL_ONE;
         mTurnAccuracy = ZERO;
+        mTurnPoints = ZERO;
+        mTurn = ONE;
+    }
+
+    public void resetGameStatsForNewGame() {
+        mLevel = ONE;
+        mRunningScoreTotal = ZERO;
+        mLives = BEGINNING_NUMBER_OF_LIVES;
+        mBaseTarget = BEGINNING_TARGET_LEVEL_ONE;
+        mTurnAccuracy = ZERO;
+        mScoreList.clear();
         mTurnPoints = ZERO;
         mTurn = ONE;
     }
@@ -170,20 +182,29 @@ public class ApplicationState extends Application{
         this.mTurnPoints = mTurnPoints;
     }
 
+    public int getmDifficulty() {
+        return mDifficulty;
+    }
+
+    public void setmDifficulty(int mDifficulty) {
+        this.mDifficulty = mDifficulty;
+    }
+
     public double randomizeTarget(double baseTarget) {
         Random random = new Random();
         return random.nextInt(RANDOM_TARGET_THRESHOLD) + baseTarget;
     }
 
     public void updateRunningScoreTotal(int newScore) {
-        scoreList.add(newScore);
+        mScoreList.add(newScore);
         mRunningScoreTotal += newScore;
     }
 
     public void resetScoreForNewGame() {
-        scoreList.clear();
+        mScoreList.clear();
         mRunningScoreTotal = ZERO;
     }
+
 
     public void resetLivesForNewGame() {
         mLives = BEGINNING_NUMBER_OF_LIVES;

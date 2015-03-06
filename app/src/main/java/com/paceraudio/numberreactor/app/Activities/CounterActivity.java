@@ -22,7 +22,6 @@ import com.paceraudio.numberreactor.app.db.UpdateLevelDbAsync;
 import com.paceraudio.numberreactor.app.db.UpdateScoreDbAsync;
 import com.paceraudio.numberreactor.app.dialogs.OutOfLivesDialogFragment;
 import com.paceraudio.numberreactor.app.R;
-import com.paceraudio.numberreactor.app.util.ResetNextTurnAsync;
 import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
 
 
@@ -188,29 +187,15 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
     }
 
     private void setInitialTimeValuesLevelOne() {
-        //        Get shared prefs and see what the difficulty level is set to.
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String difficultyLevel = prefs.getString(getString(R.string.prefs_difficulty_key), "2");
-        if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_1))) {
-            state.setDuration(BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY);
-        }
-        if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_2))) {
-            state.setDuration(BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL);
-        }
-        if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_3))) {
-            state.setDuration(BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD);
-        }
-
-        state.setBaseTarget(BEGINNING_TARGET_LEVEL_ONE);
-        mBaseTarget = state.getBaseTarget();
+        state.setDuration(checkSharedPrefsDifficulty());
+        state.resetGameStatsForNewGame();
+        resetTargetToStateTarget();
         // TODO uncomment below for random targets
         //state.setTurnTarget(state.randomizeTarget(mBaseTarget));
         //mTurnTarget = state.randomizeTarget(mBaseTarget);
         resetDurationToStateDuration();
         resetBasicTimeValues();
-        mCurrentTurn = state.getmTurn();
-        state.resetScoreForNewGame();
-        state.resetLivesForNewGame();
+        resetTurnToStateTurn();
         isStartClickable = true;
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLives,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
@@ -221,13 +206,28 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
         flashStartButton();
     }
 
+    private double checkSharedPrefsDifficulty() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String difficultyLevel = prefs.getString(getString(R.string.prefs_difficulty_key), "2");
+        state.setmDifficulty(Integer.parseInt(difficultyLevel));
+        if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_1))) {
+            return BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY;
+        }
+        else if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_2))) {
+            return BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL;
+        }
+        else  {
+            return BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD;
+        }
+    }
+
     private void resetTimeValuesBetweenTurns() {
         resetDurationToStateDuration();
         resetBasicTimeValues();
         state.setBaseTarget(mBaseTarget + 1);
         mBaseTarget = state.getBaseTarget();
         // TODO toggle below for random targets
-        state.setTurnTarget(state.randomizeTarget(mBaseTarget));
+        //state.setTurnTarget(state.randomizeTarget(mBaseTarget));
         state.setmTurn(mCurrentTurn + 1);
         mCurrentTurn = state.getmTurn();
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLives,
@@ -241,8 +241,7 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
         // Set target and accelerator to their beginning levels,
         // and increase them based on the
         // current level. Check the SharedPreferences for the difficulty level.
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        updateDifficultyBasedOnPreferencesAndLevel(prefs);
+        updateDifficultyBasedOnPreferencesAndLevel(/*prefs*/);
         resetDurationToStateDuration();
         resetTargetBasedOnLevel();
         resetTurnsToFirstTurn();
@@ -267,6 +266,10 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
     private void resetDurationToStateDuration() {
         levelDuration = state.getDuration();
     }
+
+    private void resetTurnToStateTurn() {mCurrentTurn = state.getmTurn();}
+
+    private void resetTargetToStateTarget() {mBaseTarget = state.getBaseTarget();}
 
     private void resetTargetBasedOnLevel() {
         int target = BEGINNING_TARGET_LEVEL_ONE;
@@ -325,24 +328,12 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         Log.d(DEBUG_TAG, "Shared Pref Changed Listener running.");
-        updateDifficultyBasedOnPreferencesAndLevel(sharedPreferences);
+        updateDifficultyBasedOnPreferencesAndLevel(/*sharedPreferences*/);
     }
 
-    private void updateDifficultyBasedOnPreferencesAndLevel(SharedPreferences prefs) {
+    private void updateDifficultyBasedOnPreferencesAndLevel() {
         int level = state.getLevel();
-        String difficulty = prefs.getString(getString(R.string.prefs_difficulty_key), "-1");
-        if (!difficulty.equals("-1")) {
-            double tempDuration = 0;
-            if (difficulty.equals(getString(R.string.prefs_difficulty_values_1))) {
-                tempDuration = BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY;
-            }
-            if (difficulty.equals(getString(R.string.prefs_difficulty_values_2))) {
-                tempDuration = BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL;
-            }
-            if (difficulty.equals(getString(R.string.prefs_difficulty_values_3))) {
-                tempDuration = BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD;
-            }
-
+        double tempDuration = checkSharedPrefsDifficulty();
             for (int i = 1; i < level; i++) {
                 tempDuration *= DURATION_DECREASE_PER_LEVEL_FACTOR;
             }
@@ -350,11 +341,8 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
             resetDurationToStateDuration();
 
             Log.d(DEBUG_TAG, "updateDifficultyBasedOnPreferencesAndLevel() running" +
-                    "\n difficulty: " + difficulty + "\n new duration: " + state
+                    "\n difficulty: " + state.getmDifficulty() + "\n new duration: " + state
                     .getDuration());
-        } else {
-            Log.e(DEBUG_TAG, "Shared Prefs not working!!!!!!!!!!");
-        }
     }
 
     private void flashStartButton() {
@@ -367,7 +355,7 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
     public boolean onTouch(View v, MotionEvent event) {
         if (v == startButton && isStartClickable) {
             gameInfoDisplayer.showButtonState(startButton, startButtonEngaged);
-            CounterRunnable counterRunnable = new CounterRunnable(this);
+            CounterRunnable counterRunnable = new CounterRunnable();
             Thread counterThread = new Thread(counterRunnable);
             counterThread.start();
             isStartClickable = false;
@@ -381,13 +369,13 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
         return false;
     }
 
-    static void updateCounter(long accelCount) {
+    static void updateCounter(long elapsedCount) {
         if (isStopClickable) {
-            double elapsedAccelCountDouble = accelCount / MILLIS_IN_SECONDS;
-            tvCounter.setText(String.format(DOUBLE_FORMAT, elapsedAccelCountDouble));
+            double elapsedCountDouble = elapsedCount / MILLIS_IN_SECONDS;
+            tvCounter.setText(String.format(DOUBLE_FORMAT, elapsedCountDouble));
             /*Log.d(DEBUG_TAG, LOG_UPDATE_COUNTER + String.format(DOUBLE_FORMAT,
-                    elapsedAccelCountDouble));*/
-            elapsedAcceleratedCount = accelCount;
+                    elapsedCountDouble));*/
+            elapsedAcceleratedCount = elapsedCount;
         }
     }
 
@@ -427,11 +415,10 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
 
     static class StartButtonArmedRunnable implements Runnable {
 
-        Handler handler;
+        Handler mHandler;
 
         public StartButtonArmedRunnable() {
-            /*this.activity = activity;*/
-            handler = new Handler();
+            mHandler = new Handler();
         }
 
         @Override
@@ -447,7 +434,7 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
                 elapsedTime = SystemClock.elapsedRealtime() - startTime;
                 if (elapsedTime >= runningFlashDuration) {
                     FlashStartButtonRunnable runnable = new FlashStartButtonRunnable();
-                    handler.post(runnable);
+                    mHandler.post(runnable);
                     runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
                 }
             }
@@ -502,11 +489,11 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
 
     static class CounterRunnable implements Runnable {
 
-        Activity activity;
+        //Activity activity;
         Handler handler;
 
-        public CounterRunnable(Activity activity) {
-            this.activity = activity;
+        public CounterRunnable() {
+            //this.activity = activity;
             handler = new Handler();
         }
 
