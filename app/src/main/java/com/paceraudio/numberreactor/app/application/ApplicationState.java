@@ -37,7 +37,7 @@ public class ApplicationState extends Application{
     private List<Integer> mScoreList;
     private List<Integer> accuracyList;
 
-    private static final int BEGINNING_NUMBER_OF_LIVES = 2;
+    private static final int BEGINNING_NUMBER_OF_LIVES = 4;
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     private static final int LIFE_LOSS_THRESHOLD = 80;
 

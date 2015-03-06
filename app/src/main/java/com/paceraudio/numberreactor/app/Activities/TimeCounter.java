@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -53,7 +55,7 @@ public abstract class TimeCounter extends FragmentActivity {
     protected DBHelper mDbHelper;
 
     protected static final int BEGINNING_TARGET_LEVEL_ONE = 2;
-    protected static final int TURNS_PER_LEVEL = 2;
+    protected static final int TURNS_PER_LEVEL = 3;
 
     protected static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
     protected static final int NORMAL_TURN_RESET = 0;
@@ -236,6 +238,60 @@ public abstract class TimeCounter extends FragmentActivity {
                 isStopFlashing = true;
 
             }
+        }
+    }
+
+    protected static class StartButtonArmedRunnable implements  Runnable {
+        Button mStartButton;
+        Handler mHandler;
+
+        public StartButtonArmedRunnable(Button startButton) {
+            this.mStartButton = startButton;
+            mHandler = new Handler();
+        }
+        @Override
+        public void run() {
+            showStartButtonArmed(mStartButton);
+        }
+
+        private void showStartButtonArmed(Button startButton) {
+            long startTime = SystemClock.elapsedRealtime();
+            long elapsedTime;
+            long runningFlashDuration = ARMED_START_BUTTON_FLASH_DURATION;
+            while (isStartClickable) {
+                elapsedTime = SystemClock.elapsedRealtime() - startTime;
+                if (elapsedTime >= runningFlashDuration) {
+                    FlashStartButtonRunnable runnable = new FlashStartButtonRunnable(startButton);
+                    mHandler.post(runnable);
+                    runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
+                }
+            }
+            gameInfoDisplayer.showButtonState(startButton, startButtonEngaged);
+        }
+    }
+
+    protected static class FlashStartButtonRunnable implements  Runnable {
+
+        Button mStartButton;
+
+        public FlashStartButtonRunnable(Button startButton) {
+            this.mStartButton = startButton;
+        }
+        @Override
+        public void run() {
+            flashStartButtonArmed(mStartButton);
+        }
+    }
+
+    protected static class FlashStopButtonRunnable implements  Runnable {
+
+        Button mStopButton;
+        public FlashStopButtonRunnable(Button stopButton) {
+            this.mStopButton = stopButton;
+        }
+        @Override
+        public void run() {
+            flashStopButtonArmed(mStopButton);
         }
     }
 

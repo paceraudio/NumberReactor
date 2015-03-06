@@ -163,7 +163,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
     }
 
     private void flashStartButton() {
-        StartButtonArmedRunnable runnable = new StartButtonArmedRunnable();
+        StartButtonArmedRunnable runnable = new StartButtonArmedRunnable(fadeStartButton);
         Thread startButtonArmedThread = new Thread(runnable);
         startButtonArmedThread.start();
     }
@@ -220,7 +220,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
         finish();
     }
 
-    static class StartButtonArmedRunnable implements Runnable {
+    /*static class StartButtonArmedRunnable implements Runnable {
 
         Handler mHandler;
         public StartButtonArmedRunnable() {
@@ -257,14 +257,14 @@ public class FadeOutCounterActivity extends TimeCounter implements
             flashStartButtonArmed(fadeStartButton);
         }
     }
+*/
 
-
-    static class FlashStopButtonRunnable implements  Runnable {
+    /*static class FlashStopButtonRunnable implements  Runnable {
         @Override
         public void run() {
             flashStopButtonArmed(fadeStopButton);
         }
-    }
+    }*/
 
 
     static  class UpdateCounterAfterTimeoutRunnable implements Runnable {
@@ -356,7 +356,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
 
         private long showStopButtonArmed(long elapsed, long runningDur) {
             if (elapsed >= runningDur) {
-                FlashStopButtonRunnable runnable = new FlashStopButtonRunnable();
+                FlashStopButtonRunnable runnable = new FlashStopButtonRunnable(fadeStopButton);
                 //runOnUiThread(runnable);
                 mHandler.post(runnable);
                 return ARMED_STOP_BUTTON_FLASH_DURATION;
