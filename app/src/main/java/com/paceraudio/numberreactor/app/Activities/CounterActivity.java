@@ -2,7 +2,6 @@ package com.paceraudio.numberreactor.app.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -134,11 +133,15 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
         }
     }
 
+    
+
+
     //@Override
     protected static void onCounterStopped(long elapsedCount) {
+
         gameInfoDisplayer.showButtonState(stopButton, stopButtonEngaged);
         gameInfoDisplayer.showButtonState(startButton, startButtonDisengaged);
-        isStopClickable = false;
+        //isStopClickable = false;
 
         double roundedCount = calculateRoundedCount(elapsedCount, MAX_DISPLAYED_COUNTER_VALUE);
         //roundedCount = mBaseTarget;
@@ -440,11 +443,11 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
 
     static class CounterRunnable implements Runnable {
 
-        Handler mHandler;
-        long mStartTime;
+        //Handler handler;
+        //long startTime;
 
         public CounterRunnable() {
-            mHandler = new Handler();
+            /*handler = new Handler()*/;
         }
 
 
@@ -461,7 +464,7 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
             // For the flashing of the armed stop button
             long runningFlashDuration = ARMED_STOP_BUTTON_FLASH_DURATION;
 
-            mStartTime = SystemClock.elapsedRealtime();
+            startTime = SystemClock.elapsedRealtime();
 
             while (elapsedCount <= MAX_COUNTER_VALUE_MILLIS && isStopClickable) {
                 if (checkElapsedTimeAgainstDuration(duration)) {
@@ -476,26 +479,30 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
 
                         // Flashes stop button to show its armed
                         runningFlashDuration += showStopButtonArmed(retrieveElapsedTime(),
-                                runningFlashDuration);
+                                runningFlashDuration, stopButton);
                     }
                 }
             }
-            if (isCounterAtMaxValue(elapsedCount)) {
+            if (isCounterAtMaxValue(elapsedCount, MAX_COUNTER_VALUE_MILLIS)) {
                 postUpdateCounterAfterTimeoutRunnable(elapsedCount);
             }
         }
 
 
-        private long retrieveElapsedTime() {
-            return SystemClock.elapsedRealtime() - mStartTime;
-        }
+        /*private long retrieveElapsedTime() {
+            return SystemClock.elapsedRealtime() - startTime;
+        }*/
 
-        private boolean checkElapsedTimeAgainstDuration(double duration) {
+        /*private boolean checkElapsedTimeAgainstDuration(double duration) {
             return retrieveElapsedTime() >= duration;
-        }
+        }*/
 
-        private long incrementElapsedCount(long elapsedCount) {
-            return elapsedCount += COUNTER_INCREMENT_MILLIS;
+       /* private long incrementElapsedCount(long elapsedCount) {
+            return elapsedCount + COUNTER_INCREMENT_MILLIS;
+        }*/
+
+        private double incrementDuration(double duration, double durationIncrement) {
+            return duration + durationIncrement;
         }
 
         private double changeDurationIfAboveDecreaseCutoff(double durationIncrement) {
@@ -503,10 +510,6 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
                 durationIncrement *= DURATION_DECREASE_FACTOR;
             }
             return durationIncrement;
-        }
-
-        private double incrementDuration(double duration, double durationIncrement) {
-            return duration += durationIncrement;
         }
 
         private int incrementPostCount(int postCount) {
@@ -521,26 +524,26 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
         private void postUpdateCounterRunnable(long elapsedCount) {
             UpdateCounterRunnable updateCounterRunnable = new UpdateCounterRunnable
                     (elapsedCount);
-            mHandler.post(updateCounterRunnable);
+            handler.post(updateCounterRunnable);
         }
 
-        private long showStopButtonArmed(long elapsed, long runningDur) {
+        /*private long showStopButtonArmed(long elapsed, long runningDur, Button stopButton) {
             if (elapsed >= runningDur) {
                 FlashStopButtonRunnable runnable = new FlashStopButtonRunnable(stopButton);
-                mHandler.post(runnable);
+                handler.post(runnable);
                 return ARMED_STOP_BUTTON_FLASH_DURATION;
             }
             return 0;
-        }
+        }*/
 
-        private boolean isCounterAtMaxValue(long elapsedCount) {
-            return elapsedCount >= MAX_COUNTER_VALUE_MILLIS && isStopClickable;
-        }
+        /*private boolean isCounterAtMaxValue(long elapsedCount, long maxCounterValue) {
+            return elapsedCount >= maxCounterValue && isStopClickable;
+        }*/
 
         private void postUpdateCounterAfterTimeoutRunnable(long elapsedCount) {
             UpdateCounterAfterTimeoutRunnable runnable;
             runnable = new UpdateCounterAfterTimeoutRunnable(elapsedCount);
-            mHandler.post(runnable);
+            handler.post(runnable);
         }
     }
 }

@@ -43,6 +43,8 @@ public abstract class TimeCounter extends FragmentActivity {
     /*protected static Button startButton;
     protected static Button stopButton;*/
 
+    protected static Handler handler;
+
     protected static LayerDrawable startButtonDisengaged;
     protected static LayerDrawable startButtonEngaged;
     protected static LayerDrawable startButtonArmed;
@@ -54,8 +56,10 @@ public abstract class TimeCounter extends FragmentActivity {
     protected static GameInfoDisplayer gameInfoDisplayer;
     protected DBHelper mDbHelper;
 
+    protected static long startTime;
+
     protected static final int BEGINNING_TARGET_LEVEL_ONE = 2;
-    protected static final int TURNS_PER_LEVEL = 3;
+    protected static final int TURNS_PER_LEVEL = 1;
 
     protected static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
     protected static final int NORMAL_TURN_RESET = 0;
@@ -96,6 +100,7 @@ public abstract class TimeCounter extends FragmentActivity {
         state = (ApplicationState) getApplicationContext();
         gameInfoDisplayer = new GameInfoDisplayer(ApplicationState.getAppContext());
         mDbHelper = new DBHelper(this);
+        handler = new Handler();
         initButtonDrawables();
     }
 
@@ -168,7 +173,7 @@ public abstract class TimeCounter extends FragmentActivity {
         stopButton = (Button) findViewById(R.id.b_stop);
     }*/
 
-    //protected abstract void onCounterStopped(long elapsedCount);
+    //protected void onCounterStopped(long elapsedCount) {}
 
     protected static double calculateRoundedCount(long elapsedCount, double counterCeiling) {
         //return state.roundElapsedCountLong(elapsedCount, fromActivity,counterCeiling);
@@ -241,6 +246,34 @@ public abstract class TimeCounter extends FragmentActivity {
         }
     }
 
+
+    /*******************************************************************/
+
+    protected static long retrieveElapsedTime() {
+        return SystemClock.elapsedRealtime() - startTime;
+    }
+
+    protected static boolean checkElapsedTimeAgainstDuration(double duration) {
+        return retrieveElapsedTime() >= duration;
+    }
+
+    protected static long incrementElapsedCount(long elapsedCount) {
+        return elapsedCount + COUNTER_INCREMENT_MILLIS;
+    }
+
+    protected static long showStopButtonArmed(long elapsed, long runningDur, Button stopButton) {
+        if (elapsed >= runningDur) {
+            FlashStopButtonRunnable runnable = new FlashStopButtonRunnable(stopButton);
+            handler.post(runnable);
+            return ARMED_STOP_BUTTON_FLASH_DURATION;
+        }
+        return 0;
+    }
+
+    protected static boolean isCounterAtMaxValue(long elapsedCount, long maxCounterValue) {
+        return elapsedCount >= maxCounterValue && isStopClickable;
+    }
+
     protected static class StartButtonArmedRunnable implements  Runnable {
         Button mStartButton;
         Handler mHandler;
@@ -294,6 +327,19 @@ public abstract class TimeCounter extends FragmentActivity {
             flashStopButtonArmed(mStopButton);
         }
     }
+
+    /*static class UpdateCounterAfterTimeoutRunnable implements Runnable {
+        long maxElapsedMillis;
+
+        public UpdateCounterAfterTimeoutRunnable(long maxElapsedMillis) {
+            this.maxElapsedMillis = maxElapsedMillis;
+        }
+
+        @Override
+        public void run() {
+            onCounterStopped(maxElapsedMillis);
+        }
+    }*/
 
 /*
     protected abstract void updateCounter(long elapsedCount, int alpha);
