@@ -133,7 +133,7 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
         }
     }
 
-    
+
 
 
     //@Override
@@ -489,17 +489,6 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
         }
 
 
-        /*private long retrieveElapsedTime() {
-            return SystemClock.elapsedRealtime() - startTime;
-        }*/
-
-        /*private boolean checkElapsedTimeAgainstDuration(double duration) {
-            return retrieveElapsedTime() >= duration;
-        }*/
-
-       /* private long incrementElapsedCount(long elapsedCount) {
-            return elapsedCount + COUNTER_INCREMENT_MILLIS;
-        }*/
 
         private double incrementDuration(double duration, double durationIncrement) {
             return duration + durationIncrement;
@@ -527,18 +516,7 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
             handler.post(updateCounterRunnable);
         }
 
-        /*private long showStopButtonArmed(long elapsed, long runningDur, Button stopButton) {
-            if (elapsed >= runningDur) {
-                FlashStopButtonRunnable runnable = new FlashStopButtonRunnable(stopButton);
-                handler.post(runnable);
-                return ARMED_STOP_BUTTON_FLASH_DURATION;
-            }
-            return 0;
-        }*/
 
-        /*private boolean isCounterAtMaxValue(long elapsedCount, long maxCounterValue) {
-            return elapsedCount >= maxCounterValue && isStopClickable;
-        }*/
 
         private void postUpdateCounterAfterTimeoutRunnable(long elapsedCount) {
             UpdateCounterAfterTimeoutRunnable runnable;

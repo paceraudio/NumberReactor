@@ -309,54 +309,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
             runFadeCounter();
         }
 
-        /*private void runFadeCounter() {
-
-            long elapsedMillis = 0;
-            long duration = COUNTER_INCREMENT_MILLIS;
-            long durationIncrement = duration;
-            int totalFadeDuration = (int) ((DEFAULT_FADE_COUNTER_TARGET * DEFAULT_FADE_RATIO) *
-                    MILLIS_IN_SECONDS);
-            final int fadeDurationIncrement = totalFadeDuration / ALPHA_VALUE_STEPS;
-            int fadeDuration = fadeDurationIncrement;
-            int alphaValue = ALPHA_VALUE_STEPS;
-
-            // For the flashing of the armed stop button
-            long runningFlashDuration = ARMED_STOP_BUTTON_FLASH_DURATION;
-
-            startTime  = SystemClock.elapsedRealtime();
-
-            while (elapsedMillis <= counterCeilingMillis && isStopClickable) {
-                //elapsedMillis = SystemClock.elapsedRealtime() - startTime;
-                if (checkElapsedTimeAgainstDuration(duration)) {
-                    elapsedMillis = incrementElapsedCount(elapsedMillis);
-                    //if (elapsedMillis >= fadeDuration && alphaValue > 0) {
-                    if(checkElapsedTimeAgainstFadeDuration(fadeDuration)
-                            && isAlphaAboveZero(alphaValue)){
-                        //alphaValue--;
-                        alphaValue = decrementAlphaValue(alphaValue);
-                        //fadeDuration += fadeDurationIncrement;
-                        fadeDuration = incrementFadeDuration(fadeDuration, fadeDurationIncrement);
-                    }
-                   *//* UpdateFadeCounterRunnable updateFadeCounterRunnable = new
-                            UpdateFadeCounterRunnable(elapsedMillis, alphaValue);
-                    //runOnUiThread(updateFadeCounterRunnable);
-                    handler.post(updateFadeCounterRunnable);*//*
-                    postUpdateFadeCounterRunnable(elapsedMillis, alphaValue);
-                    //duration += durationIncrement;
-                    duration = incrementDuration(duration, durationIncrement);
-
-                    // Flashes stop button to show its armed
-                    runningFlashDuration += showStopButtonArmed(elapsedMillis, runningFlashDuration);
-                }
-            }
-            //if (elapsedMillis >= counterCeilingMillis && isStopClickable) {
-            if (isCounterAtMaxValue(elapsedMillis)) {
-                *//*UpdateCounterAfterTimeoutRunnable runnable = new UpdateCounterAfterTimeoutRunnable(elapsedMillis);
-                handler.post(runnable);
-                Log.d("jwc", "elapsed Millis from runnable: " + elapsedMillis);*//*
-                postUpdateCounterAfterTimeoutRunnable(elapsedMillis);
-            }
-        }*/
 
         private void runFadeCounter() {
 
@@ -394,17 +346,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
             }
         }
 
-        /*private long retrieveElapsedTime() {
-            return SystemClock.elapsedRealtime() - startTime;
-        }*/
-
-        /*private boolean checkElapsedTimeAgainstDuration(double duration) {
-            return retrieveElapsedTime() >= duration;
-        }*/
-
-        /*private long incrementElapsedCount(long elapsedCount) {
-            return elapsedCount + COUNTER_INCREMENT_MILLIS;
-        }*/
 
         private long incrementDuration(long duration, long durationIncrement) {
             return duration + durationIncrement;
