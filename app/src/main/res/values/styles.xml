@@ -214,11 +214,11 @@
     </style>
 
     <style name="NR_TextView.GameInfo.XLarge.Target.CounterActivity">
-        <item name="android:textColor">@color/red</item>
+        <item name="android:textColor">@color/green</item>
     </style>
 
     <style name="NR_TextView.GameInfo.XLarge.Target.FadeCounterActivity">
-        <item name="android:textColor">@color/lightBlue</item>
+        <item name="android:textColor">@color/green</item>
 
     </style>
 
@@ -230,11 +230,11 @@
     </style>
 
     <style name="NR_TextView.GameInfo.Large.Target.CounterActivity">
-        <item name="android:textColor">@color/red</item>
+        <item name="android:textColor">@color/green</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Large.Target.FadeCounterActivity">
-        <item name="android:textColor">@color/lightBlue</item>
+        <item name="android:textColor">@color/green</item>
     </style>
 
     <!--NORMAL-->
@@ -245,11 +245,11 @@
     </style>
 
     <style name="NR_TextView.GameInfo.Normal.Target.CounterActivity">
-        <item name="android:textColor">@color/red</item>
+        <item name="android:textColor">@color/green</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Normal.Target.FadeCounterActivity">
-        <item name="android:textColor">@color/lightBlue</item>
+        <item name="android:textColor">@color/green</item>
     </style>
 
     <!--********************GAMEINFO ACCURACY********************-->

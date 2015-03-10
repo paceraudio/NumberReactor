@@ -443,11 +443,7 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
 
     static class CounterRunnable implements Runnable {
 
-        //Handler handler;
-        //long startTime;
-
         public CounterRunnable() {
-            /*handler = new Handler()*/;
         }
 
 

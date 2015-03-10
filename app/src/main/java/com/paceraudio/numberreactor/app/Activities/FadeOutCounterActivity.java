@@ -218,52 +218,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
         finish();
     }
 
-    /*static class StartButtonArmedRunnable implements Runnable {
-
-        Handler handler;
-        public StartButtonArmedRunnable() {
-            handler = new Handler();
-        }
-
-        @Override
-        public void run() {
-            showStartButtonArmed();
-        }
-
-        private void showStartButtonArmed() {
-            long startTime = SystemClock.elapsedRealtime();
-            long elapsedTime;
-            //long flashDuration = ARMED_START_BUTTON_FLASH_DURATION;
-            long runningFlashDuration = ARMED_START_BUTTON_FLASH_DURATION;
-            while(isStartClickable) {
-                elapsedTime = SystemClock.elapsedRealtime() - startTime;
-                if (elapsedTime >= runningFlashDuration) {
-                    FlashStartButtonRunnable runnable = new FlashStartButtonRunnable();
-                    //runOnUiThread(runnable);
-                    handler.post(runnable);
-                    runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
-                }
-            }
-            gameInfoDisplayer.showButtonState(fadeStartButton, startButtonEngaged);
-        }
-    }
-
-    static class FlashStartButtonRunnable implements Runnable {
-        @Override
-
-        public void run() {
-            flashStartButtonArmed(fadeStartButton);
-        }
-    }
-*/
-
-    /*static class FlashStopButtonRunnable implements  Runnable {
-        @Override
-        public void run() {
-            flashStopButtonArmed(fadeStopButton);
-        }
-    }*/
-
 
     static class UpdateCounterAfterTimeoutRunnable implements Runnable {
         long maxElapsedMillis;
@@ -297,11 +251,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
 
     static class FadeCounterRunnable implements Runnable {
 
-        //Handler handler;
-        //long startTime;
-
         public FadeCounterRunnable() {
-            /*handler = new Handler();*/
         }
 
         @Override
@@ -372,19 +322,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
                     UpdateFadeCounterRunnable(elapsedCount, alpha);
             handler.post(updateFadeCounterRunnable);
         }
-
-        /*private long showStopButtonArmed(long elapsed, long runningDur, Button stopButton) {
-            if (elapsed >= runningDur) {
-                FlashStopButtonRunnable runnable = new FlashStopButtonRunnable(stopButton);
-                handler.post(runnable);
-                return ARMED_STOP_BUTTON_FLASH_DURATION;
-            }
-            return 0;
-        }*/
-
-        /*private boolean isCounterAtMaxValue(long elapsedCount) {
-            return elapsedCount >= counterCeilingMillis && isStopClickable;
-        }*/
 
         private void postUpdateCounterAfterTimeoutRunnable(long elapsedCount) {
             UpdateCounterAfterTimeoutRunnable runnable;
