@@ -59,7 +59,7 @@ public abstract class TimeCounter extends FragmentActivity {
     protected static long startTime;
 
     protected static final int BEGINNING_TARGET_LEVEL_ONE = 2;
-    protected static final int TURNS_PER_LEVEL = 1;
+    protected static final int TURNS_PER_LEVEL = 3;
 
     protected static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
     protected static final int NORMAL_TURN_RESET = 0;
