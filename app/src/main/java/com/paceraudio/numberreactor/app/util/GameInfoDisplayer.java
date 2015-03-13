@@ -58,7 +58,8 @@ public class GameInfoDisplayer {
     }*/
 
     public void showButtonState(Button button, LayerDrawable layerDrawable) {
-        button.setBackgroundDrawable(layerDrawable);
+        //button.setBackgroundDrawable(layerDrawable);
+        button.setBackground(layerDrawable);
     }
 
 

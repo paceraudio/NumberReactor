@@ -3,6 +3,7 @@ package com.paceraudio.numberreactor.app.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -217,6 +218,35 @@ public class FadeOutCounterActivity extends TimeCounter implements
         setResult(RESULT_OK, intent);
         finish();
     }
+
+    /*protected static class StartButtonArmedRunnable implements  Runnable {
+        Button mStartButton;
+        Handler mHandler;
+
+        public StartButtonArmedRunnable(Button startButton) {
+            this.mStartButton = startButton;
+            mHandler = new Handler();
+        }
+        @Override
+        public void run() {
+            showStartButtonArmed(mStartButton);
+        }
+
+        private void showStartButtonArmed(Button startButton) {
+            long startTime = SystemClock.elapsedRealtime();
+            long elapsedTime;
+            long runningFlashDuration = ARMED_START_BUTTON_FLASH_DURATION;
+            while (isStartClickable) {
+                elapsedTime = SystemClock.elapsedRealtime() - startTime;
+                if (elapsedTime >= runningFlashDuration) {
+                    FlashStartButtonRunnable runnable = new FlashStartButtonRunnable(startButton);
+                    mHandler.post(runnable);
+                    runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
+                }
+            }
+            gameInfoDisplayer.showButtonState(startButton, startButtonEngaged);
+        }
+    }*/
 
 
     static class UpdateCounterAfterTimeoutRunnable implements Runnable {

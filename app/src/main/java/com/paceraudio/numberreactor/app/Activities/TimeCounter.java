@@ -274,7 +274,13 @@ public abstract class TimeCounter extends FragmentActivity {
         return elapsedCount >= maxCounterValue && isStopClickable;
     }
 
-    protected static class StartButtonArmedRunnable implements  Runnable {
+    protected static void showButtonState(Button button, LayerDrawable layerDrawable) {
+        button.setBackground(layerDrawable);
+    }
+
+
+
+    protected static class StartButtonArmedRunnable implements Runnable {
         Button mStartButton;
         Handler mHandler;
 
@@ -299,7 +305,10 @@ public abstract class TimeCounter extends FragmentActivity {
                     runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
                 }
             }
-            gameInfoDisplayer.showButtonState(startButton, startButtonEngaged);
+            //gameInfoDisplayer.showButtonState(startButton, startButtonEngaged);
+            //showButtonState(startButton, startButtonEngaged);
+            /*StartButtonEngagedRunnable runnable = new StartButtonEngagedRunnable(startButton);
+            mHandler.post(runnable);*/
         }
     }
 
@@ -315,6 +324,7 @@ public abstract class TimeCounter extends FragmentActivity {
             flashStartButtonArmed(mStartButton);
         }
     }
+
 
     protected static class FlashStopButtonRunnable implements  Runnable {
 

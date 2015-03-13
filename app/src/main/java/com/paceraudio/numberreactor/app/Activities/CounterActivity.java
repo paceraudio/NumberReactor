@@ -2,6 +2,7 @@ package com.paceraudio.numberreactor.app.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -234,6 +235,7 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
         mCurrentTurn = state.getmTurn();
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLives,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
+        //isStartClickable = true;
         flashStartButton();
     }
 
@@ -389,9 +391,10 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
                     if (checkIfLastTurn() == LAST_TURN_RESET_BEFORE_NEW_ACTIVITY) {
                         launchFadeCounterActivity();
                     } else {
+                        isStartClickable = true;
                         resetTimeValuesBetweenTurns();
                         gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengaged);
-                        isStartClickable = true;
+
                     }
                 } else {
                     launchOutOfLivesDialog();
@@ -409,6 +412,35 @@ public class CounterActivity extends TimeCounter implements /*UpdateDbListener,*
             }
         };
     }
+
+    /*protected static class StartButtonArmedRunnable implements  Runnable {
+        Button mStartButton;
+        Handler mHandler;
+
+        public StartButtonArmedRunnable(Button startButton) {
+            this.mStartButton = startButton;
+            mHandler = new Handler();
+        }
+        @Override
+        public void run() {
+            showStartButtonArmed(mStartButton);
+        }
+
+        private void showStartButtonArmed(Button startButton) {
+            long startTime = SystemClock.elapsedRealtime();
+            long elapsedTime;
+            long runningFlashDuration = ARMED_START_BUTTON_FLASH_DURATION;
+            while (isStartClickable) {
+                elapsedTime = SystemClock.elapsedRealtime() - startTime;
+                if (elapsedTime >= runningFlashDuration) {
+                    FlashStartButtonRunnable runnable = new FlashStartButtonRunnable(startButton);
+                    mHandler.post(runnable);
+                    runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
+                }
+            }
+            gameInfoDisplayer.showButtonState(startButton, startButtonEngaged);
+        }
+    }*/
 
 
 
