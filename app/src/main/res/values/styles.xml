@@ -201,8 +201,8 @@
         <item name="android:textSize">24sp</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal">
-        <item name="android:textSize">14sp</item>
+    <style name="NR_TextView.GameInfo.mw360">
+        <item name="android:textSize">18sp</item>
     </style>
 
     <!--********************GAMEINFO TARGET********************-->
@@ -238,17 +238,17 @@
     </style>
 
     <!--NORMAL-->
-    <style name="NR_TextView.GameInfo.Normal.Target">
+    <style name="NR_TextView.GameInfo.mw360.Target">
         <item name="android:text">@string/target</item>
         <item name="android:layout_weight">64</item>
         <item name="android:paddingLeft">15dp</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal.Target.CounterActivity">
+    <style name="NR_TextView.GameInfo.mw360.Target.CounterActivity">
         <item name="android:textColor">@color/lightGreen</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal.Target.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.mw360.Target.FadeCounterActivity">
         <item name="android:textColor">@color/lightGreen</item>
     </style>
 
@@ -285,16 +285,16 @@
     </style>
 
     <!--NORMAL-->
-    <style name="NR_TextView.GameInfo.Normal.Accuracy">
+    <style name="NR_TextView.GameInfo.mw360.Accuracy">
         <item name="android:text">@string/accuracy</item>
         <item name="android:layout_weight">36</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal.Accuracy.CounterActivity">
+    <style name="NR_TextView.GameInfo.mw360.Accuracy.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal.Accuracy.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.mw360.Accuracy.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
@@ -330,17 +330,17 @@
     </style>
 
     <!--NORMAL-->
-    <style name="NR_TextView.GameInfo.Normal.Lives">
+    <style name="NR_TextView.GameInfo.mw360.Lives">
         <item name="android:text">@string/lives_remaining</item>
         <item name="android:layout_weight">40</item>
         <item name="android:paddingLeft">15dp</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal.Lives.CounterActivity">
+    <style name="NR_TextView.GameInfo.mw360.Lives.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal.Lives.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.mw360.Lives.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
@@ -376,16 +376,16 @@
     </style>
 
     <!--NORMAL-->
-    <style name="NR_TextView.GameInfo.Normal.Score">
+    <style name="NR_TextView.GameInfo.mw360.Score">
         <item name="android:text">@string/score</item>
         <item name="android:layout_weight">37</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal.Score.CounterActivity">
+    <style name="NR_TextView.GameInfo.mw360.Score.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal.Score.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.mw360.Score.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
@@ -420,16 +420,16 @@
     </style>
 
     <!--NORMAL-->
-    <style name="NR_TextView.GameInfo.Normal.Level">
+    <style name="NR_TextView.GameInfo.mw360.Level">
         <item name="android:text">@string/level</item>
         <item name="android:layout_weight">23</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal.Level.CounterActivity">
+    <style name="NR_TextView.GameInfo.mw360.Level.CounterActivity">
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="NR_TextView.GameInfo.Normal.Level.FadeCounterActivity">
+    <style name="NR_TextView.GameInfo.mw360.Level.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 
@@ -485,6 +485,20 @@
     </style>
 
     <style name="NR_TextView.Counter.Normal.FadeCounterActivity">
+        <item name="android:textColor">@color/lightBlue</item>
+    </style>
+
+    <!--mw360-->
+    <style name="NR_TextView.Counter.mw360">
+        <item name="android:textSize">130sp</item>
+        <item name="android:layout_width">280dp</item>
+    </style>
+
+    <style name="NR_TextView.Counter.mw360.CounterActivity">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="NR_TextView.Counter.mw360.FadeCounterActivity">
         <item name="android:textColor">@color/lightBlue</item>
     </style>
 

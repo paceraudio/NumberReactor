@@ -1,0 +1,57 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="CLEAR ALL GAME DATA"
+        android:background="@color/darkBlackRed"
+        android:typeface="monospace"
+        android:textColor="@color/grey"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textSize="24sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="ARE YOU SURE?"
+        android:background="@color/darkBlackRed"
+        android:typeface="monospace"
+        android:textColor="@color/grey"
+        android:gravity="center"
+        android:textSize="16sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:weightSum="100">
+
+        <Button
+            android:id="@+id/b_yes_clear_all_game_data_dialog"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="50"
+            android:text="@string/OK"
+            android:background="@color/darkBlackRed"
+            android:typeface="monospace"
+            android:textColor="@color/green"
+            android:textSize="24sp"/>
+
+        <Button
+            android:id="@+id/b_exit_clear_all_game_data_dialog"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="50"
+            android:text="@string/exit"
+            android:background="@color/darkBlackRed"
+            android:typeface="monospace"
+            android:textColor="@color/red"
+            android:textSize="24sp"/>
+    </LinearLayout>
+
+
+</LinearLayout>

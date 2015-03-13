@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/darkBlackRed"
+              android:weightSum="100"
+              android:layout_margin="4dp">
+
+    <TextView
+        android:id="@+id/list_t_v_game_number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="20"
+        android:textColor="@color/orange"
+        android:gravity="right"
+        android:paddingRight="20dp"
+        android:textSize="30sp"
+        />
+
+    <TextView
+        android:id="@+id/list_t_v_game_date"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="40"
+        android:gravity="center"
+        style="@style/NR_TextView.ListViewItem.Normal"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="40"
+        android:weightSum="100"
+        android:paddingLeft="30dp">
+
+        <TextView
+            android:id="@+id/list_t_v_game_level"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/NR_TextView.ListViewItem.Normal"/>
+
+        <TextView
+            android:id="@+id/list_t_v_game_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/NR_TextView.ListViewItem.Normal"/>
+
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

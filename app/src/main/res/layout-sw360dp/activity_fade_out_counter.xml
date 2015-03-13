@@ -29,7 +29,7 @@
 
         <TextView
             android:id="@+id/t_v_fade_counter"
-            style="@style/NR_TextView.Counter.Normal.FadeCounterActivity"/>
+            style="@style/NR_TextView.Counter.mw360.FadeCounterActivity"/>
 
     </FrameLayout>
 

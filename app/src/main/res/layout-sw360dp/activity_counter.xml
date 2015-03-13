@@ -31,7 +31,7 @@
 
         <TextView
             android:id="@+id/t_v_counter"
-            style="@style/NR_TextView.Counter.Normal.CounterActivity"
+            style="@style/NR_TextView.Counter.mw360.CounterActivity"
             />
 
     </FrameLayout>
