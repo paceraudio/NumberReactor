@@ -15,23 +15,23 @@
 
         <TextView
             android:id="@+id/t_v_target"
-            style="@style/NR_TextView.GameInfo.mw360.Target.CounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Small.Target.CounterActivity"/>
 
         <TextView
             android:id="@+id/t_v_accuracy_rating"
-            style="@style/NR_TextView.GameInfo.mw360.Accuracy.CounterActivity"
-            />
+            style="@style/NR_TextView.GameInfo.Small.Accuracy.CounterActivity"
+            android:text="ACCURACY: 100%"/>
 
     </LinearLayout>
 
     <FrameLayout
         android:id="@+id/f_l_for_t_v_counter"
         android:layout_below="@id/l_l_game_info_top"
-        style="@style/NR_FrameLayout.CounterFrame.Normal">
+        style="@style/NR_FrameLayout.CounterFrame.sw360dp">
 
         <TextView
             android:id="@+id/t_v_counter"
-            style="@style/NR_TextView.Counter.Normal.CounterActivity"
+            style="@style/NR_TextView.Counter.Small.CounterActivity"
             />
 
     </FrameLayout>
@@ -43,17 +43,17 @@
 
         <TextView
             android:id="@+id/t_v_lives_remaining"
-            style="@style/NR_TextView.GameInfo.mw360.Lives.CounterActivity"
+            style="@style/NR_TextView.GameInfo.Small.Lives.CounterActivity"
             />
 
         <TextView
             android:id="@+id/t_v_score"
-            style="@style/NR_TextView.GameInfo.mw360.Score.CounterActivity"
+            style="@style/NR_TextView.GameInfo.Small.Score.CounterActivity"
             />
 
         <TextView
             android:id="@+id/t_v_level"
-            style="@style/NR_TextView.GameInfo.mw360.Level.CounterActivity"
+            style="@style/NR_TextView.GameInfo.Small.Level.CounterActivity"
             />
 
     </LinearLayout>
@@ -62,7 +62,7 @@
         android:id="@+id/f_l_for_b_stop"
         android:layout_above="@id/l_l_game_info_bottom"
         android:layout_alignRight="@id/f_l_for_t_v_counter"
-        style="@style/NR_FrameLayout.NormalButtons.Stop">
+        style="@style/NR_FrameLayout.Buttons_sw360dp.Stop">
 
         <Button
             android:id="@+id/b_stop"
@@ -74,14 +74,13 @@
         android:id="@+id/f_l_for_b_start"
         android:layout_alignLeft="@id/f_l_for_t_v_counter"
         android:layout_alignTop="@id/f_l_for_b_stop"
-        style="@style/NR_FrameLayout.NormalButtons.Start">
+        style="@style/NR_FrameLayout.Buttons_sw360dp.Start">
 
         <Button
             android:id="@+id/b_start"
             style="@style/NR_ButtonStyle"/>
 
         ></FrameLayout>
-
 
 
 </RelativeLayout>

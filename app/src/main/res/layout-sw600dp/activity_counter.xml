@@ -15,11 +15,12 @@
 
         <TextView
             android:id="@+id/t_v_target"
-            style="@style/NR_TextView.GameInfo.sw360dp.Target.CounterActivity"/>
+            style="@style/NR_TextView.GameInfo.sw600dp.Target.CounterActivity"
+            />
 
         <TextView
             android:id="@+id/t_v_accuracy_rating"
-            style="@style/NR_TextView.GameInfo.sw360dp.Accuracy.CounterActivity"
+            style="@style/NR_TextView.GameInfo.sw600dp.Accuracy.CounterActivity"
             />
 
     </LinearLayout>
@@ -27,11 +28,13 @@
     <FrameLayout
         android:id="@+id/f_l_for_t_v_counter"
         android:layout_below="@id/l_l_game_info_top"
-        style="@style/NR_FrameLayout.CounterFrame.sw360dp">
+        style="@style/NR_FrameLayout.CounterFrame.sw600dp">
 
         <TextView
             android:id="@+id/t_v_counter"
-            style="@style/NR_TextView.Counter.sw360dp.CounterActivity"
+            style="@style/NR_TextView.Counter.sw600dp.CounterActivity"
+            android:textIsSelectable="false"
+            android:singleLine="false"
             />
 
     </FrameLayout>
@@ -43,17 +46,17 @@
 
         <TextView
             android:id="@+id/t_v_lives_remaining"
-            style="@style/NR_TextView.GameInfo.sw360dp.Lives.CounterActivity"
+            style="@style/NR_TextView.GameInfo.sw600dp.Lives.CounterActivity"
             />
 
         <TextView
             android:id="@+id/t_v_score"
-            style="@style/NR_TextView.GameInfo.sw360dp.Score.CounterActivity"
+            style="@style/NR_TextView.GameInfo.sw600dp.Score.CounterActivity"
             />
 
         <TextView
             android:id="@+id/t_v_level"
-            style="@style/NR_TextView.GameInfo.sw360dp.Level.CounterActivity"
+            style="@style/NR_TextView.GameInfo.sw600dp.Level.CounterActivity"
             />
 
     </LinearLayout>
@@ -62,11 +65,12 @@
         android:id="@+id/f_l_for_b_stop"
         android:layout_above="@id/l_l_game_info_bottom"
         android:layout_alignRight="@id/f_l_for_t_v_counter"
-        style="@style/NR_FrameLayout.Buttons_sw360dp.Stop">
+        style="@style/NR_FrameLayout.Buttons_sw600dp.Stop">
 
         <Button
             android:id="@+id/b_stop"
-            style="@style/NR_ButtonStyle"/>
+            style="@style/NR_ButtonStyle"
+            />
 
     </FrameLayout>
 
@@ -74,13 +78,14 @@
         android:id="@+id/f_l_for_b_start"
         android:layout_alignLeft="@id/f_l_for_t_v_counter"
         android:layout_alignTop="@id/f_l_for_b_stop"
-        style="@style/NR_FrameLayout.Buttons_sw360dp.Start">
+        style="@style/NR_FrameLayout.Buttons_sw600dp.Start">
 
         <Button
             android:id="@+id/b_start"
-            style="@style/NR_ButtonStyle"/>
+            style="@style/NR_ButtonStyle"
+            />
 
-        ></FrameLayout>
 
+    ></FrameLayout>
 
 </RelativeLayout>

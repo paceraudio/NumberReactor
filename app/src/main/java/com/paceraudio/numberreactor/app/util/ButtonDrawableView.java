@@ -38,7 +38,7 @@ public class ButtonDrawableView extends View {
     private static final float SQUARE_X_INSET = (FRAME_SIDE_LENGTH - SQUARE_SIDE_LENGTH) / 2;
     private static final float SQUARE_Y_INSET = SQUARE_X_INSET;
     private static final float ICON_STROKE_WIDTH = 22;
-    private static final float FRAME_STROKE_WIDTH = 10;
+    private static final float FRAME_STROKE_WIDTH = 18;
 
 
     public ButtonDrawableView(Context context) {
@@ -75,10 +75,10 @@ public class ButtonDrawableView extends View {
 
     private PathShape makeButtonFrame() {
         Path path = new Path();
-        path.moveTo(ZERO, ZERO);
-        path.lineTo(FRAME_SIDE_LENGTH, ZERO);
-        path.lineTo(FRAME_SIDE_LENGTH, FRAME_SIDE_LENGTH);
-        path.lineTo(ZERO, FRAME_SIDE_LENGTH);
+        path.moveTo(ZERO + FRAME_STROKE_WIDTH, ZERO + FRAME_STROKE_WIDTH);
+        path.lineTo(FRAME_SIDE_LENGTH - FRAME_STROKE_WIDTH, ZERO + FRAME_STROKE_WIDTH);
+        path.lineTo(FRAME_SIDE_LENGTH - FRAME_STROKE_WIDTH, FRAME_SIDE_LENGTH - FRAME_STROKE_WIDTH);
+        path.lineTo(ZERO + FRAME_STROKE_WIDTH, FRAME_SIDE_LENGTH - FRAME_STROKE_WIDTH);
         path.close();
         return new PathShape(path, FRAME_SIDE_LENGTH, FRAME_SIDE_LENGTH);
     }

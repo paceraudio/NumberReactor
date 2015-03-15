@@ -15,13 +15,13 @@
 
         <TextView
             android:id="@+id/t_v_fade_target"
-            style="@style/NR_TextView.GameInfo.Large.Target.FadeCounterActivity"
+            style="@style/NR_TextView.GameInfo.sw600dp.Target.FadeCounterActivity"
 
             />
 
         <TextView
             android:id="@+id/t_v_fade_accuracy_rating"
-            style="@style/NR_TextView.GameInfo.Large.Accuracy.FadeCounterActivity"
+            style="@style/NR_TextView.GameInfo.sw600dp.Accuracy.FadeCounterActivity"
 
             />
 
@@ -30,11 +30,11 @@
     <FrameLayout
         android:id="@+id/f_l_for_fade_t_v_counter"
         android:layout_below="@id/l_l_fade_game_info_top"
-        style="@style/NR_FrameLayout.CounterFrame.Large">
+        style="@style/NR_FrameLayout.CounterFrame.sw600dp">
 
         <TextView
             android:id="@+id/t_v_fade_counter"
-            style="@style/NR_TextView.Counter.Large.FadeCounterActivity"
+            style="@style/NR_TextView.Counter.sw600dp.FadeCounterActivity"
             />
 
     </FrameLayout>
@@ -46,19 +46,19 @@
 
         <TextView
             android:id="@+id/t_v_fade_lives_remaining"
-            style="@style/NR_TextView.GameInfo.Large.Lives.FadeCounterActivity"
+            style="@style/NR_TextView.GameInfo.sw600dp.Lives.FadeCounterActivity"
 
             />
 
         <TextView
             android:id="@+id/t_v_fade_score"
-            style="@style/NR_TextView.GameInfo.Large.Score.FadeCounterActivity"
+            style="@style/NR_TextView.GameInfo.sw600dp.Score.FadeCounterActivity"
 
             />
 
         <TextView
             android:id="@+id/t_v_fade_level"
-            style="@style/NR_TextView.GameInfo.Large.Level.FadeCounterActivity"
+            style="@style/NR_TextView.GameInfo.sw600dp.Level.FadeCounterActivity"
             />
 
     </LinearLayout>
@@ -68,7 +68,7 @@
         android:id="@+id/f_l_for_fade_b_start"
         android:layout_alignLeft="@id/f_l_for_fade_t_v_counter"
         android:layout_alignTop="@id/f_l_for_fade_b_stop"
-        style="@style/NR_FrameLayout.LargeButtons.Start">
+        style="@style/NR_FrameLayout.Buttons_sw600dp.Start">
 
         <Button
             android:id="@+id/b_fade_start"
@@ -87,7 +87,7 @@
         android:id="@+id/f_l_for_fade_b_stop"
         android:layout_above="@id/l_l_fade_game_info_bottom"
         android:layout_alignRight="@id/f_l_for_fade_t_v_counter"
-        style="@style/NR_FrameLayout.LargeButtons.Stop">
+        style="@style/NR_FrameLayout.Buttons_sw600dp.Stop">
 
         <Button
             android:id="@+id/b_fade_stop"

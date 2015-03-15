@@ -24,7 +24,7 @@
         android:layout_height="match_parent"
         android:layout_weight="40"
         android:gravity="center"
-        style="@style/NR_TextView.ListViewItem.Normal"/>
+        style="@style/NR_TextView.ListViewItem.360dp"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -38,13 +38,13 @@
             android:id="@+id/list_t_v_game_level"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/NR_TextView.ListViewItem.Normal"/>
+            style="@style/NR_TextView.ListViewItem.360dp"/>
 
         <TextView
             android:id="@+id/list_t_v_game_score"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/NR_TextView.ListViewItem.Normal"/>
+            style="@style/NR_TextView.ListViewItem.360dp"/>
 
 
 

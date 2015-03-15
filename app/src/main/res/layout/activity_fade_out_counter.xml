@@ -15,21 +15,21 @@
 
         <TextView
             android:id="@+id/t_v_fade_target"
-            style="@style/NR_TextView.GameInfo.mw360.Target.FadeCounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Small.Target.FadeCounterActivity"/>
 
         <TextView
             android:id="@+id/t_v_fade_accuracy_rating"
-            style="@style/NR_TextView.GameInfo.mw360.Accuracy.FadeCounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Small.Accuracy.FadeCounterActivity"/>
 
     </LinearLayout>
 
     <FrameLayout
         android:id="@+id/f_l_for_fade_t_v_counter"
-        style="@style/NR_FrameLayout.CounterFrame.Normal">
+        style="@style/NR_FrameLayout.CounterFrame.sw360dp">
 
         <TextView
             android:id="@+id/t_v_fade_counter"
-            style="@style/NR_TextView.Counter.Normal.FadeCounterActivity"/>
+            style="@style/NR_TextView.Counter.Small.FadeCounterActivity"/>
 
     </FrameLayout>
 
@@ -40,15 +40,15 @@
 
         <TextView
             android:id="@+id/t_v_fade_lives_remaining"
-            style="@style/NR_TextView.GameInfo.mw360.Lives.FadeCounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Small.Lives.FadeCounterActivity"/>
 
         <TextView
             android:id="@+id/t_v_fade_score"
-            style="@style/NR_TextView.GameInfo.mw360.Score.FadeCounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Small.Score.FadeCounterActivity"/>
 
         <TextView
             android:id="@+id/t_v_fade_level"
-            style="@style/NR_TextView.GameInfo.mw360.Level.FadeCounterActivity"/>
+            style="@style/NR_TextView.GameInfo.Small.Level.FadeCounterActivity"/>
 
     </LinearLayout>
 
@@ -56,7 +56,7 @@
         android:id="@+id/f_l_for_fade_b_stop"
         android:layout_above="@id/l_l_fade_game_info_bottom"
         android:layout_alignRight="@id/f_l_for_fade_t_v_counter"
-        style="@style/NR_FrameLayout.NormalButtons.Stop">
+        style="@style/NR_FrameLayout.Buttons_sw360dp.Stop">
 
         <Button
             android:id="@+id/b_fade_stop"
@@ -68,7 +68,7 @@
         android:id="@+id/f_l_for_fade_b_start"
         android:layout_alignLeft="@id/f_l_for_fade_t_v_counter"
         android:layout_alignTop="@id/f_l_for_fade_b_stop"
-        style="@style/NR_FrameLayout.NormalButtons.Start">
+        style="@style/NR_FrameLayout.Buttons_sw360dp.Start">
 
         <Button
             android:id="@+id/b_fade_start"
