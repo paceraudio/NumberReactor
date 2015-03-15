@@ -33,16 +33,6 @@ public abstract class TimeCounter extends FragmentActivity {
     protected static boolean isStopClickable;
     protected static boolean isStopFlashing;
 
-    /*protected static TextView tvCounter;
-    protected static TextView tvTarget;
-    protected static TextView tvAccuracy;
-    protected static TextView tvLives;
-    protected static TextView tvScore;
-    protected static TextView tvLevel;*/
-
-    /*protected static Button startButton;
-    protected static Button stopButton;*/
-
     protected static Handler handler;
 
     protected static LayerDrawable startButtonDisengaged;
@@ -64,10 +54,12 @@ public abstract class TimeCounter extends FragmentActivity {
     protected static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
     protected static final int NORMAL_TURN_RESET = 0;
 
+/*
     protected static final int DOUBLE_LIVES_GAINED = 2;
     protected static final int LIFE_GAINED = 1;
     protected static final int LIFE_NEUTRAL = 0;
     protected static final int LIFE_LOST = -1;
+*/
 
     protected static final long COUNTER_INCREMENT_MILLIS = 10;
     protected static final double MILLIS_IN_SECONDS = 1000;
@@ -104,43 +96,24 @@ public abstract class TimeCounter extends FragmentActivity {
         initButtonDrawables();
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(DEBUG_TAG, "onRestart() end " + getLocalClassName());
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(DEBUG_TAG, "onStart() end " + getLocalClassName());
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //initButtons();
         isStartClickable = true;
         isStopClickable = false;
-        Log.d(DEBUG_TAG, "onResume() end " + getLocalClassName());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(DEBUG_TAG, "onPause() end " + getLocalClassName());
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(DEBUG_TAG, "onStop() end " + getLocalClassName());
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(DEBUG_TAG, "onDestroy() end " + getLocalClassName());
     }
 
     @Override
@@ -168,23 +141,13 @@ public abstract class TimeCounter extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /*protected void initButtons() {
-        startButton = (Button) findViewById(R.id.b_start);
-        stopButton = (Button) findViewById(R.id.b_stop);
-    }*/
-
-    //protected void onCounterStopped(long elapsedCount) {}
-
     protected static double calculateRoundedCount(long elapsedCount, double counterCeiling) {
-        //return state.roundElapsedCountLong(elapsedCount, fromActivity,counterCeiling);
         return state.roundElapsedCount(elapsedCount, counterCeiling);
     }
 
     protected static String generateRoundedCountStr(double roundedCount) {
         return String.format(DOUBLE_FORMAT, roundedCount);
     }
-
-    /*protected abstract int calculateAccuracy(double target, double elapsedCount);*/
 
     protected static void updateStateScore(int score) {
         state.setmTurnPoints(score);
@@ -241,7 +204,6 @@ public abstract class TimeCounter extends FragmentActivity {
             } else {
                 gameInfoDisplayer.showButtonState(button, stopButtonArmed);
                 isStopFlashing = true;
-
             }
         }
     }
@@ -274,9 +236,6 @@ public abstract class TimeCounter extends FragmentActivity {
         return elapsedCount >= maxCounterValue && isStopClickable;
     }
 
-    protected static void showButtonState(Button button, LayerDrawable layerDrawable) {
-        button.setBackground(layerDrawable);
-    }
 
 
 
@@ -305,10 +264,6 @@ public abstract class TimeCounter extends FragmentActivity {
                     runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
                 }
             }
-            //gameInfoDisplayer.showButtonState(startButton, startButtonEngaged);
-            //showButtonState(startButton, startButtonEngaged);
-            /*StartButtonEngagedRunnable runnable = new StartButtonEngagedRunnable(startButton);
-            mHandler.post(runnable);*/
         }
     }
 
@@ -338,20 +293,4 @@ public abstract class TimeCounter extends FragmentActivity {
         }
     }
 
-    /*static class UpdateCounterAfterTimeoutRunnable implements Runnable {
-        long maxElapsedMillis;
-
-        public UpdateCounterAfterTimeoutRunnable(long maxElapsedMillis) {
-            this.maxElapsedMillis = maxElapsedMillis;
-        }
-
-        @Override
-        public void run() {
-            onCounterStopped(maxElapsedMillis);
-        }
-    }*/
-
-/*
-    protected abstract void updateCounter(long elapsedCount, int alpha);
-*/
 }

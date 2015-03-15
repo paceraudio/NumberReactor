@@ -51,30 +51,15 @@ public class ApplicationState extends Application{
 
     private static final int RANDOM_TARGET_THRESHOLD = 3;
 
-    private static final int MAX_ACCEL_COUNT_VALUE = 99999;
-    private static final double MAX_ACCEL_COUNT_DISPLAYED = 99.99;
     private static final double MILLIS_IN_SECONDS = 1000.0;
     private static final int DEC_TO_WHOLE_PERCENTAGE = 100;
 
-    private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
-    private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
-
-    private static final String DEBUG_TAG = "jwc";
 
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
         initGameStats();
-        /*mLevel = ONE;
-        mRunningScoreTotal = ZERO;
-        mScoreList = new ArrayList<Integer>();
-        accuracyList = new ArrayList<Integer>();
-        mLives = BEGINNING_NUMBER_OF_LIVES;
-        mBaseTarget = ZERO;
-        mTurnAccuracy = ZERO;
-        mTurnPoints = ZERO;
-        mTurn = ONE;*/
     }
 
     public static Context getAppContext() {
@@ -136,7 +121,6 @@ public class ApplicationState extends Application{
         this.mTurnTarget = mTurnTarget;
     }
 
-
     public int getmTurn() {
         return mTurn;
     }
@@ -168,7 +152,6 @@ public class ApplicationState extends Application{
     public void setmWeightedAccuracy(int mWeightedAccuracy) {
         this.mWeightedAccuracy = mWeightedAccuracy;
     }
-
 
     public int getmRunningScoreTotal() {
         return mRunningScoreTotal;
@@ -218,21 +201,6 @@ public class ApplicationState extends Application{
 
 //    Methods for calculating the game values stored in this class
 
-    /*public double roundElapsedCountLong(long elapsedCount, String fromActivity, double counterCeiling) {
-
-        Log.d("jwc", "mState roundElapsedCountLong incoming param: " + elapsedCount);
-        Log.d("jwc", "mState roundElapsedCountLon rounded count: " + elapsedCount / 1000d);
-
-        if (elapsedCount >= MAX_ACCEL_COUNT_VALUE && fromActivity.equals(FROM_COUNTER_ACTIVITY)) {
-            return MAX_ACCEL_COUNT_DISPLAYED;
-        }
-        if (elapsedCount >= counterCeiling && fromActivity.equals(FROM_FADE_COUNTER_ACTIVITY)) {
-            return counterCeiling;
-        }
-
-        return elapsedCount / MILLIS_IN_SECONDS;
-    }*/
-
     public double roundElapsedCount(long elapsedCount, double counterCeiling) {
         if (elapsedCount / MILLIS_IN_SECONDS >= counterCeiling) {
             return counterCeiling;
@@ -248,7 +216,6 @@ public class ApplicationState extends Application{
         if (accuracyInt < ZERO) {
             accuracyInt = ZERO;
         }
-        Log.d(DEBUG_TAG, "calcAccuracy()return accuracy: " + accuracy);
         return accuracyInt;
     }
 
@@ -264,26 +231,9 @@ public class ApplicationState extends Application{
         if (accuracyInt < ZERO) {
             accuracyInt = ZERO;
         }
-        Log.d(DEBUG_TAG, "calcWeightedAccuracy()return accuracy: " + accuracy);
         return accuracyInt;
     }
 
-
-
-   /*public int numOfLivesGainedOrLost() {
-       int livesGained = ZERO;
-       if (mWeightedAccuracy == ONE_HUNDRED) {
-           livesGained = PLUS_TWO_LIVES;
-       }
-       else if (mWeightedAccuracy > PLUS_ONE_LIVE_THRESHOLD) {
-           livesGained = PLUS_ONE_LIFE;
-       }
-       else if (mWeightedAccuracy <= LIFE_LOSS_THRESHOLD) {
-           livesGained = MINUS_ONE_LIFE;
-       }
-       mLives += livesGained;
-       return livesGained;
-   }*/
 
     public int numOfLivesGainedOrLost(int accuracy, boolean lifeLossPossible) {
         int livesGained = ZERO;
@@ -300,18 +250,6 @@ public class ApplicationState extends Application{
         mLives += livesGained;
         return livesGained;
     }
-
-    /*public int numOfBonusLivesFadeCount() {
-        int livesGained = ZERO;
-        if (mTurnAccuracy == ONE_HUNDRED) {
-           livesGained = PLUS_TWO_LIVES;
-        }
-        else if (mTurnAccuracy > PLUS_ONE_LIVE_THRESHOLD) {
-            livesGained = PLUS_ONE_LIFE;
-        }
-        mLives += livesGained;
-        return livesGained;
-    }*/
 
     public int calcScore(int accuracy) {
         int score = ZERO;

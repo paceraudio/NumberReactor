@@ -21,33 +21,16 @@ public class GameStats {
         return mGameNumber;
     }
 
-    public void setmGameNumber(int mGameNumber) {
-        this.mGameNumber = mGameNumber;
-    }
-
     public String getmGameDate() {
         return mGameDate;
-    }
-
-    public void setmGameDate(String mGameDate) {
-        this.mGameDate = mGameDate;
     }
 
     public int getmGameLevelReached() {
         return mGameLevelReached;
     }
 
-    public void setmGameLevelReached(int mGameLevelReached) {
-        this.mGameLevelReached = mGameLevelReached;
-    }
-
     public int getmGamePointsScored() {
         return mGamePointsScored;
     }
-
-    public void setmGamePointsScored(int mGamePointsScored) {
-        this.mGamePointsScored = mGamePointsScored;
-    }
-
 
 }

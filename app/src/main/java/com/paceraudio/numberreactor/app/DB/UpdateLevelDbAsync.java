@@ -2,9 +2,6 @@ package com.paceraudio.numberreactor.app.db;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
-
-import static com.paceraudio.numberreactor.app.activities.TimeCounter.DEBUG_TAG;
 
 /**
  * Created by jeffwconaway on 12/3/14.
@@ -13,7 +10,6 @@ public class UpdateLevelDbAsync extends AsyncTask<Integer, Void, Void> {
 
     Context mContext;
     DBHelper mDbHelper;
-    QueryDbListener mListener;
 
     public UpdateLevelDbAsync(Context context) {
         this.mContext = context;
@@ -28,10 +24,5 @@ public class UpdateLevelDbAsync extends AsyncTask<Integer, Void, Void> {
 
     @Override
     protected void onPostExecute(Void result) {
-        Log.d(DEBUG_TAG, "onPostExecute updated level: " + Integer.toString(mDbHelper.queryLevelFromDb()));
-
-//        TODO figure this out, maybe just log when the Game Stats menu item is clicked
-//        QueryAllDbAsync queryAllDbAsync = new QueryAllDbAsync(mContext);
-//        queryAllDbAsync.execute();
     }
 }

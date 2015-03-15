@@ -56,15 +56,13 @@ public class ViewStatsListAdapter extends BaseAdapter {
         gameNumberTV.setText(Integer.toString(gameStats.getmGameNumber()));
 
         TextView gameDateTV = (TextView) convertView.findViewById(R.id.list_t_v_game_date);
-        gameDateTV.setText("DATE: " + gameStats.getmGameDate());
+        gameDateTV.setText(mContext.getString(R.string.date) + gameStats.getmGameDate());
 
         TextView gameLevelTV = (TextView) convertView.findViewById(R.id.list_t_v_game_level);
-        gameLevelTV.setText("LEVEL: " + Integer.toString(gameStats.getmGameLevelReached()));
+        gameLevelTV.setText(mContext.getString(R.string.level) + Integer.toString(gameStats.getmGameLevelReached()));
 
         TextView gameScoreTV = (TextView) convertView.findViewById(R.id.list_t_v_game_score);
-        gameScoreTV.setText("SCORE: " + Integer.toString(gameStats.getmGamePointsScored()));
+        gameScoreTV.setText(mContext.getString(R.string.score) + Integer.toString(gameStats.getmGamePointsScored()));
         return convertView;
     }
-
-
 }

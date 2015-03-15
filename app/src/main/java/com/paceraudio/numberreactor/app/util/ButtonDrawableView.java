@@ -44,18 +44,12 @@ public class ButtonDrawableView extends View {
     public ButtonDrawableView(Context context) {
         super(context);
 
-//        Log.d("jwc", "triangle side squared")
-
         int lightBrown = context.getResources().getColor(R.color.lightBrown);
         int brown = context.getResources().getColor(R.color.brown);
         int darkGrey = context.getResources().getColor(R.color.darkGrey);
         int grey = context.getResources().getColor(R.color.grey);
         int glowGreen = context.getResources().getColor(R.color.glowGreen);
-        int green = context.getResources().getColor(R.color.green);
         int red = context.getResources().getColor(R.color.red);
-        int darkRed = context.getResources().getColor(R.color.darkRed);
-        int lightBlackRed = context.getResources().getColor(R.color.lightBlackRed);
-        int darkBlackRed = context.getResources().getColor(R.color.darkBlackRed);
 
         PathShape frame = makeButtonFrame();
         PathShape startTriangle = makeButtonTriangleIcon();

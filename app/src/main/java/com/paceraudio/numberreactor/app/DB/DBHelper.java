@@ -59,8 +59,6 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    //TODO change signature to take params for date, level, and points? Would eliminate
-    // Instantiating ApplicationState here
     public void insertNewGameRowInDb() {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -74,9 +72,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public int queryNewestDbEntry() {
         SQLiteDatabase db = this.getReadableDatabase();
-        //String[] columns = {C_GAME_NUMBER};
-        //Cursor c = db.query(TABLE_GAME_PERFORMANCE, columns, null, null, null,null,
-        // C_GAME_NUMBER + " DESC", " 1");
         String sql = "select max(" + C_GAME_NUMBER + ")" + " from " + TABLE_GAME_PERFORMANCE;
         Cursor c = db.rawQuery(sql, null);
         c.moveToFirst();
@@ -112,8 +107,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<GameStats> queryAllFromDb() {
         ArrayList<GameStats> arrayList = new ArrayList<GameStats>();
         SQLiteDatabase db = this.getReadableDatabase();
-        //String sql = "select * from "+TABLE_GAME_PERFORMANCE+" where "+C_GAME_NUMBER+" =
-        // (select max("+C_GAME_NUMBER+") from "+TABLE_GAME_PERFORMANCE+")";
         String sql = "select * from " + TABLE_GAME_PERFORMANCE;
         Cursor c = db.rawQuery(sql, null);
         c.moveToFirst();
@@ -125,13 +118,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
             GameStats gameStats = new GameStats(num, date, level, points);
             arrayList.add(gameStats);
-
-            Log.d(DEBUG_TAG, "***queryAllFromDb()***"
-                    + "\n game: " + num
-                    + "\n date: " + date
-                    + "\n level: " + level
-                    + "\n points: " + points);
-
         }
         while (c.moveToNext());
         db.close();
@@ -156,16 +142,4 @@ public class DBHelper extends SQLiteOpenHelper {
                 ") from " + TABLE_GAME_PERFORMANCE + ")", null);
         db.close();
     }
-
-    public void clearAllGameDataFromDb() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_GAME_PERFORMANCE, null, null);
-        db.close();
-        ArrayList<GameStats> al = queryAllFromDb();
-//        insertNewGameRowInDb();
-//        updateLevelReached(mState.getLevel());
-//        updateScoreDB(mState.getmRunningScoreTotal());
-    }
-
-
 }

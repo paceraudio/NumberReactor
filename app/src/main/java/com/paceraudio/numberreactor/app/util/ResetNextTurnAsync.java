@@ -124,7 +124,6 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
             if (futureValue > currentValue) {
                 currentValue = futureValue;
                 publishProgress(currentValue, 0, 0, 0);
-                //Log.d("jwc", "Show Stats : " + currentValue);
             }
         }
         mIsDisplayingStats = false;
@@ -144,7 +143,6 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
 
     private void fadeTextOut(int[] rgbValues, long fadeTime) {
         int alpha = rgbValues[0];
-        //        int alpha = 255;
         int red = rgbValues[1];
         int green = rgbValues[2];
         int blue = rgbValues[3];
@@ -161,7 +159,6 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
                 if (futureValue < currentValue) {
                     currentValue = futureValue;
                     publishProgress(currentValue, red, green, blue);
-                    //Log.d("jwc", "Fade Out Alpha: " + currentValue);
                 }
             }
         }
@@ -184,7 +181,6 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
                 if (futureValue > currentValue) {
                     currentValue = futureValue;
                     publishProgress(currentValue, red, green, blue);
-                    //Log.d("jwc", "Fade In Alpha: " + currentValue);
                 }
             }
         }
@@ -198,25 +194,26 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
 
             if (timeIsEven && plusLives) {
                 mLivesTV.setTextColor(green);
-                mLivesTV.setText(mContext.getString(R.string.lives_remaining) + " +2");
+                mLivesTV.setText(mContext.getString(R.string.lives_remaining) +
+                        mContext.getString(R.string.plus_two));
             }
             else if (timeIsEven && plusLife) {
                 mLivesTV.setTextColor(green);
-                mLivesTV.setText(mContext.getString(R.string.lives_remaining) + " +1");
+                mLivesTV.setText(mContext.getString(R.string.lives_remaining) + mContext.getString(R.string.plus_one));
             }
             else if (timeIsEven) {
-                mLivesTV.setText(mContext.getString(R.string.lives_remaining) + " -1");
+                mLivesTV.setText(mContext.getString(R.string.lives_remaining) + mContext.getString(R.string.minus_one));
             }
             if (!timeIsEven) {
-                mLivesTV.setText("");
+                mLivesTV.setText(mContext.getString(R.string.empty_str));
             }
         }
         if (positivePoints) {
             mScoreTV.setTextColor(green);
             if (timeIsEven) {
-                mScoreTV.setText(mContext.getText(R.string.points) + " +" + points);
+                mScoreTV.setText(mContext.getText(R.string.points) + mContext.getString(R.string.plus_sign) + points);
             } else {
-                mScoreTV.setText("");
+                mScoreTV.setText(mContext.getString(R.string.empty_str));
             }
         }
     }

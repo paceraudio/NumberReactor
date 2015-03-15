@@ -33,42 +33,13 @@ public class GameInfoDisplayer {
         mState = (ApplicationState) mContext.getApplicationContext();
     }
 
-    /*public void showStartButtonEngaged(Button start, LayerDrawable drawable) {
-        start.setBackgroundDrawable(drawable);
-    }
-
-    public void showStartButtonArmed(Button start, LayerDrawable drawable) {
-        start.setBackgroundDrawable(drawable);
-    }
-
-    public void showStartButtonDisengaged(Button start, LayerDrawable drawable) {
-        start.setBackgroundDrawable(drawable);
-    }
-
-    public void showStopButtonEngaged(Button stop, LayerDrawable drawable) {
-        stop.setBackgroundDrawable(drawable);
-    }
-
-    public void showStopButtonArmed(Button start, LayerDrawable drawable) {
-        start.setBackgroundDrawable(drawable);
-    }
-
-    public void showStopButtonDisengaged(Button stop, LayerDrawable drawable) {
-        stop.setBackgroundDrawable(drawable);
-    }*/
-
     public void showButtonState(Button button, LayerDrawable layerDrawable) {
-        //button.setBackgroundDrawable(layerDrawable);
         button.setBackground(layerDrawable);
     }
 
-
     private void displayTarget(TextView tv) {
-        // TODO toggle below for random targets
         tv.setText(mContext.getString(R.string.target) + " " + String.format("%.2f",
                 mState.getBaseTarget()));
-        /*tv.setText(mContext.getString(R.string.target) + SPACE + String.format("%.2f",
-                mState.getTurnTarget()));*/
     }
 
     private void displayTurnAccuracy(TextView tv) {
@@ -102,9 +73,6 @@ public class GameInfoDisplayer {
 
     public void displayImmediateGameInfoAfterTurn(TextView accuracy) {
         displayWeightedAccuracy(accuracy);
-        //displayTurnAccuracy(accuracy);
-        //displayLives(lives);
-        //displayTurnPoints(score);
     }
 
     public void displayImmediateGameInfoAfterFadeCountTurn(TextView accuracy) {
@@ -122,18 +90,9 @@ public class GameInfoDisplayer {
             lives.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
             score.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
         }
-
         displayLives(lives);
         displayScore(score);
         displayLevel(level);
-        Log.d(DEBUG_TAG, "displayAllGameInfo ()********" +
-                "\n Level: " + mState.getLevel() +
-                "\n Turn: " + mState.getmTurn() +
-                "\n Lives: " + mState.getLives() +
-                "\n Score: " + mState.getmRunningScoreTotal() +
-                "\n BaseTarget: " + mState.getBaseTarget() +
-                "\n TurnTarget: " + mState.getTurnTarget() +
-                "\n Duration: " + mState.getDuration());
     }
 
     public void resetCounterToZero(TextView counter) {

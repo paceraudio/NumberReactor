@@ -60,18 +60,14 @@ public class FadeOutCounterActivity extends TimeCounter implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fade_out_counter);
-        //state = (ApplicationState) getApplicationContext();
         tvFadeCounter = (TextView) findViewById(R.id.t_v_fade_counter);
         tvFadeTarget = (TextView) findViewById(R.id.t_v_fade_target);
         tvFadeAccuracy = (TextView) findViewById(R.id.t_v_fade_accuracy_rating);
         tvFadeLives = (TextView) findViewById(R.id.t_v_fade_lives_remaining);
         tvFadeScore = (TextView) findViewById(R.id.t_v_fade_score);
         tvFadeLevel = (TextView) findViewById(R.id.t_v_fade_level);
-        //initButtons();
         fadeStartButton = (Button) findViewById(R.id.b_fade_start);
         fadeStopButton = (Button) findViewById(R.id.b_fade_stop);
-        //fadeStartButton = (Button) findViewById(R.id.b_start);
-        //fadeStopButton = (Button) findViewById(R.id.b_stop);
 
         gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengaged);
 
@@ -82,7 +78,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
         fadeStopButton.setOnTouchListener(this);
 
         setStateTargetBasedOnLevel();
-        Log.d(DEBUG_TAG, "onCreate() end " + getLocalClassName());
 
     }
 
@@ -107,7 +102,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
         blueValue = Color.blue(fadeCounterColor);
     }
 
-    //@Override
     protected static void onCounterStopped(long elapsedCount) {
 
         gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngaged);
@@ -115,7 +109,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
         isStopClickable = false;
 
         double roundedCount = calculateRoundedCount(elapsedCount, counterCeilingSeconds);
-        //roundedCount = target;
         String roundedCountStr = generateRoundedCountStr(roundedCount);
 
         straightAccuracy = calculateAccuracy(target, roundedCount);
@@ -135,7 +128,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
         tvFadeCounter.setTextColor(fadeCounterColor);
     }
 
-   // @Override
     protected static int calculateAccuracy(double target, double elapsedCount) {
         int accuracy = state.calcAccuracy(target, elapsedCount);
         state.setmTurnAccuracy(accuracy);
@@ -145,9 +137,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
     private void setStateTargetBasedOnLevel() {
         target = DEFAULT_FADE_COUNTER_TARGET + (state.getLevel() - 1);
         state.setBaseTarget(target);
-        // TODO toggle below for random targets
-        //state.setTurnTarget(target);
-        //counterCeilingMillis = (long) ((target + BUFFER_OVER_TARGET) * MILLIS_IN_SECONDS);
         counterCeilingSeconds = target + BUFFER_OVER_TARGET;
         counterCeilingMillis = (long) (counterCeilingSeconds * MILLIS_IN_SECONDS);
     }
@@ -155,7 +144,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
     //    Listener method runs after ResetNextTurnAsync is finished
     @Override
     public void onNextTurnReset() {
-        Log.d(DEBUG_TAG, "ResetNextTurnAsync returning to FadeCounter!!!!");
         Intent intent = new Intent(this, CounterActivity.class);
         setResult(RESULT_OK, intent);
         finish();
@@ -193,21 +181,10 @@ public class FadeOutCounterActivity extends TimeCounter implements
         }
     }
 
-    /*@Override
-    protected void updateCounter(long elapsedCount, int alpha) {
-        if (isStopClickable) {
-            double elapsedSeconds = elapsedCount / MILLIS_IN_SECONDS;
-            tvFadeCounter.setText(String.format(DOUBLE_FORMAT, elapsedSeconds));
-            tvFadeCounter.setTextColor(Color.argb(alpha, redValue, greenValue, blueValue));
-            elapsedTimeMillis = elapsedCount;
-        }
-    }*/
-
     private void initResetNextTurnListener() {
         resetNextTurnListener = new ResetNextTurnListener() {
             @Override
             public void onNextTurnReset() {
-                Log.d(DEBUG_TAG, "ResetNextTurnAsync returning to FadeCounter!!!!");
                 launchCounterActivityWithResult();
             }
         };
@@ -218,35 +195,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
         setResult(RESULT_OK, intent);
         finish();
     }
-
-    /*protected static class StartButtonArmedRunnable implements  Runnable {
-        Button mStartButton;
-        Handler mHandler;
-
-        public StartButtonArmedRunnable(Button startButton) {
-            this.mStartButton = startButton;
-            mHandler = new Handler();
-        }
-        @Override
-        public void run() {
-            showStartButtonArmed(mStartButton);
-        }
-
-        private void showStartButtonArmed(Button startButton) {
-            long startTime = SystemClock.elapsedRealtime();
-            long elapsedTime;
-            long runningFlashDuration = ARMED_START_BUTTON_FLASH_DURATION;
-            while (isStartClickable) {
-                elapsedTime = SystemClock.elapsedRealtime() - startTime;
-                if (elapsedTime >= runningFlashDuration) {
-                    FlashStartButtonRunnable runnable = new FlashStartButtonRunnable(startButton);
-                    mHandler.post(runnable);
-                    runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
-                }
-            }
-            gameInfoDisplayer.showButtonState(startButton, startButtonEngaged);
-        }
-    }*/
 
 
     static class UpdateCounterAfterTimeoutRunnable implements Runnable {

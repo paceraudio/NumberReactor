@@ -19,6 +19,7 @@
     <string name="score">SCORE: </string>
     <string name="points">POINTS: </string>
     <string name="level">LEVEL: </string>
+    <string name="date">DATE: </string>
     <string name="fade_counter_dialog">Count along with the fading counter, try to stop on the target!</string>
     <string name="out_of_lives_game_over_dialog">OUT OF LIVES!</string>
     <string name="play_again_game_over_dialog">PLAY AGAIN?</string>
@@ -35,6 +36,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_counter">CounterActivity</string>
     <string name="title_activity_view_stats">: NUMBER + REACTOR : Game Data</string>
-    <string name="title_activity_bloberton_the_third">BlobertonTheThird</string>
+    <string name="plus_two"> +2</string>
+    <string name="plus_one"> +1</string>
+    <string name="minus_one"> -1</string>
+    <string name="plus_sign"> +</string>
+    <string name="empty_str"> </string>
 
 </resources>
