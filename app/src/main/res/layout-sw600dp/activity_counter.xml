@@ -27,7 +27,6 @@
 
     <FrameLayout
         android:id="@+id/f_l_for_t_v_counter"
-        android:layout_below="@id/l_l_game_info_top"
         style="@style/NR_FrameLayout.CounterFrame.sw600dp">
 
         <TextView

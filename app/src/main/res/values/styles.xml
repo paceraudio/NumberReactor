@@ -48,7 +48,7 @@
     <!--********************FRAME LAYOUT STYLES*********************-->
 
     <style name="NR_FrameLayout">
-        <item name="android:padding">2dp</item>
+        <item name="android:padding">1.5dp</item>
         <item name="android:background">@color/brown</item>
     </style>
 
@@ -62,22 +62,22 @@
 
     <!--XX-LARGE sw720dp-->
     <style name="NR_FrameLayout.CounterFrame.sw720dp">
-        <item name="android:layout_marginTop">80dp</item>
+        <item name="android:layout_marginTop">90dp</item>
     </style>
 
     <!--LARGE sw600dp-->
     <style name="NR_FrameLayout.CounterFrame.sw600dp">
-        <item name="android:layout_marginTop">65dp</item>
+        <item name="android:layout_marginTop">75dp</item>
     </style>
 
     <!--LARGE PHONE sw550dp-->
-    <style name="NR_FrameLayout.CounterFrame.sw550">
-        <item name="android:layout_marginTop">60dp</item>
+    <style name="NR_FrameLayout.CounterFrame.sw550dp">
+        <item name="android:layout_marginTop">70dp</item>
     </style>
 
     <!--NORMAL sw360dp-->
     <style name="NR_FrameLayout.CounterFrame.sw360dp">
-        <item name="android:layout_marginTop">45dp</item>
+        <item name="android:layout_marginTop">55dp</item>
     </style>
 
     <!--FRAME LAYOUT FOR BUTTONS-->
@@ -274,7 +274,7 @@
 
     <!--NORMAL sw360dp-->
     <style name="NR_TextView.Counter.sw360dp">
-        <item name="android:textSize">120sp</item>
+        <item name="android:textSize">122sp</item>
         <item name="android:layout_width">320dp</item>
     </style>
 
@@ -310,11 +310,11 @@
     </style>
 
     <style name="NR_TextView.GameInfo.sw720dp">
-        <item name="android:textSize">34sp</item>
+        <item name="android:textSize">30sp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.sw600dp">
-        <item name="android:textSize">28sp</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.sw550dp">
