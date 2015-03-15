@@ -52,11 +52,11 @@ public class CounterActivity extends TimeCounter implements
     private static int weightedAccuracy;
     private static final boolean LIFE_LOSS_POSSIBLE = true;
 
-    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 30;
-    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL = 10;
-    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD = 7;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 20;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL =13;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD = 9;
 
-    private static final double DURATION_DECREASE_PER_LEVEL_FACTOR = .95;
+    private static final double DURATION_DECREASE_PER_LEVEL_FACTOR = .97;
 
 
     // Constants for the accelerated count
