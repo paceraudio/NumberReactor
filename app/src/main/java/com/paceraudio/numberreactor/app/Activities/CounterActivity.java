@@ -52,8 +52,8 @@ public class CounterActivity extends TimeCounter implements
     private static int weightedAccuracy;
     private static final boolean LIFE_LOSS_POSSIBLE = true;
 
-    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 20;
-    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL =13;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY = 16;
+    private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_NORMAL =12;
     private static final double BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD = 9;
 
     private static final double DURATION_DECREASE_PER_LEVEL_FACTOR = .97;
@@ -64,7 +64,7 @@ public class CounterActivity extends TimeCounter implements
     private static final double MAX_DISPLAYED_COUNTER_VALUE = 99.99;
     private static final double DURATION_DECREASE_CUTOFF = 1;
     private static final double DURATION_DECREASE_UPDATE = 3;
-    private static final double DURATION_DECREASE_FACTOR = 0.999;
+    private static final double DURATION_DECREASE_FACTOR = 0.99925;
 
 
     private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
