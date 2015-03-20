@@ -33,6 +33,8 @@ public class ApplicationState extends Application{
     private double mDuration;
     private int mDifficulty;
 
+    private static boolean firstTurnInNewGame = true;
+
     private List<Integer> mScoreList;
     private List<Integer> accuracyList;
 
@@ -170,6 +172,14 @@ public class ApplicationState extends Application{
 
     public void setmDifficulty(int mDifficulty) {
         this.mDifficulty = mDifficulty;
+    }
+
+    public boolean isFirstTurnInNewGame() {
+        return firstTurnInNewGame;
+    }
+
+    public void setFirstTurnInNewGame(boolean firstTurnInNewGame) {
+        ApplicationState.firstTurnInNewGame = firstTurnInNewGame;
     }
 
     public double randomizeTarget(double baseTarget) {

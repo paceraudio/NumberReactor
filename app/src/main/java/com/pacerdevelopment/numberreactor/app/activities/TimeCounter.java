@@ -127,8 +127,10 @@ public abstract class TimeCounter extends FragmentActivity {
             return true;
         }
         if (id == R.id.action_view_game_stats) {
-            Intent intent = new Intent(this, ViewStatsActivity.class);
-            startActivity(intent);
+            if (!state.isFirstTurnInNewGame()) {
+                Intent intent = new Intent(this, ViewStatsActivity.class);
+                startActivity(intent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }

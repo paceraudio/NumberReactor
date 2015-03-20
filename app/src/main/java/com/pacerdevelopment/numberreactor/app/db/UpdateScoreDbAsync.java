@@ -10,9 +10,9 @@ public class UpdateScoreDbAsync extends AsyncTask<Integer, Void, Void>{
 
     DBHelper mDbHelper;
     Context mContext;
-    UpdateDbListener mListener;
+    UpdateDbScoreListener mListener;
 
-    public UpdateScoreDbAsync(Context context, UpdateDbListener listener) {
+    public UpdateScoreDbAsync(Context context, UpdateDbScoreListener listener) {
         this.mContext = context;
         this.mDbHelper = new DBHelper(context);
         this.mListener = listener;

@@ -15,7 +15,9 @@ import android.widget.TextView;
 
 import com.pacerdevelopment.numberreactor.app.R;
 import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
-import com.pacerdevelopment.numberreactor.app.db.UpdateDbListener;
+import com.pacerdevelopment.numberreactor.app.db.InsertNewGameRowInDbAsync;
+import com.pacerdevelopment.numberreactor.app.db.InsertNewGameRowListener;
+import com.pacerdevelopment.numberreactor.app.db.UpdateDbScoreListener;
 import com.pacerdevelopment.numberreactor.app.db.UpdateLevelDbAsync;
 import com.pacerdevelopment.numberreactor.app.db.UpdateScoreDbAsync;
 import com.pacerdevelopment.numberreactor.app.dialogs.OutOfLivesDialogFragment;
@@ -72,7 +74,8 @@ public class CounterActivity extends TimeCounter implements
 
     private boolean mIsListeningForSharedPrefChanges = false;
 
-    private static UpdateDbListener updateDbListener;
+    private static InsertNewGameRowListener newGameRowListener;
+    private static UpdateDbScoreListener updateDbScoreListener;
     private static ResetNextTurnListener resetNextTurnListener;
 
 
@@ -92,6 +95,7 @@ public class CounterActivity extends TimeCounter implements
 
         gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengaged);
 
+        initNewGameRowListener();
         initResetNextTurnListener();
         initUpdateDbListener();
 
@@ -136,9 +140,17 @@ public class CounterActivity extends TimeCounter implements
         changeCounterColorIfDeadOn(roundedCount, mBaseTarget, tvCounter);
 
         gameInfoDisplayer.displayImmediateGameInfoAfterTurn(tvAccuracy);
-        UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(ApplicationState
-                .getAppContext(), updateDbListener);
-        updateScoreDbAsync.execute(state.getmRunningScoreTotal());
+
+        if (state.isFirstTurnInNewGame()) {
+            launchNewGameRowAsync();
+            state.setFirstTurnInNewGame(false);
+        }
+        else {
+            launchUpdateScoreAsync();
+        }
+        /*UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(ApplicationState
+                .getAppContext(), updateDbScoreListener);
+        updateScoreDbAsync.execute(state.getmRunningScoreTotal());*/
     }
 
     protected static int calculateAccuracy(double target, double elapsedCount) {
@@ -173,7 +185,7 @@ public class CounterActivity extends TimeCounter implements
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLives,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
         //        TODO put this in async task
-        mDbHelper.insertNewGameRowInDb();
+        //mDbHelper.insertNewGameRowInDb();
         flashStartButton();
     }
 
@@ -359,11 +371,32 @@ public class CounterActivity extends TimeCounter implements
     }
 
     private void initUpdateDbListener() {
-        updateDbListener = new UpdateDbListener() {
+        updateDbScoreListener = new UpdateDbScoreListener() {
             @Override
             public void onDbScoreUpdatedEndOfTurn() {
                 launchResetNextTurnAsync(resetNextTurnListener, ApplicationState.getAppContext(),
                         tvCounter, tvLives, tvScore, weightedAccuracy, LIFE_LOSS_POSSIBLE);
+            }
+        };
+    }
+
+    private static void launchNewGameRowAsync() {
+        InsertNewGameRowInDbAsync newGameRowInDbAsync =
+                new InsertNewGameRowInDbAsync(ApplicationState.getAppContext(), newGameRowListener);
+        newGameRowInDbAsync.execute();
+    }
+
+    private static void launchUpdateScoreAsync() {
+        UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(ApplicationState
+                .getAppContext(), updateDbScoreListener);
+        updateScoreDbAsync.execute(state.getmRunningScoreTotal());
+    }
+
+    private void initNewGameRowListener() {
+        newGameRowListener = new InsertNewGameRowListener() {
+            @Override
+            public void onNewRowInsertedInDb() {
+                launchUpdateScoreAsync();
             }
         };
     }
