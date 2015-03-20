@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.application;
+package com.pacerdevelopment.numberreactor.app.application;
 
 /**
  * Created by jeffwconaway on 9/26/14.
@@ -6,7 +6,6 @@ package com.paceraudio.numberreactor.app.application;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -1,18 +1,15 @@
-package com.paceraudio.numberreactor.app.db;
+package com.pacerdevelopment.numberreactor.app.db;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import com.paceraudio.numberreactor.app.application.ApplicationState;
-import com.paceraudio.numberreactor.app.util.GameStats;
+import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
+import com.pacerdevelopment.numberreactor.app.util.GameStats;
 
 import java.util.ArrayList;
-
-import static com.paceraudio.numberreactor.app.activities.TimeCounter.DEBUG_TAG;
 
 /**
  * Created by jeffwconaway on 10/9/14.

@@ -1,14 +1,13 @@
-package com.paceraudio.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.activities;
 
-import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.os.Bundle;
 
-import com.paceraudio.numberreactor.app.db.DBHelper;
-import com.paceraudio.numberreactor.app.db.QueryAllDbAsync;
-import com.paceraudio.numberreactor.app.db.QueryDbListener;
-import com.paceraudio.numberreactor.app.util.GameStats;
-import com.paceraudio.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.db.DBHelper;
+import com.pacerdevelopment.numberreactor.app.db.QueryAllDbAsync;
+import com.pacerdevelopment.numberreactor.app.db.QueryDbListener;
+import com.pacerdevelopment.numberreactor.app.util.GameStats;
 
 import java.util.ArrayList;
 
@@ -40,4 +39,6 @@ public class ViewStatsActivity extends ListActivity implements QueryDbListener {
         mAdapter.notifyDataSetChanged();
         return arrayList;
     }
+
+
 }

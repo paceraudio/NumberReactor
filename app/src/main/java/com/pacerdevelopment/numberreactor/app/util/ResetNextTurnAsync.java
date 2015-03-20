@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.util;
+package com.pacerdevelopment.numberreactor.app.util;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.widget.TextView;
 
-import com.paceraudio.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.R;
 
 
 /**

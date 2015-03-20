@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.db;
+package com.pacerdevelopment.numberreactor.app.db;
 
 import android.content.Context;
 import android.os.AsyncTask;

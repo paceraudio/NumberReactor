@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,19 +7,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.paceraudio.numberreactor.app.R;
-import com.paceraudio.numberreactor.app.application.ApplicationState;
-import com.paceraudio.numberreactor.app.db.DBHelper;
-import com.paceraudio.numberreactor.app.util.ButtonDrawableView;
-import com.paceraudio.numberreactor.app.util.GameInfoDisplayer;
-import com.paceraudio.numberreactor.app.util.ResetNextTurnAsync;
-import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
+import com.pacerdevelopment.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
+import com.pacerdevelopment.numberreactor.app.db.DBHelper;
+import com.pacerdevelopment.numberreactor.app.util.ButtonDrawableView;
+import com.pacerdevelopment.numberreactor.app.util.GameInfoDisplayer;
+import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnAsync;
+import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
 
 /**
  * Created by jeffwconaway on 2/27/15.
@@ -53,13 +52,6 @@ public abstract class TimeCounter extends FragmentActivity {
 
     protected static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;
     protected static final int NORMAL_TURN_RESET = 0;
-
-/*
-    protected static final int DOUBLE_LIVES_GAINED = 2;
-    protected static final int LIFE_GAINED = 1;
-    protected static final int LIFE_NEUTRAL = 0;
-    protected static final int LIFE_LOST = -1;
-*/
 
     protected static final long COUNTER_INCREMENT_MILLIS = 10;
     protected static final double MILLIS_IN_SECONDS = 1000;

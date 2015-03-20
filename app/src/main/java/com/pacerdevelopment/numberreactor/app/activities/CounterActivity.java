@@ -1,27 +1,25 @@
-package com.paceraudio.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.paceraudio.numberreactor.app.application.ApplicationState;
-import com.paceraudio.numberreactor.app.db.UpdateDbListener;
-import com.paceraudio.numberreactor.app.db.UpdateLevelDbAsync;
-import com.paceraudio.numberreactor.app.db.UpdateScoreDbAsync;
-import com.paceraudio.numberreactor.app.dialogs.OutOfLivesDialogFragment;
-import com.paceraudio.numberreactor.app.R;
-import com.paceraudio.numberreactor.app.util.ResetNextTurnListener;
+import com.pacerdevelopment.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
+import com.pacerdevelopment.numberreactor.app.db.UpdateDbListener;
+import com.pacerdevelopment.numberreactor.app.db.UpdateLevelDbAsync;
+import com.pacerdevelopment.numberreactor.app.db.UpdateScoreDbAsync;
+import com.pacerdevelopment.numberreactor.app.dialogs.OutOfLivesDialogFragment;
+import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
 
 
 public class CounterActivity extends TimeCounter implements

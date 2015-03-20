@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.db;
+package com.pacerdevelopment.numberreactor.app.db;
 
 /**
  * Created by jeffwconaway on 3/14/15.

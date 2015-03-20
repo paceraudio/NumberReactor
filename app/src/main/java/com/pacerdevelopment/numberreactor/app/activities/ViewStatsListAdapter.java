@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.activities;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.paceraudio.numberreactor.app.util.GameStats;
-import com.paceraudio.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.util.GameStats;
 
 import java.util.ArrayList;
 

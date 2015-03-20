@@ -1,14 +1,12 @@
-package com.paceraudio.numberreactor.app.util;
+package com.pacerdevelopment.numberreactor.app.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.LayerDrawable;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.paceraudio.numberreactor.app.application.ApplicationState;
-import com.paceraudio.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
 
 /**
  * Created by jeffwconaway on 12/17/14.

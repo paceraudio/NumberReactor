@@ -1,13 +1,13 @@
-package com.paceraudio.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.activities;
 
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
-import com.paceraudio.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.R;
 
 /**
- * A {@link PreferenceActivity} that presents a set of application settings. On
+ * A {@link android.preference.PreferenceActivity} that presents a set of application settings. On
  * handset devices, settings are presented as a single list. On tablets,
  * settings are split by category, with category headers shown to the left of
  * the list of settings.

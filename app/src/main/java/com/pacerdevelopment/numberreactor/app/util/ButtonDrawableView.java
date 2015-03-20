@@ -1,4 +1,4 @@
-package com.paceraudio.numberreactor.app.util;
+package com.pacerdevelopment.numberreactor.app.util;
 
 import android.content.Context;
 import android.graphics.Paint;
@@ -10,7 +10,7 @@ import android.graphics.drawable.shapes.PathShape;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.paceraudio.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.R;
 
 /**
  * Created by jeffwconaway on 1/8/15.
