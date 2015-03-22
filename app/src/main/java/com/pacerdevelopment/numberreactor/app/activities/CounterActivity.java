@@ -2,6 +2,8 @@ package com.pacerdevelopment.numberreactor.app.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -99,10 +101,17 @@ public class CounterActivity extends TimeCounter implements
         initResetNextTurnListener();
         initUpdateDbListener();
 
+
+
         if (!mIsListeningForSharedPrefChanges) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            /*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            prefs.registerOnSharedPreferenceChangeListener(this);*/
             prefs.registerOnSharedPreferenceChangeListener(this);
             mIsListeningForSharedPrefChanges = true;
+        }
+
+        if (checkSharedPrefsForPreviousInstall()) {
+
         }
 
         setInitialTimeValuesLevelOne();
@@ -144,6 +153,9 @@ public class CounterActivity extends TimeCounter implements
         if (state.isFirstTurnInNewGame()) {
             launchNewGameRowAsync();
             state.setFirstTurnInNewGame(false);
+            if (!checkSharedPrefsForDbExistance()) {
+                setSharedPrefsDbExists();
+            }
         }
         else {
             launchUpdateScoreAsync();
@@ -190,7 +202,8 @@ public class CounterActivity extends TimeCounter implements
     }
 
     private double checkSharedPrefsDifficulty() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         String difficultyLevel = prefs.getString(getString(R.string.prefs_difficulty_key), "2");
         state.setmDifficulty(Integer.parseInt(difficultyLevel));
         if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_1))) {
@@ -203,6 +216,24 @@ public class CounterActivity extends TimeCounter implements
             return BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD;
         }
     }
+
+
+
+
+
+    protected boolean checkSharedPrefsForPreviousInstall() {
+        return prefs.getBoolean(appNamePlusVersion, false);
+    }
+
+
+
+
+    protected void setSharedPrefsGameInstalled() {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(appNamePlusVersion, true);
+        editor.commit();
+    }
+
 
     private void resetTimeValuesBetweenTurns() {
         resetDurationToStateDuration();
@@ -293,6 +324,11 @@ public class CounterActivity extends TimeCounter implements
     @Override
     public void onOkClicked() {
         mDialogFragment.dismiss();
+
+        // set the state back to first turn in game to trip a new row entered in db after the first
+        // turn in new game is played
+        state.setFirstTurnInNewGame(true);
+
         setInitialTimeValuesLevelOne();
         gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengaged);
         gameInfoDisplayer.resetCounterToZero(tvCounter);
@@ -306,7 +342,10 @@ public class CounterActivity extends TimeCounter implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        updateDifficultyBasedOnPreferencesAndLevel();
+
+        if (s.equals(getString(R.string.prefs_difficulty_key))) {
+            updateDifficultyBasedOnPreferencesAndLevel();
+        }
     }
 
     private void updateDifficultyBasedOnPreferencesAndLevel() {

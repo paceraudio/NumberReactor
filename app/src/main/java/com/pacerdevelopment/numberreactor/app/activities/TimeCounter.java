@@ -2,10 +2,14 @@ package com.pacerdevelopment.numberreactor.app.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +51,12 @@ public abstract class TimeCounter extends FragmentActivity {
 
     protected static long startTime;
 
+    protected static SharedPreferences prefs;
+    protected static PackageInfo versionInfo;
+    protected static String appNamePlusVersion;
+    protected static String dbNotNullPrefsKey;
+
+
     protected static final int BEGINNING_TARGET_LEVEL_ONE = 2;
     protected static final int TURNS_PER_LEVEL = 4;
 
@@ -86,6 +96,8 @@ public abstract class TimeCounter extends FragmentActivity {
         mDbHelper = new DBHelper(this);
         handler = new Handler();
         initButtonDrawables();
+        initSharedPrefsElements();
+
     }
 
 
@@ -115,6 +127,46 @@ public abstract class TimeCounter extends FragmentActivity {
         return true;
     }
 
+
+    protected PackageInfo getPackageInfo() {
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = this.getPackageManager().getPackageInfo(this.getPackageName(),
+                    PackageManager.GET_ACTIVITIES);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return packageInfo;
+    }
+
+    private void initSharedPrefsElements() {
+        versionInfo = getPackageInfo();
+        appNamePlusVersion = getString(R.string.app_name) + versionInfo.versionName;
+        dbNotNullPrefsKey = getString(R.string.prefs_db_not_null_key);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    }
+
+    protected boolean checkSharedPrefsForPreviousInstall() {
+        return prefs.getBoolean(appNamePlusVersion, false);
+    }
+
+    protected void setSharedPrefsGameInstalled() {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(appNamePlusVersion, true);
+        editor.commit();
+    }
+
+    protected static boolean checkSharedPrefsForDbExistance() {
+        return prefs.getBoolean(dbNotNullPrefsKey, false);
+    }
+
+    protected static void setSharedPrefsDbExists() {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(dbNotNullPrefsKey, true);
+        editor.commit();
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -127,7 +179,7 @@ public abstract class TimeCounter extends FragmentActivity {
             return true;
         }
         if (id == R.id.action_view_game_stats) {
-            if (!state.isFirstTurnInNewGame()) {
+            if (checkSharedPrefsForDbExistance()) {
                 Intent intent = new Intent(this, ViewStatsActivity.class);
                 startActivity(intent);
             }

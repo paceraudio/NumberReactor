@@ -41,5 +41,6 @@
     <string name="minus_one"> -1</string>
     <string name="plus_sign"> +</string>
     <string name="empty_str"> </string>
+    <string name="prefs_db_not_null_key">prefsDbNotNullKey</string>
 
 </resources>
