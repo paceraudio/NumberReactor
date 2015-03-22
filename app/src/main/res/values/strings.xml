@@ -42,5 +42,10 @@
     <string name="plus_sign"> +</string>
     <string name="empty_str"> </string>
     <string name="prefs_db_not_null_key">prefsDbNotNullKey</string>
+    <string name="welcome">Welcome!</string>
+    <string name="instructions">Use the start and stop buttons to control the counter! Try to
+    stop the counter as close to the target (in the upper left of screen) as possible!</string>
+    <string name="good_luck">Good Luck!</string>
+    <string name="begin_game">OK</string>
 
 </resources>

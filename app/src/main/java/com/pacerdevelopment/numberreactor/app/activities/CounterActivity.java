@@ -21,6 +21,7 @@ import com.pacerdevelopment.numberreactor.app.db.UpdateDbScoreListener;
 import com.pacerdevelopment.numberreactor.app.db.UpdateLevelDbAsync;
 import com.pacerdevelopment.numberreactor.app.db.UpdateScoreDbAsync;
 import com.pacerdevelopment.numberreactor.app.dialogs.OutOfLivesDialogFragment;
+import com.pacerdevelopment.numberreactor.app.dialogs.WelcomeDialogFragment;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
 
 
@@ -42,6 +43,7 @@ public class CounterActivity extends TimeCounter implements
     static Button stopButton;
 
     private final static String OUT_OF_LIVES_DIALOG = "outOfLivesDialog";
+    private final static String WELCOME_DIALOG = "welcomeDialog";
     private DialogFragment mDialogFragment;
 
     static long elapsedAcceleratedCount;
@@ -108,8 +110,9 @@ public class CounterActivity extends TimeCounter implements
             mIsListeningForSharedPrefChanges = true;
         }
 
-        if (checkSharedPrefsForPreviousInstall()) {
-
+        if (!checkSharedPrefsForPreviousInstall()) {
+            launchWelcomeDialog();
+            setSharedPrefsGameInstalled(true);
         }
 
         setInitialTimeValuesLevelOne();
@@ -217,22 +220,6 @@ public class CounterActivity extends TimeCounter implements
 
 
 
-
-
-    protected boolean checkSharedPrefsForPreviousInstall() {
-        return prefs.getBoolean(appNamePlusVersion, false);
-    }
-
-
-
-
-    protected void setSharedPrefsGameInstalled() {
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(appNamePlusVersion, true);
-        editor.commit();
-    }
-
-
     private void resetTimeValuesBetweenTurns() {
         resetDurationToStateDuration();
         resetBasicTimeValues();
@@ -301,6 +288,13 @@ public class CounterActivity extends TimeCounter implements
         FragmentTransaction ft = fm.beginTransaction();
         mDialogFragment = OutOfLivesDialogFragment.newInstance();
         mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
+    }
+
+    private void launchWelcomeDialog() {
+        android.app.FragmentManager fm = getFragmentManager();
+        android.app.FragmentTransaction ft = fm.beginTransaction();
+        android.app.DialogFragment welcomeDialog = WelcomeDialogFragment.newInstance();
+        welcomeDialog.show(fm, WELCOME_DIALOG);
     }
 
     private void launchFadeCounterActivity() {

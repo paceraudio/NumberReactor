@@ -146,9 +146,9 @@ public abstract class TimeCounter extends FragmentActivity {
         return prefs.getBoolean(appNamePlusVersion, false);
     }
 
-    protected void setSharedPrefsGameInstalled() {
+    protected void setSharedPrefsGameInstalled(boolean isInstalled) {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(appNamePlusVersion, true);
+        editor.putBoolean(appNamePlusVersion, isInstalled);
         editor.commit();
     }
 

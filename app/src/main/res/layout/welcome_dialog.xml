@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:typeface="monospace"
+        android:textColor="@color/grey"
+        android:textSize="24sp"
+        android:background="@color/darkBlackRed"
+        android:text="@string/welcome"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:typeface="monospace"
+        android:textColor="@color/grey"
+        android:textSize="16sp"
+        android:background="@color/darkBlackRed"
+        android:text="@string/instructions"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:typeface="monospace"
+        android:textColor="@color/grey"
+        android:textSize="24sp"
+        android:background="@color/darkBlackRed"
+        android:text="@string/good_luck"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/b_ok_welcome_dialog_frag"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:typeface="monospace"
+        android:textColor="@color/green"
+        android:textSize="24sp"
+        android:background="@color/darkBlackRed"
+        android:text="@string/begin_game"
+        android:gravity="center"/>
+
+
+</LinearLayout>
