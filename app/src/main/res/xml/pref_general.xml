@@ -30,15 +30,20 @@
         <!--android:negativeButtonText="@null"-->
         <!--android:positiveButtonText="@null" />-->
 
+<!--    android:dialogLayout="@layout/set_difficulty_dialog"-->
     <PreferenceCategory>
         <ListPreference
+
             android:key="@string/prefs_difficulty_key"
             android:title="@string/prefs_title_select_difficulty"
+            android:dialogTitle="@string/prefs_title_select_difficulty"
             android:entries="@array/prefs_difficulty_settings"
             android:entryValues="@array/prefs_difficulty_values"
             android:positiveButtonText="@null"
             android:negativeButtonText="@null"
-            android:persistent="true"/>
+            android:persistent="true"
+            android:defaultValue="2"
+            />
 
     </PreferenceCategory>
 

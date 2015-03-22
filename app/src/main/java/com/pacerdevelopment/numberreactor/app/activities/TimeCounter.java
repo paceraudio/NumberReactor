@@ -87,7 +87,6 @@ public abstract class TimeCounter extends FragmentActivity {
         stopButtonEngaged = buttonDrawableView.mStopEngagedDrawables;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,10 +96,7 @@ public abstract class TimeCounter extends FragmentActivity {
         handler = new Handler();
         initButtonDrawables();
         initSharedPrefsElements();
-
     }
-
-
 
     @Override
     protected void onResume() {
@@ -156,11 +152,11 @@ public abstract class TimeCounter extends FragmentActivity {
         editor.commit();
     }
 
-    protected static boolean checkSharedPrefsForDbExistance() {
+    protected static boolean checkSharedPrefsForDbNotNull() {
         return prefs.getBoolean(dbNotNullPrefsKey, false);
     }
 
-    protected static void setSharedPrefsDbExists() {
+    protected static void setSharedPrefsDbNotNull() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(dbNotNullPrefsKey, true);
         editor.commit();
@@ -179,7 +175,7 @@ public abstract class TimeCounter extends FragmentActivity {
             return true;
         }
         if (id == R.id.action_view_game_stats) {
-            if (checkSharedPrefsForDbExistance()) {
+            if (checkSharedPrefsForDbNotNull()) {
                 Intent intent = new Intent(this, ViewStatsActivity.class);
                 startActivity(intent);
             }

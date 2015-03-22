@@ -33,11 +33,10 @@
     </style>
 
     <style name="NR_SettingsActivity">
-        <item name="android:dialogTheme">@style/NR_Dialog</item>
-        <item name="android:background">@color/darkBlackRed</item>
-        <item name="android:textColor">@color/red</item>
+        <item name="android:textColor">@color/orange</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:typeface">monospace</item>
     </style>
-
 
 
     <!--********************LIST VIEW STYLES*********************-->

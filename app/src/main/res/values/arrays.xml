@@ -3,11 +3,11 @@
 
     <string-array name="prefs_difficulty_settings">
         <item
-            >EASY</item>
+            >Low</item>
         <item
-            >MEDIUM</item>
+            >Medium</item>
         <item
-            >HARD</item>
+            >High</item>
     </string-array>
 
     <string-array name="prefs_difficulty_values">

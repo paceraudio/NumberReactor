@@ -2,8 +2,6 @@ package com.pacerdevelopment.numberreactor.app.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -153,8 +151,8 @@ public class CounterActivity extends TimeCounter implements
         if (state.isFirstTurnInNewGame()) {
             launchNewGameRowAsync();
             state.setFirstTurnInNewGame(false);
-            if (!checkSharedPrefsForDbExistance()) {
-                setSharedPrefsDbExists();
+            if (!checkSharedPrefsForDbNotNull()) {
+                setSharedPrefsDbNotNull();
             }
         }
         else {
