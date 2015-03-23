@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +16,7 @@ import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
 
 
 public class FadeOutCounterActivity extends TimeCounter implements
-        ResetNextTurnListener, View.OnTouchListener {
+        /*ResetNextTurnListener,*/ View.OnTouchListener {
 
     private static TextView tvFadeCounter;
     private static TextView tvFadeTarget;
@@ -140,12 +141,11 @@ public class FadeOutCounterActivity extends TimeCounter implements
     }
 
     //    Listener method runs after ResetNextTurnAsync is finished
-    @Override
+    /*@Override
     public void onNextTurnReset() {
-        Intent intent = new Intent(this, CounterActivity.class);
-        setResult(RESULT_OK, intent);
-        finish();
-    }
+
+    }*/
+
 
     private void flashStartButton() {
         StartButtonArmedRunnable runnable = new StartButtonArmedRunnable(fadeStartButton);
@@ -194,6 +194,10 @@ public class FadeOutCounterActivity extends TimeCounter implements
         finish();
     }
 
+    @Override
+    public void onBackPressed() {
+        launchCounterActivityWithResult();
+    }
 
     static class UpdateCounterAfterTimeoutRunnable implements Runnable {
         long maxElapsedMillis;

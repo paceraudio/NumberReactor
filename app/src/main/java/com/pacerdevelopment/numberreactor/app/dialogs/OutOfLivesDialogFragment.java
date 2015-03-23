@@ -19,7 +19,7 @@ import com.pacerdevelopment.numberreactor.app.R;
  * Use the {@link com.pacerdevelopment.numberreactor.app.dialogs.OutOfLivesDialogFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class OutOfLivesDialogFragment extends DialogFragment {
+public class OutOfLivesDialogFragment extends android.app.DialogFragment {
 
 
         private OnFragmentInteractionListener mListener;

@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -118,6 +119,8 @@ public class CounterActivity extends TimeCounter implements
         setInitialTimeValuesLevelOne();
         startButton.setOnTouchListener(this);
         stopButton.setOnTouchListener(this);
+
+        Log.d(getLocalClassName(), "state.isFirstTurnInNewGame: " + state.isFirstTurnInNewGame());
     }
 
 
@@ -284,17 +287,19 @@ public class CounterActivity extends TimeCounter implements
     }
 
     private void launchOutOfLivesDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        mDialogFragment = OutOfLivesDialogFragment.newInstance();
-        mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
+        android.app.FragmentManager fm = getFragmentManager();
+        android.app.FragmentTransaction ft = fm.beginTransaction();
+        //mDialogFragment = OutOfLivesDialogFragment.newInstance();
+        //mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
+        android.app.DialogFragment dialogFragment = new OutOfLivesDialogFragment();
+        dialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
     }
 
     private void launchWelcomeDialog() {
         android.app.FragmentManager fm = getFragmentManager();
         android.app.FragmentTransaction ft = fm.beginTransaction();
         android.app.DialogFragment welcomeDialog = WelcomeDialogFragment.newInstance();
-        welcomeDialog.show(fm, WELCOME_DIALOG);
+        welcomeDialog.show(ft, WELCOME_DIALOG);
     }
 
     private void launchFadeCounterActivity() {
@@ -432,6 +437,11 @@ public class CounterActivity extends TimeCounter implements
         };
     }
 
+    @Override
+    public void onBackPressed() {
+        state.setFirstTurnInNewGame(true);
+        super.onBackPressed();
+    }
 
     static class UpdateCounterAfterTimeoutRunnable implements Runnable {
         long maxAccelCount;

@@ -1,5 +1,7 @@
 package com.pacerdevelopment.numberreactor.app.activities;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +13,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -27,7 +30,7 @@ import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
 /**
  * Created by jeffwconaway on 2/27/15.
  */
-public abstract class TimeCounter extends FragmentActivity {
+public abstract class TimeCounter extends Activity {
 
     public static final String DEBUG_TAG = "jwc";
 
@@ -96,6 +99,7 @@ public abstract class TimeCounter extends FragmentActivity {
         handler = new Handler();
         initButtonDrawables();
         initSharedPrefsElements();
+        Log.d(getLocalClassName(), "onCreate");
     }
 
     @Override
@@ -103,17 +107,38 @@ public abstract class TimeCounter extends FragmentActivity {
         super.onResume();
         isStartClickable = true;
         isStopClickable = false;
+        Log.d(getLocalClassName(), "onResume");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(getLocalClassName(), "onRestart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(getLocalClassName(), "onStop");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(getLocalClassName(), "onStart");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(getLocalClassName(), "onPause");
     }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(getLocalClassName(), "onDestroy");
     }
 
     @Override
