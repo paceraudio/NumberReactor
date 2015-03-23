@@ -440,7 +440,7 @@ public class CounterActivity extends TimeCounter implements
     @Override
     public void onBackPressed() {
         state.setFirstTurnInNewGame(true);
-        super.onBackPressed();on
+        super.onBackPressed();
     }
 
     static class UpdateCounterAfterTimeoutRunnable implements Runnable {
