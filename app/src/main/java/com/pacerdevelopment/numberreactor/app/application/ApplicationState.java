@@ -8,9 +8,7 @@ import android.app.Application;
 import android.content.Context;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Random;
 
 public class ApplicationState extends Application{
@@ -21,9 +19,7 @@ public class ApplicationState extends Application{
     private double mBaseTarget;
     private double mTurnTarget;
 
-
     private int mTurnAccuracy;
-
 
     private int mWeightedAccuracy;
     private int mLives;
@@ -34,9 +30,6 @@ public class ApplicationState extends Application{
     private int mDifficulty;
 
     private static boolean firstTurnInNewGame = true;
-
-    private List<Integer> mScoreList;
-    private List<Integer> accuracyList;
 
     private static final int BEGINNING_NUMBER_OF_LIVES = 4;
     private static final int BEGINNING_TARGET_LEVEL_ONE = 2;
@@ -70,8 +63,6 @@ public class ApplicationState extends Application{
     private void initGameStats() {
         mLevel = ONE;
         mRunningScoreTotal = ZERO;
-        mScoreList = new ArrayList<Integer>();
-        accuracyList = new ArrayList<Integer>();
         mLives = BEGINNING_NUMBER_OF_LIVES;
         mBaseTarget = BEGINNING_TARGET_LEVEL_ONE;
         mTurnAccuracy = ZERO;
@@ -85,7 +76,6 @@ public class ApplicationState extends Application{
         mLives = BEGINNING_NUMBER_OF_LIVES;
         mBaseTarget = BEGINNING_TARGET_LEVEL_ONE;
         mTurnAccuracy = ZERO;
-        mScoreList.clear();
         mTurnPoints = ZERO;
         mTurn = ONE;
     }
@@ -112,10 +102,6 @@ public class ApplicationState extends Application{
 
     public void setBaseTarget(double target) {
         this.mBaseTarget = target;
-    }
-
-    public double getTurnTarget() {
-        return mTurnTarget;
     }
 
     public void setTurnTarget(double mTurnTarget) {
@@ -166,10 +152,6 @@ public class ApplicationState extends Application{
         this.mTurnPoints = mTurnPoints;
     }
 
-    public int getmDifficulty() {
-        return mDifficulty;
-    }
-
     public void setmDifficulty(int mDifficulty) {
         this.mDifficulty = mDifficulty;
     }
@@ -188,18 +170,7 @@ public class ApplicationState extends Application{
     }
 
     public void updateRunningScoreTotal(int newScore) {
-        mScoreList.add(newScore);
         mRunningScoreTotal += newScore;
-    }
-
-    public void resetScoreForNewGame() {
-        mScoreList.clear();
-        mRunningScoreTotal = ZERO;
-    }
-
-
-    public void resetLivesForNewGame() {
-        mLives = BEGINNING_NUMBER_OF_LIVES;
     }
 
     public String obtainGameDate() {
@@ -255,7 +226,6 @@ public class ApplicationState extends Application{
         else if (accuracy <= LIFE_LOSS_THRESHOLD && lifeLossPossible) {
             livesGained = MINUS_ONE_LIFE;
         }
-        // TODO use setLives for activity instead of this
         mLives += livesGained;
         return livesGained;
     }

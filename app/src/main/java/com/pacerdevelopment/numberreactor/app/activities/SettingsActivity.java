@@ -11,19 +11,8 @@ import android.view.MenuItem;
 
 import com.pacerdevelopment.numberreactor.app.R;
 
-import static com.pacerdevelopment.numberreactor.app.activities.CounterActivity.FROM_COUNTER_ACTIVITY_FLAG;
-import static com.pacerdevelopment.numberreactor.app.activities.FadeOutCounterActivity.FROM_FADE_COUNTER_ACTIVITY_FLAG;
 
 public class SettingsActivity extends PreferenceActivity {
-
-   /* @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        addPreferencesFromResource(R.xml.pref_general);
-        ActionBar actionBar = getActionBar();
-        actionBar.hide();
-    }*/
 
     Intent mIntent;
 
@@ -54,11 +43,5 @@ public class SettingsActivity extends PreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
         }
-
-        /*@Override
-        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-            super.onCreateOptionsMenu(menu, inflater);
-            inflater.inflate(R.menu.menu_settings_frag, menu);
-        }*/
     }
 }

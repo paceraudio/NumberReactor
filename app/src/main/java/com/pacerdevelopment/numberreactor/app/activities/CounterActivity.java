@@ -135,7 +135,6 @@ public class CounterActivity extends TimeCounter implements
         }
     }
 
-
     protected static void onCounterStopped(long elapsedCount) {
 
         gameInfoDisplayer.showButtonState(stopButton, stopButtonEngaged);

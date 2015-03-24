@@ -28,7 +28,6 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
     boolean mIsLiveNeutral = false;
     boolean mIsLifeLost = false;
     boolean mIsFadeOutDone = false;
-    int mBlinks = 8;
     int mTurnPoints;
 
     private static final int LAST_TURN_RESET_BEFORE_NEW_ACTIVITY = -1;

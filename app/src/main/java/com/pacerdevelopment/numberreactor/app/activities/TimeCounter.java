@@ -96,7 +96,6 @@ public abstract class TimeCounter extends Activity {
         handler = new Handler();
         initButtonDrawables();
         initSharedPrefsElements();
-        Log.d(getLocalClassName(), "onCreate");
     }
 
     @Override
@@ -104,41 +103,13 @@ public abstract class TimeCounter extends Activity {
         super.onResume();
         isStartClickable = true;
         isStopClickable = false;
-        Log.d(getLocalClassName(), "onResume");
-
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(getLocalClassName(), "onRestart");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(getLocalClassName(), "onStop");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(getLocalClassName(), "onStart");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(getLocalClassName(), "onPause");
         quitFlashingStartButton();
         StartButtonArmedRunnable.cancelThread();
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(getLocalClassName(), "onDestroy");
     }
 
     @Override
@@ -146,7 +117,6 @@ public abstract class TimeCounter extends Activity {
         getMenuInflater().inflate(R.menu.time_counter, menu);
         return true;
     }
-
 
     protected PackageInfo getPackageInfo() {
         PackageInfo packageInfo = null;

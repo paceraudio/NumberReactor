@@ -67,40 +67,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public int queryNewestDbEntry() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "select max(" + C_GAME_NUMBER + ")" + " from " + TABLE_GAME_PERFORMANCE;
-        Cursor c = db.rawQuery(sql, null);
-        c.moveToFirst();
-        int i = c.getInt(0);
-        db.close();
-        return i;
-    }
-
-    public int queryScoreFromDb() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "select " + C_POINTS_SCORED + " from " + TABLE_GAME_PERFORMANCE + " where "
-                + C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER + ") from " +
-                TABLE_GAME_PERFORMANCE + ")";
-        Cursor c = db.rawQuery(sql, null);
-        c.moveToFirst();
-        int i = c.getInt(0);
-        db.close();
-        return i;
-    }
-
-    public int queryLevelFromDb() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "select " + C_LEVEL_REACHED + " from " + TABLE_GAME_PERFORMANCE + " where "
-                + C_GAME_NUMBER + " = (select max(" + C_GAME_NUMBER + ") from " +
-                TABLE_GAME_PERFORMANCE + ")";
-        Cursor c = db.rawQuery(sql, null);
-        c.moveToFirst();
-        int i = c.getInt(0);
-        db.close();
-        return i;
-    }
-
     public ArrayList<GameStats> queryAllFromDb() {
         ArrayList<GameStats> arrayList = new ArrayList<GameStats>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -120,7 +86,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return arrayList;
     }
-
 
     public void updateScoreDB(int score) {
         SQLiteDatabase db = this.getWritableDatabase();

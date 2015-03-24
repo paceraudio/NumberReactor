@@ -23,8 +23,6 @@ public class GameInfoDisplayer {
     private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
     private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
 
-    private static final String DEBUG_TAG = "jwc";
-
 
     public GameInfoDisplayer(Context context) {
         this.mContext = context;
@@ -55,10 +53,6 @@ public class GameInfoDisplayer {
     private void displayLives(TextView tv) {
         tv.setText(mContext.getString(R.string.lives_remaining) + SPACE + mState
                 .getLives());
-    }
-
-    private void displayTurnPoints(TextView tv) {
-        tv.setText(mContext.getString(R.string.points) + SPACE + mState.getmTurnPoints());
     }
 
     private void displayScore(TextView tv) {
