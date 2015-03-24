@@ -5,8 +5,8 @@
 
     <style name="NR_ActionBar" parent="android:Widget.ActionBar">
         <item name="android:background">@color/blackRed</item>
-        <item name="android:iconifiedByDefault">false</item>
-        <item name="android:icon">@color/lightBlue</item>
+        <item name="android:iconifiedByDefault">true</item>
+        <item name="android:icon">@mipmap/ic_launcher_n_r</item>
         <item name="android:actionBarSize">wrap_content</item>
         <item name="android:titleTextStyle">@style/NR_ActionBar_Title_Text</item>
     </style>
@@ -33,9 +33,10 @@
     </style>
 
     <style name="NR_SettingsActivity">
-        <item name="android:textColor">@color/orange</item>
+        <item name="android:textColor">@color/grey</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:typeface">monospace</item>
+        <item name="android:actionBarStyle">@style/NR_ActionBar</item>
     </style>
 
 

@@ -1,31 +1,64 @@
 package com.pacerdevelopment.numberreactor.app.activities;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.pacerdevelopment.numberreactor.app.R;
 
-/**
- * A {@link android.preference.PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
- * <p/>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
- */
+import static com.pacerdevelopment.numberreactor.app.activities.CounterActivity.FROM_COUNTER_ACTIVITY_FLAG;
+import static com.pacerdevelopment.numberreactor.app.activities.FadeOutCounterActivity.FROM_FADE_COUNTER_ACTIVITY_FLAG;
+
 public class SettingsActivity extends PreferenceActivity {
 
-
-    @Override
+   /* @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         addPreferencesFromResource(R.xml.pref_general);
         ActionBar actionBar = getActionBar();
         actionBar.hide();
+    }*/
+
+    Intent mIntent;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mIntent = getIntent();
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return(super.onOptionsItemSelected(item));
+    }
+
+    public static class SettingsFragment extends  PreferenceFragment {
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_general);
+        }
+
+        /*@Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            super.onCreateOptionsMenu(menu, inflater);
+            inflater.inflate(R.menu.menu_settings_frag, menu);
+        }*/
+    }
 }

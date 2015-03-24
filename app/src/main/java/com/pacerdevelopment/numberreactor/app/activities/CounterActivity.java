@@ -3,12 +3,12 @@ package com.pacerdevelopment.numberreactor.app.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -31,7 +31,6 @@ public class CounterActivity extends TimeCounter implements
         SharedPreferences.OnSharedPreferenceChangeListener, View.OnTouchListener {
 
     public static double mBaseTarget;
-    public double mTurnTarget;
 
     private static TextView tvCounter;
     private static TextView tvLives;
@@ -45,7 +44,7 @@ public class CounterActivity extends TimeCounter implements
 
     private final static String OUT_OF_LIVES_DIALOG = "outOfLivesDialog";
     private final static String WELCOME_DIALOG = "welcomeDialog";
-    private DialogFragment mDialogFragment;
+    //private DialogFragment mDialogFragment;
 
     static long elapsedAcceleratedCount;
     static double levelDuration = 10;
@@ -71,6 +70,7 @@ public class CounterActivity extends TimeCounter implements
 
 
     private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
+    protected static final int FROM_COUNTER_ACTIVITY_FLAG = 100;
 
     //    RequestCode for starting FadeCounter for a result
     private static final int FADE_COUNTER_REQUEST_CODE = 1;
@@ -105,8 +105,6 @@ public class CounterActivity extends TimeCounter implements
 
 
         if (!mIsListeningForSharedPrefChanges) {
-            /*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            prefs.registerOnSharedPreferenceChangeListener(this);*/
             prefs.registerOnSharedPreferenceChangeListener(this);
             mIsListeningForSharedPrefChanges = true;
         }
@@ -119,10 +117,13 @@ public class CounterActivity extends TimeCounter implements
         setInitialTimeValuesLevelOne();
         startButton.setOnTouchListener(this);
         stopButton.setOnTouchListener(this);
-
-        Log.d(getLocalClassName(), "state.isFirstTurnInNewGame: " + state.isFirstTurnInNewGame());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        flashStartButton();
+    }
 
     @Override
     protected void onDestroy() {
@@ -133,8 +134,6 @@ public class CounterActivity extends TimeCounter implements
             mIsListeningForSharedPrefChanges = false;
         }
     }
-
-
 
 
     protected static void onCounterStopped(long elapsedCount) {
@@ -164,9 +163,6 @@ public class CounterActivity extends TimeCounter implements
         else {
             launchUpdateScoreAsync();
         }
-        /*UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(ApplicationState
-                .getAppContext(), updateDbScoreListener);
-        updateScoreDbAsync.execute(state.getmRunningScoreTotal());*/
     }
 
     protected static int calculateAccuracy(double target, double elapsedCount) {
@@ -186,7 +182,7 @@ public class CounterActivity extends TimeCounter implements
     }
 
     private void resetBasicTimeValues() {
-        elapsedAcceleratedCount = 0;
+        elapsedAcceleratedCount = ZERO;
         mDurationIncrement = levelDuration;
     }
 
@@ -200,14 +196,9 @@ public class CounterActivity extends TimeCounter implements
         isStartClickable = true;
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLives,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
-        //        TODO put this in async task
-        //mDbHelper.insertNewGameRowInDb();
-        flashStartButton();
     }
 
     private double checkSharedPrefsDifficulty() {
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
         String difficultyLevel = prefs.getString(getString(R.string.prefs_difficulty_key), "2");
         state.setmDifficulty(Integer.parseInt(difficultyLevel));
         if (difficultyLevel.equals(getString(R.string.prefs_difficulty_values_1))) {
@@ -220,8 +211,6 @@ public class CounterActivity extends TimeCounter implements
             return BEGINNING_LEVEL_DURATION_LEVEL_ONE_HARD;
         }
     }
-
-
 
     private void resetTimeValuesBetweenTurns() {
         resetDurationToStateDuration();
@@ -255,7 +244,6 @@ public class CounterActivity extends TimeCounter implements
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLives,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
         flashStartButton();
-
     }
 
     private void resetTurnsToFirstTurn() {
@@ -289,8 +277,6 @@ public class CounterActivity extends TimeCounter implements
     private void launchOutOfLivesDialog() {
         android.app.FragmentManager fm = getFragmentManager();
         android.app.FragmentTransaction ft = fm.beginTransaction();
-        //mDialogFragment = OutOfLivesDialogFragment.newInstance();
-        //mDialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
         android.app.DialogFragment dialogFragment = new OutOfLivesDialogFragment();
         dialogFragment.show(ft, OUT_OF_LIVES_DIALOG);
     }
@@ -311,21 +297,20 @@ public class CounterActivity extends TimeCounter implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == FADE_COUNTER_REQUEST_CODE) {
+            //quitFlashingStartButton();
             setGameValuesForNextLevel();
             UpdateLevelDbAsync updateLevelDbAsync = new UpdateLevelDbAsync(this);
             updateLevelDbAsync.execute(state.getLevel());
+            flashStartButton();
         }
     }
 
     //  Dialog fragment interaction methods
     @Override
     public void onOkClicked() {
-        mDialogFragment.dismiss();
-
         // set the state back to first turn in game to trip a new row entered in db after the first
         // turn in new game is played
         state.setFirstTurnInNewGame(true);
-
         setInitialTimeValuesLevelOne();
         gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengaged);
         gameInfoDisplayer.resetCounterToZero(tvCounter);
@@ -333,7 +318,6 @@ public class CounterActivity extends TimeCounter implements
 
     @Override
     public void onExitClicked() {
-        mDialogFragment.dismiss();
         finish();
     }
 
@@ -368,6 +352,7 @@ public class CounterActivity extends TimeCounter implements
             CounterRunnable counterRunnable = new CounterRunnable();
             Thread counterThread = new Thread(counterRunnable);
             counterThread.start();
+            StartButtonArmedRunnable.cancelThread();
             isStartClickable = false;
             isStopClickable = true;
         } else if (v == stopButton && isStopClickable) {
@@ -476,7 +461,6 @@ public class CounterActivity extends TimeCounter implements
         public CounterRunnable() {
         }
 
-
         @Override
         public void run() {
             runCounter();
@@ -540,8 +524,6 @@ public class CounterActivity extends TimeCounter implements
                     (elapsedCount);
             handler.post(updateCounterRunnable);
         }
-
-
 
         private void postUpdateCounterAfterTimeoutRunnable(long elapsedCount) {
             UpdateCounterAfterTimeoutRunnable runnable;

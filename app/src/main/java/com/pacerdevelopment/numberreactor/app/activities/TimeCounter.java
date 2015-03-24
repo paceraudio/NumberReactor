@@ -1,7 +1,6 @@
 package com.pacerdevelopment.numberreactor.app.activities;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,12 +30,10 @@ import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
  */
 public abstract class TimeCounter extends Activity {
 
-    public static final String DEBUG_TAG = "jwc";
-
-    protected static boolean isStartClickable;
-    protected static boolean isStartFlashing;
-    protected static boolean isStopClickable;
-    protected static boolean isStopFlashing;
+    protected static volatile boolean isStartClickable;
+    protected static volatile boolean isStartFlashing;
+    protected static volatile boolean isStopClickable;
+    protected static volatile boolean isStopFlashing;
 
     protected static Handler handler;
 
@@ -78,6 +74,7 @@ public abstract class TimeCounter extends Activity {
     protected static final int SCORE_QUADRUPLE_THRESHOLD = 99;
     protected static final int TWO = 2;
     protected static final int FOUR = 4;
+    protected static final int ZERO = 0;
 
 
     protected void initButtonDrawables() {
@@ -108,6 +105,7 @@ public abstract class TimeCounter extends Activity {
         isStartClickable = true;
         isStopClickable = false;
         Log.d(getLocalClassName(), "onResume");
+
     }
 
     @Override
@@ -132,6 +130,8 @@ public abstract class TimeCounter extends Activity {
     protected void onPause() {
         super.onPause();
         Log.d(getLocalClassName(), "onPause");
+        quitFlashingStartButton();
+        StartButtonArmedRunnable.cancelThread();
     }
 
 
@@ -143,7 +143,6 @@ public abstract class TimeCounter extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.time_counter, menu);
         return true;
     }
@@ -186,7 +185,6 @@ public abstract class TimeCounter extends Activity {
         editor.putBoolean(dbNotNullPrefsKey, true);
         editor.commit();
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -263,6 +261,11 @@ public abstract class TimeCounter extends Activity {
         }
     }
 
+    protected void quitFlashingStartButton() {
+        //StartButtonArmedRunnable only runs while isStartClickable = true
+        isStartClickable = false;
+    }
+
     protected static void flashStopButtonArmed(Button button) {
         if (isStopClickable) {
             if (isStopFlashing) {
@@ -331,6 +334,11 @@ public abstract class TimeCounter extends Activity {
                     runningFlashDuration += ARMED_START_BUTTON_FLASH_DURATION;
                 }
             }
+            Thread.currentThread().interrupt();
+        }
+
+        public static void cancelThread() {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -351,6 +359,7 @@ public abstract class TimeCounter extends Activity {
     protected static class FlashStopButtonRunnable implements  Runnable {
 
         Button mStopButton;
+
         public FlashStopButtonRunnable(Button stopButton) {
             this.mStopButton = stopButton;
         }
@@ -359,5 +368,4 @@ public abstract class TimeCounter extends Activity {
             flashStopButtonArmed(mStopButton);
         }
     }
-
 }

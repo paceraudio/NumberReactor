@@ -37,8 +37,8 @@ public class ButtonDrawableView extends View {
     private static final float TRIANGLE_Y_INSET = (FRAME_SIDE_LENGTH - TRIANGLE_SIDE_LENGTH) / 2;
     private static final float SQUARE_X_INSET = (FRAME_SIDE_LENGTH - SQUARE_SIDE_LENGTH) / 2;
     private static final float SQUARE_Y_INSET = SQUARE_X_INSET;
-    private static final float ICON_STROKE_WIDTH = 22;
-    private static final float FRAME_STROKE_WIDTH = 18;
+    private static final float ICON_STROKE_WIDTH = 28;
+    private static final float FRAME_STROKE_WIDTH = 15;
 
 
     public ButtonDrawableView(Context context) {

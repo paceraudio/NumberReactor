@@ -3,8 +3,9 @@ package com.pacerdevelopment.numberreactor.app.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
-import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -15,8 +16,7 @@ import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
 
 
-public class FadeOutCounterActivity extends TimeCounter implements
-        /*ResetNextTurnListener,*/ View.OnTouchListener {
+public class FadeOutCounterActivity extends TimeCounter implements View.OnTouchListener {
 
     private static TextView tvFadeCounter;
     private static TextView tvFadeTarget;
@@ -30,14 +30,17 @@ public class FadeOutCounterActivity extends TimeCounter implements
 
     private static long elapsedTimeMillis;
     private static double target;
-    private double mFadeIncrement;
-    private double mRunningFadeTime;
+    //private double mFadeIncrement;
+    //private double mRunningFadeTime;
 
     private static int fadeCounterColor;
-    private static int alphaValue;
+    //private static int alphaValue;
     private static int redValue;
     private static int greenValue;
     private static int blueValue;
+
+    private static long counterCeilingMillis;
+    private static double counterCeilingSeconds;
 
     private static int straightAccuracy;
 
@@ -46,14 +49,13 @@ public class FadeOutCounterActivity extends TimeCounter implements
     private static final int SCORE_NOT_POSSIBLE = 0;
     private static boolean IS_LIFE_LOSS_POSSIBLE = false;
     private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
-
+    protected static final int FROM_FADE_COUNTER_ACTIVITY_FLAG = 200;
 
     private static final double DEFAULT_FADE_COUNTER_TARGET = 10.00;
     private static final int BUFFER_OVER_TARGET = 10;
-    private static long counterCeilingMillis;
-    private static double counterCeilingSeconds;
     private static final double DEFAULT_FADE_RATIO = .60;
     private static final int ALPHA_VALUE_STEPS = 255;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,13 +91,9 @@ public class FadeOutCounterActivity extends TimeCounter implements
         flashStartButton();
     }
 
+
     private void initFadeVariables() {
-        double fadeRange = DEFAULT_FADE_COUNTER_TARGET * DEFAULT_FADE_RATIO;
-        //        This assumes the alpha value of the color is at its max
-        mFadeIncrement = fadeRange / 255;
-        mRunningFadeTime = mFadeIncrement;
         fadeCounterColor = tvFadeCounter.getCurrentTextColor();
-        alphaValue = Color.alpha(fadeCounterColor);
         redValue = Color.red(fadeCounterColor);
         greenValue = Color.green(fadeCounterColor);
         blueValue = Color.blue(fadeCounterColor);
@@ -140,13 +138,6 @@ public class FadeOutCounterActivity extends TimeCounter implements
         counterCeilingMillis = (long) (counterCeilingSeconds * MILLIS_IN_SECONDS);
     }
 
-    //    Listener method runs after ResetNextTurnAsync is finished
-    /*@Override
-    public void onNextTurnReset() {
-
-    }*/
-
-
     private void flashStartButton() {
         StartButtonArmedRunnable runnable = new StartButtonArmedRunnable(fadeStartButton);
         Thread startButtonArmedThread = new Thread(runnable);
@@ -160,6 +151,7 @@ public class FadeOutCounterActivity extends TimeCounter implements
             FadeCounterRunnable fadeCounterRunnable = new FadeCounterRunnable();
             Thread fadeCounterThread = new Thread(fadeCounterRunnable);
             fadeCounterThread.start();
+            StartButtonArmedRunnable.cancelThread();
             isStartClickable = false;
             isStopClickable = true;
         } else if (v == fadeStopButton && isStopClickable) {
@@ -196,6 +188,8 @@ public class FadeOutCounterActivity extends TimeCounter implements
 
     @Override
     public void onBackPressed() {
+        StartButtonArmedRunnable.cancelThread();
+        quitFlashingStartButton();
         launchCounterActivityWithResult();
     }
 
