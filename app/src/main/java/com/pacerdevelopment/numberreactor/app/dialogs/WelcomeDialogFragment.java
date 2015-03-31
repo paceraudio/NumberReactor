@@ -1,5 +1,6 @@
 package com.pacerdevelopment.numberreactor.app.dialogs;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ public class WelcomeDialogFragment extends DialogFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
-        View v = inflater.inflate(R.layout.welcome_dialog, null);
+        View v = inflater.inflate(R.layout.welcome_dialog, container, true);
         Button okButton = (Button) v.findViewById(R.id.b_ok_welcome_dialog_frag);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,5 +42,10 @@ public class WelcomeDialogFragment extends DialogFragment{
         });
         return v;
 
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
     }
 }

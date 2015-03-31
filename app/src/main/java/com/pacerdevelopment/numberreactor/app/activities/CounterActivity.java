@@ -23,7 +23,7 @@ import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
 
 
 public class CounterActivity extends TimeCounter implements
-         OutOfLivesDialogFragment.OnFragmentInteractionListener,
+        OutOfLivesDialogFragment.OutOfLivesListener,
         SharedPreferences.OnSharedPreferenceChangeListener, View.OnTouchListener {
 
     public static double mBaseTarget;
@@ -304,7 +304,7 @@ public class CounterActivity extends TimeCounter implements
 
     //  Dialog fragment interaction methods
     @Override
-    public void onOkClicked() {
+    public void onOkClickedOutOfLivesDialog() {
         // set the state back to first turn in game to trip a new row entered in db after the first
         // turn in new game is played
         state.setFirstTurnInNewGame(true);
@@ -314,7 +314,7 @@ public class CounterActivity extends TimeCounter implements
     }
 
     @Override
-    public void onExitClicked() {
+    public void onExitClickedOutOfLivesDialog() {
         finish();
     }
 
