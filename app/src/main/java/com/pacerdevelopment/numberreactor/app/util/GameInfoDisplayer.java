@@ -19,6 +19,7 @@ public class GameInfoDisplayer {
     private static final String SPACE = " ";
     private static final String PERCENT = "%";
     private static final String ZERO = "0";
+    private static final String DOUBLE_FORMAT = "%.2f";
 
     private static final String FROM_COUNTER_ACTIVITY = "fromCounterActivity";
     private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
@@ -34,7 +35,7 @@ public class GameInfoDisplayer {
     }
 
     private void displayTarget(TextView tv) {
-        tv.setText(mContext.getString(R.string.target) + " " + String.format("%.2f",
+        tv.setText(mContext.getString(R.string.target) + " " + String.format(DOUBLE_FORMAT,
                 mState.getBaseTarget()));
     }
 

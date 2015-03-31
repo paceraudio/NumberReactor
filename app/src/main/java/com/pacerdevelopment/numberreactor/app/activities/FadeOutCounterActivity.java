@@ -3,9 +3,7 @@ package com.pacerdevelopment.numberreactor.app.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -49,12 +47,13 @@ public class FadeOutCounterActivity extends TimeCounter implements View.OnTouchL
     private static final int SCORE_NOT_POSSIBLE = 0;
     private static boolean IS_LIFE_LOSS_POSSIBLE = false;
     private static final String FROM_FADE_COUNTER_ACTIVITY = "fromFadeCounterActivity";
-    protected static final int FROM_FADE_COUNTER_ACTIVITY_FLAG = 200;
 
     private static final double DEFAULT_FADE_COUNTER_TARGET = 10.00;
     private static final int BUFFER_OVER_TARGET = 10;
     private static final double DEFAULT_FADE_RATIO = .60;
     private static final int ALPHA_VALUE_STEPS = 255;
+
+    private static final int ONE = 1;
 
 
     @Override
@@ -132,7 +131,7 @@ public class FadeOutCounterActivity extends TimeCounter implements View.OnTouchL
     }
 
     private void setStateTargetBasedOnLevel() {
-        target = DEFAULT_FADE_COUNTER_TARGET + (state.getLevel() - 1);
+        target = DEFAULT_FADE_COUNTER_TARGET + (state.getLevel() - ONE);
         state.setBaseTarget(target);
         counterCeilingSeconds = target + BUFFER_OVER_TARGET;
         counterCeilingMillis = (long) (counterCeilingSeconds * MILLIS_IN_SECONDS);

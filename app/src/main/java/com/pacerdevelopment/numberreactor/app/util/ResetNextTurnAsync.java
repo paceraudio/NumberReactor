@@ -14,7 +14,6 @@ import com.pacerdevelopment.numberreactor.app.R;
  */
 public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
 
-    private static final String DEBUG_TAG = "ResetNextTurnAsync";
 
     TextView mCounterTV;
     TextView mLivesTV;
@@ -42,6 +41,10 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
     private static final long NUM_OF_BLINKS = 8;
     private static final long FADE_OUT_DURATION = 1200;
     private static final long FADE_IN_DURATION = 600;
+    private static final int MAX_ALPHA = 255;
+
+    private static final int ZERO = 0;
+    private static final int TWO = 2;
 
 
 
@@ -122,7 +125,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
             futureValue = (int) (((double) elapsedTime * NUM_OF_BLINKS) / millis);
             if (futureValue > currentValue) {
                 currentValue = futureValue;
-                publishProgress(currentValue, 0, 0, 0);
+                publishProgress(currentValue, ZERO, ZERO, ZERO);
             }
         }
         mIsDisplayingStats = false;
@@ -154,7 +157,7 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
 
         while ((elapsedTime = SystemClock.elapsedRealtime() - startTime) <= fadeTime) {
             if (currentValue > 0) {
-                futureValue = 255 - ((int) ((double) (elapsedTime * 255 / fadeTime)));
+                futureValue = MAX_ALPHA - ((int) ((double) (elapsedTime * MAX_ALPHA / fadeTime)));
                 if (futureValue < currentValue) {
                     currentValue = futureValue;
                     publishProgress(currentValue, red, green, blue);
@@ -170,13 +173,13 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
         int blue = Color.blue(colorToBe);
 
         int futureValue;
-        int currentValue = 0;
+        int currentValue = ZERO;
         long elapsedTime;
 
         long startTime = SystemClock.elapsedRealtime();
         while ((elapsedTime = SystemClock.elapsedRealtime() - startTime) <= fadeTime) {
             if (currentValue < alpha) {
-                futureValue = (int) ((double) (elapsedTime * 255) / fadeTime);
+                futureValue = (int) ((double) (elapsedTime * MAX_ALPHA) / fadeTime);
                 if (futureValue > currentValue) {
                     currentValue = futureValue;
                     publishProgress(currentValue, red, green, blue);
@@ -187,8 +190,8 @@ public class ResetNextTurnAsync extends AsyncTask<Integer, Integer, Void> {
 
     private void blinkTurnInfo(boolean plusLives, boolean plusLife, boolean minusLife, int time, int points) {
         int green = mContext.getResources().getColor(R.color.green);
-        boolean timeIsEven = (time % 2 == 0);
-        boolean positivePoints = (points > 0);
+        boolean timeIsEven = (time % TWO == ZERO);
+        boolean positivePoints = (points > ZERO);
         if (plusLives || plusLife || minusLife) {
 
             if (timeIsEven && plusLives) {

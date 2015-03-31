@@ -16,8 +16,7 @@ public class OutOfLivesDialogFragment extends android.app.DialogFragment {
 
 
         public static OutOfLivesDialogFragment newInstance() {
-            OutOfLivesDialogFragment fragment = new OutOfLivesDialogFragment();
-            return fragment;
+            return new OutOfLivesDialogFragment();
         }
         public OutOfLivesDialogFragment() {
             // Required empty public constructor
