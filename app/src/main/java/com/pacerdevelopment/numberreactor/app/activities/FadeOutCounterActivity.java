@@ -69,6 +69,9 @@ public class FadeOutCounterActivity extends TimeCounter implements View.OnTouchL
         fadeStartButton = (Button) findViewById(R.id.b_fade_start);
         fadeStopButton = (Button) findViewById(R.id.b_fade_stop);
 
+        applyTypeface(makeTvArrayList(tvFadeCounter, tvFadeTarget, tvFadeAccuracy, tvFadeLives,
+                tvFadeScore, tvFadeLevel));
+
         gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonDisengaged);
 
         initResetNextTurnListener();
@@ -98,7 +101,7 @@ public class FadeOutCounterActivity extends TimeCounter implements View.OnTouchL
         blueValue = Color.blue(fadeCounterColor);
     }
 
-    protected static void onCounterStopped(long elapsedCount) {
+    private static void onCounterStopped(long elapsedCount) {
 
         gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngaged);
         gameInfoDisplayer.showButtonState(fadeStartButton, startButtonDisengaged);

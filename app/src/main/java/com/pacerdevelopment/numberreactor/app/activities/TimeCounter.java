@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,9 +21,13 @@ import com.pacerdevelopment.numberreactor.app.R;
 import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
 import com.pacerdevelopment.numberreactor.app.db.DBHelper;
 import com.pacerdevelopment.numberreactor.app.util.ButtonDrawableView;
+import com.pacerdevelopment.numberreactor.app.util.CustomTypeface;
 import com.pacerdevelopment.numberreactor.app.util.GameInfoDisplayer;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnAsync;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by jeffwconaway on 2/27/15.
@@ -46,6 +51,7 @@ public abstract class TimeCounter extends Activity {
     protected static ApplicationState state;
     protected static GameInfoDisplayer gameInfoDisplayer;
     protected DBHelper mDbHelper;
+    //protected static CustomTypeface customTypeface;
 
     protected static long startTime;
 
@@ -75,6 +81,9 @@ public abstract class TimeCounter extends Activity {
     protected static final int FOUR = 4;
     protected static final int ZERO = 0;
 
+    protected static final String FONT_ASSET_PATH = "fonts/Roboto-Regular.ttf";
+    protected static final String TEST_FONT_ASSET_PATH = "fonts/Roboto-LightItalic.ttf";
+
 
     protected void initButtonDrawables() {
         ButtonDrawableView buttonDrawableView = new ButtonDrawableView(this);
@@ -91,6 +100,7 @@ public abstract class TimeCounter extends Activity {
         super.onCreate(savedInstanceState);
         state = (ApplicationState) getApplicationContext();
         gameInfoDisplayer = new GameInfoDisplayer(ApplicationState.getAppContext());
+        //customTypeface = CustomTypeface.getInstance();
         mDbHelper = new DBHelper(this);
         handler = new Handler();
         initButtonDrawables();
@@ -126,6 +136,23 @@ public abstract class TimeCounter extends Activity {
             e.printStackTrace();
         }
         return packageInfo;
+    }
+
+    private Typeface obtainTypeface(String assetPath) {
+        return CustomTypeface.get(this, assetPath);
+    }
+
+    protected void applyTypeface(ArrayList<TextView> tvList) {
+        Typeface tf = obtainTypeface(FONT_ASSET_PATH);
+        for (TextView tv : tvList) {
+            tv.setTypeface(tf);
+        }
+    }
+
+    protected ArrayList<TextView> makeTvArrayList(TextView counter, TextView target, TextView accuracy,
+        TextView lives, TextView score, TextView level) {
+        TextView[] tvArray = {counter, target, accuracy, lives, score, level};
+        return new ArrayList<>(Arrays.asList(tvArray));
     }
 
     private void initSharedPrefsElements() {

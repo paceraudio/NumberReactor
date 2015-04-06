@@ -14,7 +14,7 @@
     <style name="NR_ActionBar_Title_Text" parent="android:TextAppearance">
         <item name="android:textColor">@color/grey</item>
         <item name="android:title">@string/action_bar_app_name</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">16dp</item>
         <item name="android:typeface">monospace</item>
     </style>
 
@@ -185,7 +185,7 @@
     <!--********************BASIC TEXTVIEW STYLES********************-->
 
     <style name="NR_TextView">
-        <item name="android:typeface">normal</item>
+        <item name="android:typeface">sans</item>
     </style>
 
     <!--********************BASIC LISTVIEW STYLES********************-->
@@ -197,23 +197,23 @@
     </style>
 
     <style name="NR_TextView.ListViewItem.sw720dp">
-        <item name="android:textSize">25sp</item>
+        <item name="android:textSize">25dp</item>
     </style>
 
     <style name="NR_TextView.ListViewItem.600dp">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">20dp</item>
     </style>
 
     <style name="NR_TextView.ListViewItem.sw550dp">
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">15dp</item>
     </style>
 
     <style name="NR_TextView.ListViewItem.360dp">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">12dp</item>
     </style>
 
     <style name="NR_TextView.ListViewItem.Small">
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">10dp</item>
     </style>
 
     <!--********************COUNTER TV STYLES********************-->
@@ -231,7 +231,7 @@
 
     <!--X-LARGE sw720dp-->
     <style name="NR_TextView.Counter.sw720dp">
-        <item name="android:textSize">250sp</item>
+        <item name="android:textSize">250dp</item>
         <item name="android:layout_width">650dp</item>
     </style>
 
@@ -245,7 +245,7 @@
 
     <!--LARGE sw600dp-->
     <style name="NR_TextView.Counter.sw600dp">
-        <item name="android:textSize">210sp</item>
+        <item name="android:textSize">210dp</item>
         <item name="android:layout_width">540dp</item>
     </style>
 
@@ -259,7 +259,7 @@
 
     <!--LARGE PHONE sw560dp-->
     <style name="NR_TextView.Counter.sw550dp">
-        <item name="android:textSize">130sp</item>
+        <item name="android:textSize">130dp</item>
         <item name="android:layout_width">370dp</item>
     </style>
 
@@ -274,7 +274,7 @@
 
     <!--NORMAL sw360dp-->
     <style name="NR_TextView.Counter.sw360dp">
-        <item name="android:textSize">122sp</item>
+        <item name="android:textSize">122dp</item>
         <item name="android:layout_width">320dp</item>
     </style>
 
@@ -288,7 +288,7 @@
 
     <!--SMALL-->
     <style name="NR_TextView.Counter.Small">
-        <item name="android:textSize">100sp</item>
+        <item name="android:textSize">100dp</item>
         <item name="android:layout_width">250dp</item>
     </style>
 
@@ -310,23 +310,23 @@
     </style>
 
     <style name="NR_TextView.GameInfo.sw720dp">
-        <item name="android:textSize">30sp</item>
+        <item name="android:textSize">30dp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.sw600dp">
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">24dp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.sw550dp">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">20dp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.sw360dp">
-        <item name="android:textSize">17sp</item>
+        <item name="android:textSize">17dp</item>
     </style>
 
     <style name="NR_TextView.GameInfo.Small">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">14dp</item>
     </style>
 
     <!--********************GAMEINFO TARGET********************-->

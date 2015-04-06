@@ -21,6 +21,10 @@ import com.pacerdevelopment.numberreactor.app.dialogs.OutOfLivesDialogFragment;
 import com.pacerdevelopment.numberreactor.app.dialogs.WelcomeDialogFragment;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class CounterActivity extends TimeCounter implements
         OutOfLivesDialogFragment.OutOfLivesListener,
@@ -94,7 +98,10 @@ public class CounterActivity extends TimeCounter implements
         startButton = (Button) findViewById(R.id.b_start);
         stopButton = (Button) findViewById(R.id.b_stop);
 
+        applyTypeface(makeTvArrayList(tvCounter, tvTarget, tvAccuracy, tvLives, tvScore, tvLevel));
+
         gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengaged);
+
 
         initNewGameRowListener();
         initResetNextTurnListener();
@@ -133,7 +140,7 @@ public class CounterActivity extends TimeCounter implements
         }
     }
 
-    protected static void onCounterStopped(long elapsedCount) {
+    private static void onCounterStopped(long elapsedCount) {
 
         gameInfoDisplayer.showButtonState(stopButton, stopButtonEngaged);
         gameInfoDisplayer.showButtonState(startButton, startButtonDisengaged);
