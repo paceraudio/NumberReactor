@@ -2,46 +2,31 @@
 <items version="2" >
 
     <item
-        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
+        is-multidex="false"
+        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/jars/classes.jar"
         jumboMode="false"
+        optimize="true"
         revision="21.1.2"
         sha1="686344a780033e4ba22b926cd225f8d4941247e6">
-        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/classes-746589e760bc09338b8200c15ad9d9347761d260.jar" />
+        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-21.0.0_863f74b47f2bd2929f84a4383ba7c5216b00099d.jar" />
     </item>
     <item
-        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
+        is-multidex="false"
+        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/jars/libs/internal_impl-21.0.0.jar"
         jumboMode="false"
-        revision="20.0.0"
-        sha1="686344a780033e4ba22b926cd225f8d4941247e6">
-        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/classes-746589e760bc09338b8200c15ad9d9347761d260.jar" />
-    </item>
-    <item
-        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
-        jumboMode="false"
+        optimize="true"
         revision="21.1.2"
         sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0">
-        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-65612891578316cb92302c02218ae3892e14e0e4.jar" />
+        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0_44cbd343df5436f757d8fd4384283f74eb1fc5ce.jar" />
     </item>
     <item
-        jar="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0">
-        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-65612891578316cb92302c02218ae3892e14e0e4.jar" />
-    </item>
-    <item
+        is-multidex="false"
         jar="/Users/jeffwconaway/Development/android_sdk/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar"
         jumboMode="false"
-        revision="20.0.0"
-        sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e">
-        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-1df1b5e62a0b6d99d9b9219806ed0c5c76cea6ed.jar" />
-    </item>
-    <item
-        jar="/Users/jeffwconaway/Development/android_sdk/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar"
-        jumboMode="false"
+        optimize="true"
         revision="21.1.2"
         sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e">
-        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-1df1b5e62a0b6d99d9b9219806ed0c5c76cea6ed.jar" />
+        <dex dex="/Users/jeffwconaway/AndroidStudioProjects/NumberReactor/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.0_1df1b5e62a0b6d99d9b9219806ed0c5c76cea6ed.jar" />
     </item>
 
 </items>
