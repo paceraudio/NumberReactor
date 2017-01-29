@@ -1,4 +1,4 @@
-package com.pacerdevelopment.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.vp_stats;
 
 import android.content.Context;
 import android.view.LayoutInflater;

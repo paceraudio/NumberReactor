@@ -1,4 +1,4 @@
-package com.pacerdevelopment.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.counter.vp_fade_counter;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pacerdevelopment.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.counter.TimeCounter;
+import com.pacerdevelopment.numberreactor.app.counter.vp_accel_counter.CounterActivity;
 import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
 

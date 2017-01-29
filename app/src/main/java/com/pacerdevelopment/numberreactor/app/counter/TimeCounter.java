@@ -1,4 +1,4 @@
-package com.pacerdevelopment.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.counter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,6 +25,8 @@ import com.pacerdevelopment.numberreactor.app.util.CustomTypeface;
 import com.pacerdevelopment.numberreactor.app.util.GameInfoDisplayer;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnAsync;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
+import com.pacerdevelopment.numberreactor.app.vp_settings.SettingsActivity;
+import com.pacerdevelopment.numberreactor.app.vp_stats.ViewStatsActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;

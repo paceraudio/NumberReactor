@@ -1,4 +1,4 @@
-package com.pacerdevelopment.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.vp_settings;
 
 import android.app.ActionBar;
 import android.content.Intent;

@@ -1,16 +1,17 @@
-package com.pacerdevelopment.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.counter.vp_accel_counter;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.pacerdevelopment.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.counter.vp_fade_counter.FadeOutCounterActivity;
+import com.pacerdevelopment.numberreactor.app.counter.TimeCounter;
 import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
 import com.pacerdevelopment.numberreactor.app.db.InsertNewGameRowInDbAsync;
 import com.pacerdevelopment.numberreactor.app.db.InsertNewGameRowListener;
@@ -20,10 +21,6 @@ import com.pacerdevelopment.numberreactor.app.db.UpdateScoreDbAsync;
 import com.pacerdevelopment.numberreactor.app.dialogs.OutOfLivesDialogFragment;
 import com.pacerdevelopment.numberreactor.app.dialogs.WelcomeDialogFragment;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class CounterActivity extends TimeCounter implements

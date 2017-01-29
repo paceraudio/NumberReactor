@@ -9,13 +9,13 @@
         android:label="@string/app_name"
         android:theme="@style/NumberReactorAppTheme" >
         <activity
-            android:name=".activities.FadeOutCounterActivity"
+            android:name=".counter.vp_fade_counter.FadeOutCounterActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             >
         </activity>
         <activity
-            android:name=".activities.CounterActivity"
+            android:name=".counter.vp_accel_counter.CounterActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
              >
@@ -26,12 +26,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ViewStatsActivity"
+            android:name=".vp_stats.ViewStatsActivity"
             android:label="@string/title_activity_view_stats"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".activities.SettingsActivity"
+            android:name=".vp_settings.SettingsActivity"
             android:label="@string/title_activity_settings_2"
             android:theme="@style/NR_SettingsActivity" >
         </activity>

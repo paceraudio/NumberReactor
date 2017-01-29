@@ -1,4 +1,4 @@
-package com.pacerdevelopment.numberreactor.app.activities;
+package com.pacerdevelopment.numberreactor.app.vp_stats;
 
 import android.app.ActionBar;
 import android.app.ListActivity;
