@@ -1,4 +1,4 @@
-package com.pacerdevelopment.numberreactor.app.counter;
+package com.pacerdevelopment.numberreactor.app.counter.vp_counter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,8 +18,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pacerdevelopment.numberreactor.app.R;
-import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
+import com.pacerdevelopment.numberreactor.app.application.NrApp;
 import com.pacerdevelopment.numberreactor.app.db.DBHelper;
+import com.pacerdevelopment.numberreactor.app.model.GameState;
 import com.pacerdevelopment.numberreactor.app.util.ButtonDrawableView;
 import com.pacerdevelopment.numberreactor.app.util.CustomTypeface;
 import com.pacerdevelopment.numberreactor.app.util.GameInfoDisplayer;
@@ -50,8 +51,9 @@ public abstract class TimeCounter extends Activity {
     protected static LayerDrawable stopButtonEngaged;
     protected static LayerDrawable stopButtonArmed;
 
-    protected static ApplicationState state;
+    //protected static NrApp nrApp;
     protected static GameInfoDisplayer gameInfoDisplayer;
+    protected static GameState gameState;
     protected DBHelper mDbHelper;
     //protected static CustomTypeface customTypeface;
 
@@ -100,8 +102,9 @@ public abstract class TimeCounter extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        state = (ApplicationState) getApplicationContext();
-        gameInfoDisplayer = new GameInfoDisplayer(ApplicationState.getAppContext());
+        gameState = NrApp.getGameState();
+        //nrApp = (NrApp) getApplicationContext();
+        gameInfoDisplayer = new GameInfoDisplayer(NrApp.getAppContext());
         //customTypeface = CustomTypeface.getInstance();
         mDbHelper = new DBHelper(this);
         handler = new Handler();
@@ -205,7 +208,7 @@ public abstract class TimeCounter extends Activity {
     }
 
     protected static double calculateRoundedCount(long elapsedCount, double counterCeiling) {
-        return state.roundElapsedCount(elapsedCount, counterCeiling);
+        return gameState.roundElapsedCount(elapsedCount, counterCeiling);
     }
 
     protected static String generateRoundedCountStr(double roundedCount) {
@@ -213,14 +216,14 @@ public abstract class TimeCounter extends Activity {
     }
 
     protected static void updateStateScore(int score) {
-        state.setmTurnPoints(score);
-        state.updateRunningScoreTotal(score);
+        gameState.setTurnPoints(score);
+        gameState.updateRunningScoreTotal(score);
     }
 
     protected static void changeCounterColorIfDeadOn(double roundedCount, double target,
                                               TextView tvCounter) {
         if (roundedCount == target) {
-            tvCounter.setTextColor(ApplicationState.getAppContext().getResources().getColor(R.color.glowGreen));
+            tvCounter.setTextColor(NrApp.getAppContext().getResources().getColor(R.color.glowGreen));
         }
     }
 
@@ -233,14 +236,14 @@ public abstract class TimeCounter extends Activity {
                 tvCounter, tvLives, tvScore);
 
         int param0 = checkIfLastTurn();
-        int param1 = state.numOfLivesGainedOrLost(accuracy, lifeLossPossible);
-        int param2 = state.getmTurnPoints();
+        int param1 = gameState.numOfLivesGainedOrLost(accuracy, lifeLossPossible);
+        int param2 = gameState.getTurnPoints();
 
         resetNextTurnAsync.execute(param0, param1, param2);
     }
 
     protected static int checkIfLastTurn() {
-        if (state.getmTurn() == TURNS_PER_LEVEL) {
+        if (gameState.getTurn() == TURNS_PER_LEVEL) {
             return LAST_TURN_RESET_BEFORE_NEW_ACTIVITY;
         } else {
             return NORMAL_TURN_RESET;

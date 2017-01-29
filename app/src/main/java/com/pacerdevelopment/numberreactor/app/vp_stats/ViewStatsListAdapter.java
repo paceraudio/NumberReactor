@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.pacerdevelopment.numberreactor.app.R;
-import com.pacerdevelopment.numberreactor.app.util.GameStats;
+import com.pacerdevelopment.numberreactor.app.model.GameStats;
 
 import java.util.ArrayList;
 
@@ -53,16 +53,16 @@ public class ViewStatsListAdapter extends BaseAdapter {
         }
 
         TextView gameNumberTV = (TextView) convertView.findViewById(R.id.list_t_v_game_number);
-        gameNumberTV.setText(Integer.toString(gameStats.getmGameNumber()));
+        gameNumberTV.setText(Integer.toString(gameStats.getGameNumber()));
 
         TextView gameDateTV = (TextView) convertView.findViewById(R.id.list_t_v_game_date);
-        gameDateTV.setText(mContext.getString(R.string.date) + gameStats.getmGameDate());
+        gameDateTV.setText(mContext.getString(R.string.date) + gameStats.getGameDate());
 
         TextView gameLevelTV = (TextView) convertView.findViewById(R.id.list_t_v_game_level);
-        gameLevelTV.setText(mContext.getString(R.string.level) + Integer.toString(gameStats.getmGameLevelReached()));
+        gameLevelTV.setText(mContext.getString(R.string.level) + Integer.toString(gameStats.getGameLevelReached()));
 
         TextView gameScoreTV = (TextView) convertView.findViewById(R.id.list_t_v_game_score);
-        gameScoreTV.setText(mContext.getString(R.string.score) + Integer.toString(gameStats.getmGamePointsScored()));
+        gameScoreTV.setText(mContext.getString(R.string.score) + Integer.toString(gameStats.getGamePointsScored()));
         return convertView;
     }
 }

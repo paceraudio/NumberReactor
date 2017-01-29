@@ -6,15 +6,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pacerdevelopment.numberreactor.app.R;
-import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
+import com.pacerdevelopment.numberreactor.app.application.NrApp;
+import com.pacerdevelopment.numberreactor.app.model.GameState;
 
 /**
  * Created by jeffwconaway on 12/17/14.
  */
 public class GameInfoDisplayer {
 
-    Context mContext;
-    ApplicationState mState;
+    Context context;
+    //NrApp mState;
+    GameState gameState;
 
     private static final String SPACE = " ";
     private static final String PERCENT = "%";
@@ -26,8 +28,9 @@ public class GameInfoDisplayer {
 
 
     public GameInfoDisplayer(Context context) {
-        this.mContext = context;
-        mState = (ApplicationState) mContext.getApplicationContext();
+        this.context = context;
+        gameState = NrApp.getGameState();
+        //mState = (NrApp) context.getApplicationContext();
     }
 
     public void showButtonState(Button button, LayerDrawable layerDrawable) {
@@ -35,33 +38,32 @@ public class GameInfoDisplayer {
     }
 
     private void displayTarget(TextView tv) {
-        tv.setText(mContext.getString(R.string.target) + " " + String.format(DOUBLE_FORMAT,
-                mState.getBaseTarget()));
+        tv.setText(context.getString(R.string.target) + " " + String.format(DOUBLE_FORMAT,
+                gameState.getBaseTarget()));
     }
 
     private void displayTurnAccuracy(TextView tv) {
-        tv.setText(mContext.getString(R.string.accuracy) + SPACE + mState.getmTurnAccuracy() + PERCENT);
+        tv.setText(context.getString(R.string.accuracy) + SPACE + gameState.getTurnAccuracy() + PERCENT);
     }
 
     private void displayWeightedAccuracy(TextView tv) {
-        tv.setText(mContext.getString(R.string.accuracy) + SPACE + mState.getmWeightedAccuracy() + PERCENT);
+        tv.setText(context.getString(R.string.accuracy) + SPACE + gameState.getWeightedAccuracy() + PERCENT);
     }
 
     private void displayOverallAccuracy(TextView tv) {
-        tv.setText(mContext.getString(R.string.accuracy) +  SPACE + ZERO + PERCENT);
+        tv.setText(context.getString(R.string.accuracy) +  SPACE + ZERO + PERCENT);
     }
 
     private void displayLives(TextView tv) {
-        tv.setText(mContext.getString(R.string.lives_remaining) + SPACE + mState
-                .getLives());
+        tv.setText(context.getString(R.string.lives_remaining) + SPACE + gameState.getLives());
     }
 
     private void displayScore(TextView tv) {
-        tv.setText(mContext.getString(R.string.score) + SPACE + mState.getmRunningScoreTotal());
+        tv.setText(context.getString(R.string.score) + SPACE + gameState.getRunningScoreTotal());
     }
 
     private void displayLevel(TextView tv) {
-        tv.setText(mContext.getString(R.string.level) + SPACE + mState.getLevel());
+        tv.setText(context.getString(R.string.level) + SPACE + gameState.getLevel());
     }
 
     public void displayImmediateGameInfoAfterTurn(TextView accuracy) {
@@ -76,12 +78,12 @@ public class GameInfoDisplayer {
         displayTarget(target);
         displayOverallAccuracy(accuracy);
         if (fromActivity.equals(FROM_COUNTER_ACTIVITY)){
-            lives.setTextColor(mContext.getResources().getColor(R.color.red));
-            score.setTextColor(mContext.getResources().getColor(R.color.red));
+            lives.setTextColor(context.getResources().getColor(R.color.red));
+            score.setTextColor(context.getResources().getColor(R.color.red));
         }
         if (fromActivity.equals(FROM_FADE_COUNTER_ACTIVITY)){
-            lives.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
-            score.setTextColor(mContext.getResources().getColor(R.color.lightBlue));
+            lives.setTextColor(context.getResources().getColor(R.color.lightBlue));
+            score.setTextColor(context.getResources().getColor(R.color.lightBlue));
         }
         displayLives(lives);
         displayScore(score);
@@ -89,7 +91,7 @@ public class GameInfoDisplayer {
     }
 
     public void resetCounterToZero(TextView counter) {
-        counter.setText(mContext.getString(R.string.zero_point_zero));
-        counter.setTextColor(mContext.getResources().getColor(R.color.red));
+        counter.setText(context.getString(R.string.zero_point_zero));
+        counter.setTextColor(context.getResources().getColor(R.color.red));
     }
 }

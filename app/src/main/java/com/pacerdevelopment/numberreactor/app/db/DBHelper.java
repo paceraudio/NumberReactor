@@ -6,8 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
-import com.pacerdevelopment.numberreactor.app.util.GameStats;
+import com.pacerdevelopment.numberreactor.app.application.NrApp;
+import com.pacerdevelopment.numberreactor.app.model.GameState;
+import com.pacerdevelopment.numberreactor.app.model.GameStats;
 
 import java.util.ArrayList;
 
@@ -26,13 +27,15 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String C_POINTS_SCORED = "pointsScored";
 
     Context mContext;
-    ApplicationState mState;
+    //NrApp mState;
+    GameState gameState;
 
     public DBHelper(Context ctx) {
 
         super(ctx, DB_NAME, null, DB_VERSION);
         this.mContext = ctx;
-        mState = (ApplicationState) mContext.getApplicationContext();
+        gameState = NrApp.getGameState();
+        //mState = (NrApp) mContext.getApplicationContext();
         mContext.getApplicationContext();
     }
 
@@ -59,7 +62,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertNewGameRowInDb() {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        String date = mState.obtainGameDate();
+        String date = gameState.obtainGameDate();
         cv.put(C_DATE_PLAYED, date);
         cv.put(C_LEVEL_REACHED, 1);
         cv.put(C_POINTS_SCORED, 0);

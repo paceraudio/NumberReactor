@@ -1,6 +1,6 @@
 package com.pacerdevelopment.numberreactor.app.db;
 
-import com.pacerdevelopment.numberreactor.app.util.GameStats;
+import com.pacerdevelopment.numberreactor.app.model.GameStats;
 
 import java.util.ArrayList;
 

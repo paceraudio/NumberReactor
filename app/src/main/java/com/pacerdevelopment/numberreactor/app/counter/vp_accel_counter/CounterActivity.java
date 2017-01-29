@@ -10,9 +10,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pacerdevelopment.numberreactor.app.R;
+import com.pacerdevelopment.numberreactor.app.application.NrApp;
+import com.pacerdevelopment.numberreactor.app.counter.vp_counter.TimeCounter;
 import com.pacerdevelopment.numberreactor.app.counter.vp_fade_counter.FadeOutCounterActivity;
-import com.pacerdevelopment.numberreactor.app.counter.TimeCounter;
-import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
 import com.pacerdevelopment.numberreactor.app.db.InsertNewGameRowInDbAsync;
 import com.pacerdevelopment.numberreactor.app.db.InsertNewGameRowListener;
 import com.pacerdevelopment.numberreactor.app.db.UpdateDbScoreListener;
@@ -86,6 +86,7 @@ public class CounterActivity extends TimeCounter implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_counter);
         //        Define all the UI elements
+
         tvCounter = (TextView) findViewById(R.id.t_v_counter);
         tvTarget = (TextView) findViewById(R.id.t_v_target);
         tvAccuracy = (TextView) findViewById(R.id.t_v_accuracy_rating);
@@ -154,9 +155,9 @@ public class CounterActivity extends TimeCounter implements
 
         gameInfoDisplayer.displayImmediateGameInfoAfterTurn(tvAccuracy);
 
-        if (state.isFirstTurnInNewGame()) {
+        if (gameState.isFirstTurnInNewGame()) {
             launchNewGameRowAsync();
-            state.setFirstTurnInNewGame(false);
+            gameState.setFirstTurnInNewGame(false);
             if (!checkSharedPrefsForDbNotNull()) {
                 setSharedPrefsDbNotNull();
             }
@@ -167,13 +168,13 @@ public class CounterActivity extends TimeCounter implements
     }
 
     protected static int calculateAccuracy(double target, double elapsedCount) {
-        int weightedAccuracy = state.calcWeightedAccuracy(target, elapsedCount);
-        state.setmWeightedAccuracy(weightedAccuracy);
+        int weightedAccuracy = gameState.calcWeightedAccuracy(target, elapsedCount);
+        gameState.setWeightedAccuracy(weightedAccuracy);
         return weightedAccuracy;
     }
 
     private static int calculateScore(int accuracy) {
-        int score = state.calcScore(accuracy);
+        int score = gameState.calcScore(accuracy);
         if (accuracy > SCORE_QUADRUPLE_THRESHOLD) {
             score *= FOUR;
         } else if (accuracy > SCORE_DOUBLE_THRESHOLD) {
@@ -188,8 +189,8 @@ public class CounterActivity extends TimeCounter implements
     }
 
     private void setInitialTimeValuesLevelOne() {
-        state.setDuration(checkSharedPrefsDifficulty());
-        state.resetGameStatsForNewGame();
+        gameState.setDuration(checkSharedPrefsDifficulty());
+        gameState.resetGameStatsForNewGame();
         resetTargetToStateTarget();
         resetDurationToStateDuration();
         resetBasicTimeValues();
@@ -201,7 +202,7 @@ public class CounterActivity extends TimeCounter implements
 
     private double checkSharedPrefsDifficulty() {
         String difficultyLevel = prefs.getString(getString(R.string.prefs_difficulty_key), PREFS_DIFFICULTY_TWO);
-        state.setmDifficulty(Integer.parseInt(difficultyLevel));
+        gameState.setDifficulty(Integer.parseInt(difficultyLevel));
         if (difficultyLevel.equals(PREFS_DIFFICULTY_ONE)) {
             return BEGINNING_LEVEL_DURATION_LEVEL_ONE_EASY;
         }
@@ -216,18 +217,18 @@ public class CounterActivity extends TimeCounter implements
     private void resetTimeValuesBetweenTurns() {
         resetDurationToStateDuration();
         resetBasicTimeValues();
-        state.setBaseTarget(mBaseTarget + 1);
-        mBaseTarget = state.getBaseTarget();
-        state.setmTurn(mCurrentTurn + 1);
-        mCurrentTurn = state.getmTurn();
+        gameState.setBaseTarget(mBaseTarget + 1);
+        mBaseTarget = gameState.getBaseTarget();
+        gameState.setTurn(mCurrentTurn + 1);
+        mCurrentTurn = gameState.getTurn();
         gameInfoDisplayer.displayAllGameInfo(tvTarget, tvAccuracy, tvLives,
                 tvScore, tvLevel, FROM_COUNTER_ACTIVITY);
         flashStartButton();
     }
 
     private void setGameValuesForNextLevel() {
-        int currentLevel = state.getLevel();
-        state.setLevel(currentLevel + 1);
+        int currentLevel = gameState.getLevel();
+        gameState.setLevel(currentLevel + 1);
         // Set target and accelerator to their beginning levels,
         // and increase them based on the
         // current level. Check the SharedPreferences for the difficulty level.
@@ -248,31 +249,31 @@ public class CounterActivity extends TimeCounter implements
     }
 
     private void resetTurnsToFirstTurn() {
-        state.setmTurn(1);
-        mCurrentTurn = state.getmTurn();
+        gameState.setTurn(1);
+        mCurrentTurn = gameState.getTurn();
     }
 
     private void resetDurationToStateDuration() {
-        levelDuration = state.getDuration();
+        levelDuration = gameState.getDuration();
     }
 
-    private void resetTurnToStateTurn() {mCurrentTurn = state.getmTurn();}
+    private void resetTurnToStateTurn() {mCurrentTurn = gameState.getTurn();}
 
-    private void resetTargetToStateTarget() {mBaseTarget = state.getBaseTarget();}
+    private void resetTargetToStateTarget() {mBaseTarget = gameState.getBaseTarget();}
 
     private void resetTargetBasedOnLevel() {
         int target = BEGINNING_TARGET_LEVEL_ONE;
-        int level = state.getLevel();
+        int level = gameState.getLevel();
         for (int i = 1; i < level; i++) {
             target++;
         }
-        state.setBaseTarget(target);
-        mBaseTarget = state.getBaseTarget();
-        state.setTurnTarget(state.randomizeTarget(mBaseTarget));
+        gameState.setBaseTarget(target);
+        mBaseTarget = gameState.getBaseTarget();
+        gameState.setTurnTarget(gameState.randomizeTarget(mBaseTarget));
     }
 
     private boolean checkIfLivesLeft() {
-        return state.getLives() > 0;
+        return gameState.getLives() > 0;
     }
 
     private void launchOutOfLivesDialog() {
@@ -301,7 +302,7 @@ public class CounterActivity extends TimeCounter implements
             //quitFlashingStartButton();
             setGameValuesForNextLevel();
             UpdateLevelDbAsync updateLevelDbAsync = new UpdateLevelDbAsync(this);
-            updateLevelDbAsync.execute(state.getLevel());
+            updateLevelDbAsync.execute(gameState.getLevel());
             flashStartButton();
         }
     }
@@ -309,9 +310,9 @@ public class CounterActivity extends TimeCounter implements
     //  Dialog fragment interaction methods
     @Override
     public void onOkClickedOutOfLivesDialog() {
-        // set the state back to first turn in game to trip a new row entered in db after the first
+        // set the gameState back to first turn in game to trip a new row entered in db after the first
         // turn in new game is played
-        state.setFirstTurnInNewGame(true);
+        gameState.setFirstTurnInNewGame(true);
         setInitialTimeValuesLevelOne();
         gameInfoDisplayer.showButtonState(stopButton, stopButtonDisengaged);
         gameInfoDisplayer.resetCounterToZero(tvCounter);
@@ -331,12 +332,12 @@ public class CounterActivity extends TimeCounter implements
     }
 
     private void updateDifficultyBasedOnPreferencesAndLevel() {
-        int level = state.getLevel();
+        int level = gameState.getLevel();
         double tempDuration = checkSharedPrefsDifficulty();
             for (int i = 1; i < level; i++) {
                 tempDuration *= DURATION_DECREASE_PER_LEVEL_FACTOR;
             }
-            state.setDuration(tempDuration);
+            gameState.setDuration(tempDuration);
             resetDurationToStateDuration();
     }
 
@@ -396,7 +397,7 @@ public class CounterActivity extends TimeCounter implements
         updateDbScoreListener = new UpdateDbScoreListener() {
             @Override
             public void onDbScoreUpdatedEndOfTurn() {
-                launchResetNextTurnAsync(resetNextTurnListener, ApplicationState.getAppContext(),
+                launchResetNextTurnAsync(resetNextTurnListener, CounterActivity.this,
                         tvCounter, tvLives, tvScore, weightedAccuracy, LIFE_LOSS_POSSIBLE);
             }
         };
@@ -404,14 +405,14 @@ public class CounterActivity extends TimeCounter implements
 
     private static void launchNewGameRowAsync() {
         InsertNewGameRowInDbAsync newGameRowInDbAsync =
-                new InsertNewGameRowInDbAsync(ApplicationState.getAppContext(), newGameRowListener);
+                new InsertNewGameRowInDbAsync(NrApp.getAppContext(), newGameRowListener);
         newGameRowInDbAsync.execute();
     }
 
     private static void launchUpdateScoreAsync() {
-        UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(ApplicationState
+        UpdateScoreDbAsync updateScoreDbAsync = new UpdateScoreDbAsync(NrApp
                 .getAppContext(), updateDbScoreListener);
-        updateScoreDbAsync.execute(state.getmRunningScoreTotal());
+        updateScoreDbAsync.execute(gameState.getRunningScoreTotal());
     }
 
     private void initNewGameRowListener() {
@@ -425,7 +426,7 @@ public class CounterActivity extends TimeCounter implements
 
     @Override
     public void onBackPressed() {
-        state.setFirstTurnInNewGame(true);
+        gameState.setFirstTurnInNewGame(true);
         super.onBackPressed();
     }
 

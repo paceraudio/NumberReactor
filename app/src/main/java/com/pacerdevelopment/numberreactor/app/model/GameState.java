@@ -1,33 +1,28 @@
-package com.pacerdevelopment.numberreactor.app.application;
-
-/**
- * Created by jeffwconaway on 9/26/14.
- */
-
-import android.app.Application;
-import android.content.Context;
+package com.pacerdevelopment.numberreactor.app.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Random;
 
-public class ApplicationState extends Application{
+/**
+ * Created by jeffwconaway on 1/29/17.
+ */
 
-    private static Context context;
+public class GameState {
 
-    private int mTurn;
-    private double mBaseTarget;
-    private double mTurnTarget;
+    private int turn;
+    private double baseTarget;
+    private double turnTarget;
 
-    private int mTurnAccuracy;
+    private int turnAccuracy;
 
-    private int mWeightedAccuracy;
-    private int mLives;
-    private int mTurnPoints;
-    private int mRunningScoreTotal;
-    private int mLevel;
-    private double mDuration;
-    private int mDifficulty;
+    private int weightedAccuracy;
+    private int lives;
+    private int turnPoints;
+    private int runningScoreTotal;
+    private int level;
+    private double duration;
+    private int difficulty;
 
     private static boolean firstTurnInNewGame = true;
 
@@ -48,112 +43,100 @@ public class ApplicationState extends Application{
     private static final double MILLIS_IN_SECONDS = 1000.0;
     private static final int DEC_TO_WHOLE_PERCENTAGE = 100;
 
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        context = getApplicationContext();
-        initGameStats();
-    }
-
-    public static Context getAppContext() {
-        return ApplicationState.context;
-    }
-
-    private void initGameStats() {
-        mLevel = ONE;
-        mRunningScoreTotal = ZERO;
-        mLives = BEGINNING_NUMBER_OF_LIVES;
-        mBaseTarget = BEGINNING_TARGET_LEVEL_ONE;
-        mTurnAccuracy = ZERO;
-        mTurnPoints = ZERO;
-        mTurn = ONE;
+    public void initGameStats() {
+        level = ONE;
+        runningScoreTotal = ZERO;
+        lives = BEGINNING_NUMBER_OF_LIVES;
+        baseTarget = BEGINNING_TARGET_LEVEL_ONE;
+        turnAccuracy = ZERO;
+        turnPoints = ZERO;
+        turn = ONE;
     }
 
     public void resetGameStatsForNewGame() {
-        mLevel = ONE;
-        mRunningScoreTotal = ZERO;
-        mLives = BEGINNING_NUMBER_OF_LIVES;
-        mBaseTarget = BEGINNING_TARGET_LEVEL_ONE;
-        mTurnAccuracy = ZERO;
-        mTurnPoints = ZERO;
-        mTurn = ONE;
+        level = ONE;
+        runningScoreTotal = ZERO;
+        lives = BEGINNING_NUMBER_OF_LIVES;
+        baseTarget = BEGINNING_TARGET_LEVEL_ONE;
+        turnAccuracy = ZERO;
+        turnPoints = ZERO;
+        turn = ONE;
     }
 
     public int getLevel() {
-        return mLevel;
+        return level;
     }
 
     public void setLevel(int l) {
-        mLevel = l;
+        level = l;
     }
 
     public int getLives() {
-        return mLives;
+        return lives;
     }
 
     public void setLives(int lives) {
-        this.mLives = lives;
+        this.lives = lives;
     }
 
     public double getBaseTarget() {
-        return mBaseTarget;
+        return baseTarget;
     }
 
     public void setBaseTarget(double target) {
-        this.mBaseTarget = target;
+        this.baseTarget = target;
     }
 
     public void setTurnTarget(double mTurnTarget) {
-        this.mTurnTarget = mTurnTarget;
+        this.turnTarget = mTurnTarget;
     }
 
-    public int getmTurn() {
-        return mTurn;
+    public int getTurn() {
+        return turn;
     }
 
-    public void setmTurn(int mTurn) {
-        this.mTurn = mTurn;
+    public void setTurn(int turn) {
+        this.turn = turn;
     }
 
     public double getDuration() {
-        return mDuration;
+        return duration;
     }
 
     public void setDuration(double duration) {
-        this.mDuration = duration;
+        this.duration = duration;
     }
 
-    public int getmTurnAccuracy() {
-        return mTurnAccuracy;
+    public int getTurnAccuracy() {
+        return turnAccuracy;
     }
 
-    public void setmTurnAccuracy(int mTurnAccuracy) {
-        this.mTurnAccuracy = mTurnAccuracy;
+    public void setTurnAccuracy(int turnAccuracy) {
+        this.turnAccuracy = turnAccuracy;
     }
 
-    public int getmWeightedAccuracy() {
-        return mWeightedAccuracy;
+    public int getWeightedAccuracy() {
+        return weightedAccuracy;
     }
 
-    public void setmWeightedAccuracy(int mWeightedAccuracy) {
-        this.mWeightedAccuracy = mWeightedAccuracy;
+    public void setWeightedAccuracy(int weightedAccuracy) {
+        this.weightedAccuracy = weightedAccuracy;
     }
 
-    public int getmRunningScoreTotal() {
-        return mRunningScoreTotal;
+    public int getRunningScoreTotal() {
+        return runningScoreTotal;
     }
 
-    public int getmTurnPoints() {
-        return mTurnPoints;
+    public int getTurnPoints() {
+        return turnPoints;
     }
 
-    public void setmTurnPoints(int mTurnPoints) {
-        this.mTurnPoints = mTurnPoints;
+    public void setTurnPoints(int turnPoints) {
+        this.turnPoints = turnPoints;
     }
 
-    public void setmDifficulty(int mDifficulty) {
-        this.mDifficulty = mDifficulty;
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
     }
 
     public boolean isFirstTurnInNewGame() {
@@ -161,7 +144,7 @@ public class ApplicationState extends Application{
     }
 
     public void setFirstTurnInNewGame(boolean firstTurnInNewGame) {
-        ApplicationState.firstTurnInNewGame = firstTurnInNewGame;
+        firstTurnInNewGame = firstTurnInNewGame;
     }
 
     public double randomizeTarget(double baseTarget) {
@@ -170,7 +153,7 @@ public class ApplicationState extends Application{
     }
 
     public void updateRunningScoreTotal(int newScore) {
-        mRunningScoreTotal += newScore;
+        runningScoreTotal += newScore;
     }
 
     public String obtainGameDate() {
@@ -226,7 +209,7 @@ public class ApplicationState extends Application{
         else if (accuracy <= LIFE_LOSS_THRESHOLD && lifeLossPossible) {
             livesGained = MINUS_ONE_LIFE;
         }
-        mLives += livesGained;
+        lives += livesGained;
         return livesGained;
     }
 

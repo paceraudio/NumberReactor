@@ -10,9 +10,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pacerdevelopment.numberreactor.app.R;
-import com.pacerdevelopment.numberreactor.app.counter.TimeCounter;
+import com.pacerdevelopment.numberreactor.app.application.NrApp;
 import com.pacerdevelopment.numberreactor.app.counter.vp_accel_counter.CounterActivity;
-import com.pacerdevelopment.numberreactor.app.application.ApplicationState;
+import com.pacerdevelopment.numberreactor.app.counter.vp_counter.TimeCounter;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
 
 
@@ -122,7 +122,7 @@ public class FadeOutCounterActivity extends TimeCounter implements View.OnTouchL
 
         updateStateScore(SCORE_NOT_POSSIBLE);
 
-        launchResetNextTurnAsync(resetNextTurnListener, ApplicationState.getAppContext(), tvFadeCounter, tvFadeLives, tvFadeScore, straightAccuracy, IS_LIFE_LOSS_POSSIBLE);
+        launchResetNextTurnAsync(resetNextTurnListener, NrApp.getAppContext(), tvFadeCounter, tvFadeLives, tvFadeScore, straightAccuracy, IS_LIFE_LOSS_POSSIBLE);
     }
 
     private static void resetCounterColorAfterFadeOut() {
@@ -130,14 +130,14 @@ public class FadeOutCounterActivity extends TimeCounter implements View.OnTouchL
     }
 
     protected static int calculateAccuracy(double target, double elapsedCount) {
-        int accuracy = state.calcAccuracy(target, elapsedCount);
-        state.setmTurnAccuracy(accuracy);
+        int accuracy = gameState.calcAccuracy(target, elapsedCount);
+        gameState.setTurnAccuracy(accuracy);
         return accuracy;
     }
 
     private void setStateTargetBasedOnLevel() {
-        target = DEFAULT_FADE_COUNTER_TARGET + (state.getLevel() - ONE);
-        state.setBaseTarget(target);
+        target = DEFAULT_FADE_COUNTER_TARGET + (gameState.getLevel() - ONE);
+        gameState.setBaseTarget(target);
         counterCeilingSeconds = target + BUFFER_OVER_TARGET;
         counterCeilingMillis = (long) (counterCeilingSeconds * MILLIS_IN_SECONDS);
     }

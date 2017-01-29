@@ -3,7 +3,7 @@ package com.pacerdevelopment.numberreactor.app.db;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.pacerdevelopment.numberreactor.app.util.GameStats;
+import com.pacerdevelopment.numberreactor.app.model.GameStats;
 
 import java.util.ArrayList;
 

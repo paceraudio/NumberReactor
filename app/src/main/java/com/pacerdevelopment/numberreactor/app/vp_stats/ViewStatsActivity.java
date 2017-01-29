@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import com.pacerdevelopment.numberreactor.app.R;
 import com.pacerdevelopment.numberreactor.app.db.QueryAllDbAsync;
 import com.pacerdevelopment.numberreactor.app.db.QueryDbListener;
-import com.pacerdevelopment.numberreactor.app.util.GameStats;
+import com.pacerdevelopment.numberreactor.app.model.GameStats;
 
 import java.util.ArrayList;
 
