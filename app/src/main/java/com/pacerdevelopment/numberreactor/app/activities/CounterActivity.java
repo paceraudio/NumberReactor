@@ -134,7 +134,7 @@ public class CounterActivity extends TimeCounter implements
     protected void onDestroy() {
         super.onDestroy();
         if (mIsListeningForSharedPrefChanges) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             prefs.unregisterOnSharedPreferenceChangeListener(this);
             mIsListeningForSharedPrefChanges = false;
         }
