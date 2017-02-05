@@ -5,13 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -19,7 +17,7 @@ import android.widget.TextView;
 
 import com.pacerdevelopment.numberreactor.app.R;
 import com.pacerdevelopment.numberreactor.app.application.NrApp;
-import com.pacerdevelopment.numberreactor.app.db.DBHelper;
+import com.pacerdevelopment.numberreactor.app.model.db.DBHelper;
 import com.pacerdevelopment.numberreactor.app.model.GameState;
 import com.pacerdevelopment.numberreactor.app.util.ButtonDrawableView;
 import com.pacerdevelopment.numberreactor.app.util.CustomTypeface;
@@ -35,7 +33,7 @@ import java.util.Arrays;
 /**
  * Created by jeffwconaway on 2/27/15.
  */
-public abstract class TimeCounter extends Activity {
+public abstract class TimeCounter extends Activity implements CounterContract.View {
 
     protected static volatile boolean isStartClickable;
     protected static volatile boolean isStartFlashing;
@@ -51,9 +49,13 @@ public abstract class TimeCounter extends Activity {
     protected static LayerDrawable stopButtonEngaged;
     protected static LayerDrawable stopButtonArmed;
 
+    protected double roundedCount;
+
     //protected static NrApp nrApp;
+
+    private CounterContract.Presenter presenter;
     protected static GameInfoDisplayer gameInfoDisplayer;
-    protected static GameState gameState;
+    //protected static GameState gameState;
     protected DBHelper mDbHelper;
     //protected static CustomTypeface customTypeface;
 
@@ -102,14 +104,16 @@ public abstract class TimeCounter extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        gameState = NrApp.getGameState();
+        //gameState = NrApp.getModel();
         //nrApp = (NrApp) getApplicationContext();
         gameInfoDisplayer = new GameInfoDisplayer(NrApp.getAppContext());
         //customTypeface = CustomTypeface.getInstance();
-        mDbHelper = new DBHelper(this);
+        //mDbHelper = new DBHelper(this);
         handler = new Handler();
         initButtonDrawables();
-        initSharedPrefsElements();
+        //initSharedPrefsElements();
+
+        presenter = new CounterPresenter(this, NrApp.getModel());
     }
 
     @Override
@@ -132,7 +136,7 @@ public abstract class TimeCounter extends Activity {
         return true;
     }
 
-    protected PackageInfo getPackageInfo() {
+    /*protected PackageInfo getPackageInfo() {
         PackageInfo packageInfo = null;
         try {
             packageInfo = this.getPackageManager().getPackageInfo(this.getPackageName(),
@@ -141,7 +145,7 @@ public abstract class TimeCounter extends Activity {
             e.printStackTrace();
         }
         return packageInfo;
-    }
+    }*/
 
     private Typeface obtainTypeface(String assetPath) {
         return CustomTypeface.get(this, assetPath);
@@ -160,7 +164,7 @@ public abstract class TimeCounter extends Activity {
         return new ArrayList<>(Arrays.asList(tvArray));
     }
 
-    private void initSharedPrefsElements() {
+/*    private void initSharedPrefsElements() {
         versionInfo = getPackageInfo();
         appNamePlusVersion = getString(R.string.app_name) + versionInfo.versionName;
         dbNotNullPrefsKey = getString(R.string.prefs_db_not_null_key);
@@ -185,7 +189,7 @@ public abstract class TimeCounter extends Activity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(dbNotNullPrefsKey, true);
         editor.commit();
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -199,12 +203,24 @@ public abstract class TimeCounter extends Activity {
             return true;
         }
         if (id == R.id.action_view_game_stats) {
-            if (checkSharedPrefsForDbNotNull()) {
-                Intent intent = new Intent(this, ViewStatsActivity.class);
-                startActivity(intent);
-            }
+            presenter.onViewGameStats();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void viewStats() {
+        Intent intent = new Intent(this, ViewStatsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onRoundedCount(double roundedCount) {
+        this.roundedCount = roundedCount;
+    }
+
+    protected void obtainRoundedCount(long elapsedCount, double counterCeiling) {
+        presenter.obtainRoundedCount(elapsedCount, counterCeiling);
     }
 
     protected static double calculateRoundedCount(long elapsedCount, double counterCeiling) {

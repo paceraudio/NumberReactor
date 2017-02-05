@@ -13,11 +13,11 @@ import com.pacerdevelopment.numberreactor.app.R;
 import com.pacerdevelopment.numberreactor.app.application.NrApp;
 import com.pacerdevelopment.numberreactor.app.counter.vp_counter.TimeCounter;
 import com.pacerdevelopment.numberreactor.app.counter.vp_fade_counter.FadeOutCounterActivity;
-import com.pacerdevelopment.numberreactor.app.db.InsertNewGameRowInDbAsync;
-import com.pacerdevelopment.numberreactor.app.db.InsertNewGameRowListener;
-import com.pacerdevelopment.numberreactor.app.db.UpdateDbScoreListener;
-import com.pacerdevelopment.numberreactor.app.db.UpdateLevelDbAsync;
-import com.pacerdevelopment.numberreactor.app.db.UpdateScoreDbAsync;
+import com.pacerdevelopment.numberreactor.app.model.db.InsertNewGameRowInDbAsync;
+import com.pacerdevelopment.numberreactor.app.model.db.InsertNewGameRowListener;
+import com.pacerdevelopment.numberreactor.app.model.db.UpdateDbScoreListener;
+import com.pacerdevelopment.numberreactor.app.model.db.UpdateLevelDbAsync;
+import com.pacerdevelopment.numberreactor.app.model.db.UpdateScoreDbAsync;
 import com.pacerdevelopment.numberreactor.app.dialogs.OutOfLivesDialogFragment;
 import com.pacerdevelopment.numberreactor.app.dialogs.WelcomeDialogFragment;
 import com.pacerdevelopment.numberreactor.app.util.ResetNextTurnListener;
@@ -138,12 +138,13 @@ public class CounterActivity extends TimeCounter implements
         }
     }
 
-    private static void onCounterStopped(long elapsedCount) {
+    private void onCounterStopped(long elapsedCount) {
 
         gameInfoDisplayer.showButtonState(stopButton, stopButtonEngaged);
         gameInfoDisplayer.showButtonState(startButton, startButtonDisengaged);
 
-        double roundedCount = calculateRoundedCount(elapsedCount, MAX_DISPLAYED_COUNTER_VALUE);
+        //double roundedCount = calculateRoundedCount(elapsedCount, MAX_DISPLAYED_COUNTER_VALUE);
+        obtainRoundedCount(elapsedCount, MAX_DISPLAYED_COUNTER_VALUE);
 
         String roundedCountStr = generateRoundedCountStr(roundedCount);
         tvCounter.setText(roundedCountStr);
@@ -310,7 +311,7 @@ public class CounterActivity extends TimeCounter implements
     //  Dialog fragment interaction methods
     @Override
     public void onOkClickedOutOfLivesDialog() {
-        // set the gameState back to first turn in game to trip a new row entered in db after the first
+        // set the Model back to first turn in game to trip a new row entered in db after the first
         // turn in new game is played
         gameState.setFirstTurnInNewGame(true);
         setInitialTimeValuesLevelOne();

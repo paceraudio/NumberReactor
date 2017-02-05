@@ -103,13 +103,14 @@ public class FadeOutCounterActivity extends TimeCounter implements View.OnTouchL
         blueValue = Color.blue(fadeCounterColor);
     }
 
-    private static void onCounterStopped(long elapsedCount) {
+    private void onCounterStopped(long elapsedCount) {
 
         gameInfoDisplayer.showButtonState(fadeStopButton, stopButtonEngaged);
         gameInfoDisplayer.showButtonState(fadeStartButton, startButtonDisengaged);
         isStopClickable = false;
 
-        double roundedCount = calculateRoundedCount(elapsedCount, counterCeilingSeconds);
+        //double roundedCount = calculateRoundedCount(elapsedCount, counterCeilingSeconds);
+        obtainRoundedCount(elapsedCount, counterCeilingSeconds);
         String roundedCountStr = generateRoundedCountStr(roundedCount);
 
         straightAccuracy = calculateAccuracy(target, roundedCount);

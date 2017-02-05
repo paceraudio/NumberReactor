@@ -1,4 +1,4 @@
-package com.pacerdevelopment.numberreactor.app.db;
+package com.pacerdevelopment.numberreactor.app.model.db;
 
 /**
  * Created by jeffwconaway on 12/2/14.

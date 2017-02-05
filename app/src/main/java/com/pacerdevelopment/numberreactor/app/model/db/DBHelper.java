@@ -1,4 +1,4 @@
-package com.pacerdevelopment.numberreactor.app.db;
+package com.pacerdevelopment.numberreactor.app.model.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -34,7 +34,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         super(ctx, DB_NAME, null, DB_VERSION);
         this.mContext = ctx;
-        gameState = NrApp.getGameState();
+        gameState = NrApp.getModel();
         //mState = (NrApp) mContext.getApplicationContext();
         mContext.getApplicationContext();
     }

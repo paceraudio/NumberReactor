@@ -29,7 +29,7 @@ public class GameInfoDisplayer {
 
     public GameInfoDisplayer(Context context) {
         this.context = context;
-        gameState = NrApp.getGameState();
+        gameState = NrApp.getModel();
         //mState = (NrApp) context.getApplicationContext();
     }
 

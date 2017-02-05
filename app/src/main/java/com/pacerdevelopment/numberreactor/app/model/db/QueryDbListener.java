@@ -1,4 +1,4 @@
-package com.pacerdevelopment.numberreactor.app.db;
+package com.pacerdevelopment.numberreactor.app.model.db;
 
 import com.pacerdevelopment.numberreactor.app.model.GameStats;
 

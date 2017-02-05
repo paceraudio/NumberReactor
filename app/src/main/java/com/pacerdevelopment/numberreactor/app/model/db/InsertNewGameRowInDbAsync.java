@@ -1,4 +1,4 @@
-package com.pacerdevelopment.numberreactor.app.db;
+package com.pacerdevelopment.numberreactor.app.model.db;
 
 import android.content.Context;
 import android.os.AsyncTask;

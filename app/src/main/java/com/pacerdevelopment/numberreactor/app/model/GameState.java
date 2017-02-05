@@ -8,7 +8,7 @@ import java.util.Random;
  * Created by jeffwconaway on 1/29/17.
  */
 
-public class GameState {
+public class GameState implements ModelContract{
 
     private int turn;
     private double baseTarget;

@@ -5,8 +5,8 @@ import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import com.pacerdevelopment.numberreactor.app.R;
-import com.pacerdevelopment.numberreactor.app.db.QueryAllDbAsync;
-import com.pacerdevelopment.numberreactor.app.db.QueryDbListener;
+import com.pacerdevelopment.numberreactor.app.model.db.QueryAllDbAsync;
+import com.pacerdevelopment.numberreactor.app.model.db.QueryDbListener;
 import com.pacerdevelopment.numberreactor.app.model.GameStats;
 
 import java.util.ArrayList;

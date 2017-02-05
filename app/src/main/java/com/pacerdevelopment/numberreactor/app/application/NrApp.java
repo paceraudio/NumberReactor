@@ -7,27 +7,28 @@ package com.pacerdevelopment.numberreactor.app.application;
 import android.app.Application;
 import android.content.Context;
 
-import com.pacerdevelopment.numberreactor.app.model.GameState;
+import com.pacerdevelopment.numberreactor.app.model.Model;
+import com.pacerdevelopment.numberreactor.app.model.ModelContract;
 
-public class NrApp extends Application{
+public class NrApp extends Application {
 
     private static Context context;
 
-    public static GameState gameState;
+    public static ModelContract model;
 
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        gameState = new GameState();
-        gameState.initGameStats();
+        model = new Model();
+        model.initGameStats();
     }
 
     public static Context getAppContext() {
         return context;
     }
 
-    public static GameState getGameState() {
-        return gameState;
+    public static ModelContract getModel() {
+        return model;
     }
 }
