@@ -45,7 +45,7 @@ public class NRPrefs {
         return prefs.getBoolean(dbNotNullPrefsKey, false);
     }
 
-    protected static void setSharedPrefsDbNotNull() {
+    protected void setSharedPrefsDbNotNull() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(dbNotNullPrefsKey, true);
         editor.commit();
